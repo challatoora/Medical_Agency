@@ -1,10 +1,14 @@
-function App() {
-  return (
-    <div style={{ background: "white", color: "black", padding: "50px" }}>
-      <h1>CMR Medical Agency</h1>
-      <p>Frontend is working successfully!</p>
-    </div>
-  );
-}
+import React, { useState } from "react";
 
-export default App;
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
+
+import Dashboard from "./pages/Dashboard";
+import Medicines from "./pages/Medicines";
+import Suppliers from "./pages/Suppliers";
+import Inventory from "./pages/Inventory";
+import Orders from "./pages/Orders";
+import Billing from "./pages/Billing";
+import Users from "./pages/Users";
+
+import "./App.css";
