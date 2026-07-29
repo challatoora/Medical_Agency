@@ -13,4 +13,12 @@ app.use(express.json());
 
 app.use("/api/medicines", medicineRoutes);
 
+// Home Route
+app.get("/", (req, res) => {
+    res.send("CMR Medical Agency - Medicine Service Running...");
+});
+
+// Medicine Routes
+app.use("/api/medicines", medicineRoutes);
+
 module.exports = app;
