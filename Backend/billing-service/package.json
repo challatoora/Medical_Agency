@@ -1,0 +1,25 @@
+{
+  "name": "billing-service",
+  "version": "1.0.0",
+  "description": "CMR Medical Agency Billing Service",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "billing",
+    "invoice",
+    "medical",
+    "cmr",
+    "express",
+    "mysql"
+  ],
+  "author": "Murali",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mysql2": "^3.14.5"
+  }
+}
