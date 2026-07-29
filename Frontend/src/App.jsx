@@ -12,3 +12,48 @@ import Billing from "./pages/Billing";
 import Users from "./pages/Users";
 
 import "./App.css";
+
+function App() {
+  const [page, setPage] = useState("dashboard");
+
+  const renderPage = () => {
+    switch (page) {
+      case "medicines":
+        return <Medicines />;
+
+      case "suppliers":
+        return <Suppliers />;
+
+      case "inventory":
+        return <Inventory />;
+
+      case "orders":
+        return <Orders />;
+
+      case "billing":
+        return <Billing />;
+
+      case "users":
+        return <Users />;
+
+      default:
+        return <Dashboard />;
+    }
+  };
+
+  return (
+    <div>
+      <Navbar />
+
+      <div className="main-layout">
+        <Sidebar setPage={setPage} />
+
+        <main className="content">
+          {renderPage()}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+export default App;
