@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: "Inter", sans-serif;
+  color: #172033;
+  background: #f5f7fb;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: #f5f7fb;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f3f7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5a15a;
+  border-radius: 10px;
+}
+
+/* Page Animation */
+
+.page-animation {
+  animation: pageFade 0.5s ease-in-out;
+}
+
+@keyframes pageFade {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card Animation */
+
+.card-animation {
+  animation: cardFade 0.6s ease forwards;
+}
+
+@keyframes cardFade {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Floating Animation */
+
+.float-animation {
+  animation: floating 4s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Luxury Gold Text */
+
+.gold-text {
+  background: linear-gradient(
+    90deg,
+    #b88a35,
+    #f3d58a,
+    #b88a35
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Premium Hover */
+
+.premium-hover {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.premium-hover:hover {
+  transform: translateY(-5px);
+
+  box-shadow:
+    0 15px 35px rgba(20, 30, 50, 0.12);
+}
+
+/* Glass Effect */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+
+  backdrop-filter: blur(15px);
+
+  -webkit-backdrop-filter: blur(15px);
+
+  border: 1px solid rgba(255, 255, 255, 0.7);
+
+  box-shadow:
+    0 10px 30px rgba(30, 40, 70, 0.08);
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+  .sidebar {
+    width: 70px;
+  }
+
+  .sidebar h2 {
+    font-size: 14px;
+  }
+
+  .sidebar button {
+    font-size: 0;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+}
