@@ -1,57 +1,143 @@
 const API_URL = "http://52.201.247.34:5000";
 
+const request = async (url, options = {}) => {
+  const response = await fetch(`${API_URL}${url}`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+    ...options,
+  });
+
+  if (!response.ok) {
+    throw new Error(`API Error: ${response.status}`);
+  }
+
+  return response.json();
+};
+
 export const userAPI = {
-  getAll: async () => {
-    const response = await fetch(`${API_URL}/users`);
+  getAll: () => request("/users"),
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch users");
-    }
-
-    return response.json();
-  },
-
-  create: async (userData) => {
-    const response = await fetch(`${API_URL}/users`, {
+  create: (data) =>
+    request("/users", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
+      body: JSON.stringify(data),
+    }),
 
-    if (!response.ok) {
-      throw new Error("Failed to create user");
-    }
-
-    return response.json();
-  },
-
-  update: async (id, userData) => {
-    const response = await fetch(`${API_URL}/users/${id}`, {
+  update: (id, data) =>
+    request(`/users/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
+      body: JSON.stringify(data),
+    }),
 
-    if (!response.ok) {
-      throw new Error("Failed to update user");
-    }
-
-    return response.json();
-  },
-
-  delete: async (id) => {
-    const response = await fetch(`${API_URL}/users/${id}`, {
+  delete: (id) =>
+    request(`/users/${id}`, {
       method: "DELETE",
-    });
+    }),
+};
 
-    if (!response.ok) {
-      throw new Error("Failed to delete user");
-    }
+export const medicineAPI = {
+  getAll: () => request("/medicines"),
 
-    return response.json();
-  },
+  create: (data) =>
+    request("/medicines", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  update: (id, data) =>
+    request(`/medicines/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id) =>
+    request(`/medicines/${id}`, {
+      method: "DELETE",
+    }),
+};
+
+export const supplierAPI = {
+  getAll: () => request("/suppliers"),
+
+  create: (data) =>
+    request("/suppliers", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  update: (id, data) =>
+    request(`/suppliers/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id) =>
+    request(`/suppliers/${id}`, {
+      method: "DELETE",
+    }),
+};
+
+export const inventoryAPI = {
+  getAll: () => request("/inventory"),
+
+  create: (data) =>
+    request("/inventory", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  update: (id, data) =>
+    request(`/inventory/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id) =>
+    request(`/inventory/${id}`, {
+      method: "DELETE",
+    }),
+};
+
+export const orderAPI = {
+  getAll: () => request("/orders"),
+
+  create: (data) =>
+    request("/orders", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  update: (id, data) =>
+    request(`/orders/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id) =>
+    request(`/orders/${id}`, {
+      method: "DELETE",
+    }),
+};
+
+export const billingAPI = {
+  getAll: () => request("/billing"),
+
+  create: (data) =>
+    request("/billing", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  update: (id, data) =>
+    request(`/billing/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id) =>
+    request(`/billing/${id}`, {
+      method: "DELETE",
+    }),
 };
