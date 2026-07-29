@@ -1,0 +1,25 @@
+{
+  "name": "medicine-service",
+  "version": "1.0.0",
+  "description": "CMR Medical Agency - Medicine Service",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "cmr",
+    "medical",
+    "medicine",
+    "express",
+    "mysql"
+  ],
+  "author": "Murali",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mysql2": "^3.14.1"
+  }
+}
