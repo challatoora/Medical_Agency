@@ -1,9 +1,42 @@
-import React from "react";
-import Layout from "./components/Layout";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Sidebar from "./components/Sidebar";
+import Header from "./components/Header";
+
+import Dashboard from "./pages/Dashboard";
 
 function App() {
-return ( <Layout> <h1>CMR Medical Agency</h1> <p>Welcome to the Medical Agency Management System</p> </Layout>
-);
+  return (
+    <BrowserRouter>
+      <div className="app-layout">
+
+        <Sidebar />
+
+        <div className="main-area">
+
+          <Header />
+
+          <main className="page-content">
+            <Routes>
+
+              <Route
+                path="/"
+                element={<Dashboard />}
+              />
+
+              <Route
+                path="/dashboard"
+                element={<Dashboard />}
+              />
+
+            </Routes>
+          </main>
+
+        </div>
+
+      </div>
+    </BrowserRouter>
+  );
 }
 
 export default App;
