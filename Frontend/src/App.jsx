@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 
+import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
 import Medicines from "./pages/Medicines";
@@ -13,6 +14,20 @@ import Billing from "./pages/Billing";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("Dashboard");
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
 
   const renderPage = () => {
     switch (currentPage) {
@@ -38,6 +53,10 @@ function App() {
         return <Dashboard />;
     }
   };
+
+  if (!isLoggedIn) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   return (
     <div className="app-container">

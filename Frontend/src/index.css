@@ -1833,3 +1833,163 @@ tbody tr:last-child td {
 .secondary-button:hover {
   background: #cbd5e1;
 }
+
+
+/* ===========================
+   LOGIN PAGE
+=========================== */
+
+.login-page {
+  width: 100%;
+  height: 100vh;
+  background: #f4f7fb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card {
+  width: 950px;
+  max-width: 95%;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  box-shadow: 0 20px 60px rgba(0,0,0,.12);
+}
+
+.login-left {
+  background: linear-gradient(135deg,#2563eb,#1e40af);
+  color: white;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-logo {
+  width: 90px;
+  height: 90px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.login-left h1 {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.login-left p {
+  font-size: 18px;
+  opacity: .9;
+}
+
+.login-right {
+  padding: 60px;
+}
+
+.login-right h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #1e293b;
+}
+
+.login-right p {
+  color: #64748b;
+  margin-bottom: 35px;
+}
+
+.login-group {
+  margin-bottom: 22px;
+}
+
+.login-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.login-group input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #dbe2ea;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+}
+
+.login-group input:focus {
+  border-color: #2563eb;
+}
+
+.password-box {
+  position: relative;
+}
+
+.password-box input {
+  padding-right: 50px;
+}
+
+.eye-btn {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.login-btn {
+  width: 100%;
+  margin-top: 15px;
+  padding: 15px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.login-btn:hover {
+  background: #1d4ed8;
+}
+
+.login-btn:disabled {
+  opacity: .7;
+  cursor: not-allowed;
+}
+
+.login-error {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+@media(max-width:900px){
+
+.login-card{
+grid-template-columns:1fr;
+}
+
+.login-left{
+display:none;
+}
+
+.login-right{
+padding:40px;
+}
+
+}
