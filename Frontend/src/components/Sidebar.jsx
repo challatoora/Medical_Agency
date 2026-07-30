@@ -115,9 +115,16 @@ function Sidebar({ currentPage, setCurrentPage }) {
           <span>Settings</span>
         </button>
 
-        <button className="nav-item logout">
-          <LogOut size={20} />
-          <span>Logout</span>
+        <button
+            className="nav-item logout"
+            onClick={() => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                window.location.reload();
+            }}
+        >
+            <LogOut size={20} />
+            <span>Logout</span>
         </button>
 
         <div className="sidebar-user">
