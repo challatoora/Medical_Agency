@@ -1,87 +1,122 @@
-
 import React from "react";
-import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
-  Users,
   Pill,
   Package,
   Truck,
   ShoppingCart,
   CreditCard,
+  Users,
+  Settings,
+  LogOut,
+  MoreHorizontal,
 } from "lucide-react";
 
-function Sidebar() {
+function Sidebar({ currentPage, setCurrentPage }) {
   const menuItems = [
     {
-      name: "Dashboard",
-      path: "/",
       icon: LayoutDashboard,
+      label: "Dashboard",
     },
     {
-      name: "Medicines",
-      path: "/medicines",
       icon: Pill,
+      label: "Medicines",
     },
     {
-      name: "Inventory",
-      path: "/inventory",
       icon: Package,
+      label: "Inventory",
     },
     {
-      name: "Suppliers",
-      path: "/suppliers",
       icon: Truck,
+      label: "Suppliers",
     },
     {
-      name: "Orders",
-      path: "/orders",
       icon: ShoppingCart,
+      label: "Orders",
     },
     {
-      name: "Billing",
-      path: "/billing",
       icon: CreditCard,
+      label: "Billing",
     },
     {
-      name: "Users",
-      path: "/users",
       icon: Users,
+      label: "Users",
     },
   ];
 
   return (
     <aside className="sidebar">
-
       {/* Logo */}
-      <div className="sidebar-logo">
-        <h2>CMR Medical</h2>
-        <p>Agency Management</p>
+
+      <div className="brand">
+        <div className="brand-logo">
+          <Pill size={26} />
+        </div>
+
+        <div>
+          <h2>CMR MEDICAL</h2>
+          <span>AGENCY</span>
+        </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="sidebar-nav">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
+      {/* Menu */}
 
-          return (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) =>
-                isActive ? "nav-item active" : "nav-item"
-              }
-            >
-              <Icon size={20} />
-              <span>{item.name}</span>
-            </NavLink>
-          );
-        })}
-      </nav>
+      <div className="sidebar-section">
+        <p className="section-title">MAIN MENU</p>
 
+        <nav>
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <button
+                key={item.label}
+                className={`nav-item ${
+                  currentPage === item.label ? "active" : ""
+                }`}
+                onClick={() => setCurrentPage(item.label)}
+              >
+                <Icon size={20} />
+
+                <span>{item.label}</span>
+
+                {currentPage === item.label && (
+                  <div className="active-indicator"></div>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Bottom */}
+
+      <div className="sidebar-bottom">
+        <button className="nav-item">
+          <Settings size={20} />
+          <span>Settings</span>
+        </button>
+
+        <button className="nav-item logout">
+          <LogOut size={20} />
+          <span>Logout</span>
+        </button>
+
+        <div className="sidebar-user">
+          <div className="user-avatar">MR</div>
+
+          <div className="user-details">
+            <strong>Murali Reddy</strong>
+            <span>Administrator</span>
+          </div>
+
+          <button className="user-more">
+            <MoreHorizontal size={18} />
+          </button>
+        </div>
+      </div>
     </aside>
   );
 }
 
 export default Sidebar;
-

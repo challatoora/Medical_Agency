@@ -1,51 +1,63 @@
 import React from "react";
 import {
-Search,
-Bell,
-ChevronDown
+  Search,
+  Bell,
+  ChevronDown,
 } from "lucide-react";
 
 function Header() {
-return ( <header className="header">
+  return (
+    <header className="header">
 
+      {/* Search */}
 
-  <div className="search-box">
-    <Search size={20} />
+      <div className="search-box">
 
-    <input
-      type="text"
-      placeholder="Search medicines, orders, suppliers..."
-    />
-  </div>
+        <Search size={20} />
 
-  <div className="header-right">
+        <input
+          type="text"
+          placeholder="Search medicines, orders, suppliers..."
+        />
 
-    <button className="notification">
-      <Bell size={21} />
-      <span className="notification-dot"></span>
-    </button>
-
-    <div className="profile">
-
-      <div className="avatar">
-        A
       </div>
 
-      <div className="profile-info">
-        <strong>Admin User</strong>
-        <span>Administrator</span>
+      {/* Right Side */}
+
+      <div className="header-right">
+
+        <button className="notification">
+
+          <Bell size={20} />
+
+          <span className="notification-dot"></span>
+
+        </button>
+
+        <div className="header-divider"></div>
+
+        <div className="profile">
+
+          <div className="profile-avatar">
+            MR
+          </div>
+
+          <div className="profile-info">
+
+            <strong>Murali Reddy</strong>
+
+            <span>Administrator</span>
+
+          </div>
+
+          <ChevronDown size={18} />
+
+        </div>
+
       </div>
 
-      <ChevronDown size={18} />
-
-    </div>
-
-  </div>
-
-</header>
-
-
-);
+    </header>
+  );
 }
 
 export default Header;

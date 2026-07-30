@@ -1,546 +1,650 @@
+import React from "react";
 import {
-Users,
-Pill,
-Package,
-Truck,
-ShoppingCart,
-IndianRupee,
-AlertTriangle,
-TrendingUp,
-ArrowUpRight,
-ArrowDownRight,
-Activity,
-Clock,
-CheckCircle2,
+  DollarSign,
+  ShoppingCart,
+  Boxes,
+  Users,
+  TrendingUp,
+  TrendingDown,
+  Plus,
+  MoreHorizontal,
+  ArrowUpRight,
+  AlertTriangle,
+  Pill,
+  Truck,
+  Package,
+  Activity,
 } from "lucide-react";
 
 function Dashboard() {
-const stats = [
-{
-title: "Total Users",
-value: "1,248",
-change: "+12.5%",
-trend: "up",
-icon: Users,
-className: "blue",
-},
-{
-title: "Total Medicines",
-value: "3,642",
-change: "+8.2%",
-trend: "up",
-icon: Pill,
-className: "purple",
-},
-{
-title: "Inventory Items",
-value: "8,426",
-change: "+5.7%",
-trend: "up",
-icon: Package,
-className: "green",
-},
-{
-title: "Suppliers",
-value: "186",
-change: "+3.1%",
-trend: "up",
-icon: Truck,
-className: "orange",
-},
-{
-title: "Total Orders",
-value: "2,856",
-change: "+14.8%",
-trend: "up",
-icon: ShoppingCart,
-className: "pink",
-},
-{
-title: "Total Billing",
-value: "₹12.8L",
-change: "+18.4%",
-trend: "up",
-icon: IndianRupee,
-className: "cyan",
-},
-];
+  const stats = [
+    {
+      title: "Total Revenue",
+      value: "₹12,48,500",
+      change: "+12.5%",
+      positive: true,
+      icon: DollarSign,
+      color: "blue",
+    },
+    {
+      title: "Total Orders",
+      value: "1,248",
+      change: "+8.2%",
+      positive: true,
+      icon: ShoppingCart,
+      color: "purple",
+    },
+    {
+      title: "Stock Available",
+      value: "8,452",
+      change: "-2.4%",
+      positive: false,
+      icon: Boxes,
+      color: "green",
+    },
+    {
+      title: "Active Suppliers",
+      value: "128",
+      change: "+5.1%",
+      positive: true,
+      icon: Users,
+      color: "orange",
+    },
+  ];
 
-const recentOrders = [
-{
-id: "#ORD-10245",
-customer: "Apollo Pharmacy",
-amount: "₹24,850",
-status: "Completed",
-date: "Today, 10:32 AM",
-},
-{
-id: "#ORD-10244",
-customer: "MedPlus",
-amount: "₹18,420",
-status: "Processing",
-date: "Today, 09:18 AM",
-},
-{
-id: "#ORD-10243",
-customer: "Sri Sai Medicals",
-amount: "₹12,750",
-status: "Completed",
-date: "Yesterday, 05:42 PM",
-},
-{
-id: "#ORD-10242",
-customer: "HealthCare Plus",
-amount: "₹31,200",
-status: "Pending",
-date: "Yesterday, 02:15 PM",
-},
-{
-id: "#ORD-10241",
-customer: "City Medical Store",
-amount: "₹9,850",
-status: "Completed",
-date: "28 Jul, 11:25 AM",
-},
-];
+  const quickActions = [
+    {
+      icon: Pill,
+      title: "Add Medicine",
+      description: "Add new medicine",
+    },
+    {
+      icon: Truck,
+      title: "Add Supplier",
+      description: "Register supplier",
+    },
+    {
+      icon: ShoppingCart,
+      title: "Create Order",
+      description: "Create new order",
+    },
+  ];
 
-const lowStock = [
-{
-medicine: "Paracetamol 500mg",
-category: "Tablets",
-stock: 12,
-level: "Critical",
-},
-{
-medicine: "Amoxicillin 250mg",
-category: "Capsules",
-stock: 24,
-level: "Low",
-},
-{
-medicine: "Azithromycin 500mg",
-category: "Tablets",
-stock: 31,
-level: "Low",
-},
-{
-medicine: "Cetirizine 10mg",
-category: "Tablets",
-stock: 18,
-level: "Critical",
-},
-];
+  const orders = [
+    {
+      id: "#ORD-1024",
+      customer: "Apollo Pharmacy",
+      date: "30 Jul 2026",
+      amount: "₹24,500",
+      status: "Completed",
+    },
+    {
+      id: "#ORD-1023",
+      customer: "MedPlus",
+      date: "30 Jul 2026",
+      amount: "₹18,200",
+      status: "Processing",
+    },
+    {
+      id: "#ORD-1022",
+      customer: "Care Pharmacy",
+      date: "29 Jul 2026",
+      amount: "₹32,800",
+      status: "Completed",
+    },
+    {
+      id: "#ORD-1021",
+      customer: "Sri Sai Medicals",
+      date: "29 Jul 2026",
+      amount: "₹12,600",
+      status: "Pending",
+    },
+  ];
 
-const chartData = [
-{ day: "Mon", sales: 55, orders: 40 },
-{ day: "Tue", sales: 70, orders: 52 },
-{ day: "Wed", sales: 48, orders: 35 },
-{ day: "Thu", sales: 82, orders: 65 },
-{ day: "Fri", sales: 68, orders: 50 },
-{ day: "Sat", sales: 92, orders: 78 },
-{ day: "Sun", sales: 76, orders: 60 },
-];
-
-return ( <div className="dashboard-page">
-
-
-  {/* Dashboard Header */}
-  <div className="dashboard-heading">
-    <div>
-      <div className="welcome-label">
-        <Activity size={16} />
-        <span>Medical Agency Overview</span>
-      </div>
-
-      <h1>Good Morning, Admin 👋</h1>
-
-      <p>
-        Here's what's happening with your medical agency today.
-      </p>
-    </div>
-
-    <div className="dashboard-date">
-      <Clock size={17} />
-      <span>Thursday, July 30, 2026</span>
-    </div>
-  </div>
-
-  {/* Statistics Cards */}
-  <div className="stats-grid">
-    {stats.map((stat) => {
-      const Icon = stat.icon;
-
-      return (
-        <div className="stat-card" key={stat.title}>
-
-          <div className={`stat-icon ${stat.className}`}>
-            <Icon size={23} />
-          </div>
-
-          <div className="stat-content">
-            <span className="stat-title">
-              {stat.title}
-            </span>
-
-            <h2>{stat.value}</h2>
-
-            <div className="stat-change">
-              <ArrowUpRight size={15} />
-              <span>{stat.change}</span>
-              <small>from last month</small>
-            </div>
-          </div>
-
-        </div>
-      );
-    })}
-  </div>
-
-  {/* Main Dashboard Grid */}
-  <div className="dashboard-main-grid">
-
-    {/* Sales Chart */}
-    <div className="dashboard-card sales-card">
-
-      <div className="card-header">
+  return (
+    <div className="dashboard">
+      <section className="welcome-section">
         <div>
-          <h3>Sales & Orders Overview</h3>
-          <p>Weekly performance analytics</p>
-        </div>
-
-        <select className="period-select">
-          <option>Last 7 Days</option>
-          <option>Last 30 Days</option>
-          <option>Last 6 Months</option>
-        </select>
-      </div>
-
-      <div className="chart-summary">
-        <div>
-          <span>Total Sales</span>
-          <strong>₹4,82,650</strong>
-        </div>
-
-        <div>
-          <span>Total Orders</span>
-          <strong>486</strong>
-        </div>
-
-        <div className="positive-summary">
-          <TrendingUp size={17} />
-          <span>+18.4%</span>
-        </div>
-      </div>
-
-      <div className="sales-chart">
-
-        <div className="chart-y-axis">
-          <span>100k</span>
-          <span>75k</span>
-          <span>50k</span>
-          <span>25k</span>
-          <span>0</span>
-        </div>
-
-        <div className="chart-area">
-
-          <div className="chart-lines">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-
-          <div className="bars-container">
-            {chartData.map((item) => (
-              <div className="chart-column" key={item.day}>
-
-                <div className="bars">
-
-                  <div
-                    className="sales-bar"
-                    style={{ height: `${item.sales}%` }}
-                    title={`Sales: ${item.sales}%`}
-                  ></div>
-
-                  <div
-                    className="orders-bar"
-                    style={{ height: `${item.orders}%` }}
-                    title={`Orders: ${item.orders}%`}
-                  ></div>
-
-                </div>
-
-                <span className="chart-label">
-                  {item.day}
-                </span>
-
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </div>
-
-      <div className="chart-legend">
-        <span>
-          <i className="legend-sales"></i>
-          Sales
-        </span>
-
-        <span>
-          <i className="legend-orders"></i>
-          Orders
-        </span>
-      </div>
-
-    </div>
-
-    {/* Low Stock */}
-    <div className="dashboard-card low-stock-card">
-
-      <div className="card-header">
-        <div>
-          <h3>Low Stock Medicines</h3>
-          <p>Items requiring attention</p>
-        </div>
-
-        <div className="warning-count">
-          <AlertTriangle size={16} />
-          4
-        </div>
-      </div>
-
-      <div className="low-stock-list">
-
-        {lowStock.map((item) => (
-          <div className="stock-item" key={item.medicine}>
-
-            <div className="medicine-icon">
-              <Pill size={18} />
-            </div>
-
-            <div className="medicine-info">
-              <strong>{item.medicine}</strong>
-              <span>{item.category}</span>
-            </div>
-
-            <div className="stock-status">
-              <strong>{item.stock}</strong>
-
-              <span
-                className={
-                  item.level === "Critical"
-                    ? "critical"
-                    : "low"
-                }
-              >
-                {item.level}
-              </span>
-            </div>
-
-          </div>
-        ))}
-
-      </div>
-
-      <button className="view-all-btn">
-        View Inventory
-        <ArrowUpRight size={16} />
-      </button>
-
-    </div>
-
-  </div>
-
-  {/* Bottom Dashboard Grid */}
-  <div className="dashboard-bottom-grid">
-
-    {/* Recent Orders */}
-    <div className="dashboard-card orders-card">
-
-      <div className="card-header">
-        <div>
-          <h3>Recent Orders</h3>
-          <p>Latest medical agency orders</p>
-        </div>
-
-        <button className="view-all-link">
-          View All
-          <ArrowUpRight size={15} />
-        </button>
-      </div>
-
-      <div className="orders-table-wrapper">
-
-        <table className="orders-table">
-
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Customer</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            {recentOrders.map((order) => (
-              <tr key={order.id}>
-
-                <td>
-                  <strong className="order-id">
-                    {order.id}
-                  </strong>
-                </td>
-
-                <td>{order.customer}</td>
-
-                <td>
-                  <strong>{order.amount}</strong>
-                </td>
-
-                <td>
-
-                  <span
-                    className={`order-status ${order.status
-                      .toLowerCase()
-                      .replace(" ", "-")}`}
-                  >
-
-                    {order.status === "Completed" && (
-                      <CheckCircle2 size={14} />
-                    )}
-
-                    {order.status === "Processing" && (
-                      <Activity size={14} />
-                    )}
-
-                    {order.status === "Pending" && (
-                      <Clock size={14} />
-                    )}
-
-                    {order.status}
-
-                  </span>
-
-                </td>
-
-                <td className="order-date">
-                  {order.date}
-                </td>
-
-              </tr>
-            ))}
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-    {/* Quick Overview */}
-    <div className="dashboard-card overview-card">
-
-      <div className="card-header">
-        <div>
-          <h3>Agency Overview</h3>
-          <p>Today's business summary</p>
-        </div>
-      </div>
-
-      <div className="overview-list">
-
-        <div className="overview-item">
-          <div className="overview-item-icon users">
-            <Users size={19} />
-          </div>
-
-          <div>
-            <span>Active Users</span>
-            <strong>842</strong>
-          </div>
-
-          <span className="overview-percent">
-            67%
-          </span>
-        </div>
-
-        <div className="overview-item">
-          <div className="overview-item-icon inventory">
-            <Package size={19} />
-          </div>
-
-          <div>
-            <span>Stock Availability</span>
-            <strong>92%</strong>
-          </div>
-
-          <span className="overview-percent">
-            92%
-          </span>
-        </div>
-
-        <div className="overview-item">
-          <div className="overview-item-icon suppliers">
-            <Truck size={19} />
-          </div>
-
-          <div>
-            <span>Active Suppliers</span>
-            <strong>164</strong>
-          </div>
-
-          <span className="overview-percent">
-            88%
-          </span>
-        </div>
-
-        <div className="overview-item">
-          <div className="overview-item-icon orders">
-            <ShoppingCart size={19} />
-          </div>
-
-          <div>
-            <span>Orders Delivered</span>
-            <strong>2,342</strong>
-          </div>
-
-          <span className="overview-percent">
-            82%
-          </span>
-        </div>
-
-      </div>
-
-      <div className="performance-box">
-
-        <div className="performance-icon">
-          <TrendingUp size={21} />
-        </div>
-
-        <div>
-          <strong>Excellent Performance</strong>
-          <p>
-            Your agency is performing 18.4% better than last month.
+          <p className="welcome-label">
+            Thursday, July 30, 2026
+          </p>
+
+          <h1>
+            Good Morning, Murali 👋
+          </h1>
+
+          <p className="welcome-description">
+            Here's what's happening with your medical agency today.
           </p>
         </div>
 
-      </div>
+        <button className="primary-button">
+          <Plus size={18} />
+          New Order
+        </button>
+      </section>
+
+      <section className="stats-grid">
+        {stats.map((stat) => {
+          const Icon = stat.icon;
+
+          return (
+            <div
+              key={stat.title}
+              className={`stat-card ${stat.color}`}
+            >
+              <div className="stat-top">
+                <div className="stat-icon">
+                  <Icon size={22} />
+                </div>
+
+                <button className="more-button">
+                  <MoreHorizontal size={18} />
+                </button>
+              </div>
+
+              <p>{stat.title}</p>
+
+              <div className="stat-bottom">
+                <h2>{stat.value}</h2>
+
+                <span
+                  className={`stat-change ${
+                    stat.positive
+                      ? "positive"
+                      : "negative"
+                  }`}
+                >
+                  {stat.positive ? (
+                    <TrendingUp size={14} />
+                  ) : (
+                    <TrendingDown size={14} />
+                  )}
+
+                  {stat.change}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </section>
+            <section className="dashboard-grid">
+
+        {/* Revenue Card */}
+
+        <div className="card revenue-card">
+
+          <div className="card-header">
+
+            <div>
+
+              <h3>Revenue Overview</h3>
+
+              <p>Monthly revenue performance</p>
+
+            </div>
+
+            <select>
+
+              <option>Last 7 Months</option>
+
+              <option>Last 30 Days</option>
+
+              <option>This Year</option>
+
+            </select>
+
+          </div>
+
+          <div className="revenue-summary">
+
+            <h2>₹12,48,500</h2>
+
+            <span className="positive">
+
+              <TrendingUp size={15} />
+
+              12.5% vs last month
+
+            </span>
+
+          </div>
+
+          <div className="chart">
+
+            <div className="chart-y-axis">
+
+              <span>₹4L</span>
+
+              <span>₹3L</span>
+
+              <span>₹2L</span>
+
+              <span>₹1L</span>
+
+              <span>₹0</span>
+
+            </div>
+
+            <div className="chart-area">
+
+              <div className="chart-grid-line"></div>
+              <div className="chart-grid-line"></div>
+              <div className="chart-grid-line"></div>
+              <div className="chart-grid-line"></div>
+
+              <svg
+                viewBox="0 0 700 220"
+                preserveAspectRatio="none"
+                className="chart-svg"
+              >
+
+                <defs>
+
+                  <linearGradient
+                    id="areaGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+
+                    <stop offset="0%" stopOpacity="0.25" />
+
+                    <stop offset="100%" stopOpacity="0" />
+
+                  </linearGradient>
+
+                </defs>
+
+                <path
+                  className="chart-fill"
+                  d="
+                    M0,180
+                    C80,165 100,140 170,150
+                    C230,160 250,110 320,120
+                    C390,130 400,80 470,95
+                    C530,110 570,55 630,65
+                    C660,70 680,40 700,45
+                    L700,220
+                    L0,220
+                    Z
+                  "
+                />
+
+                <path
+                  className="chart-line"
+                  d="
+                    M0,180
+                    C80,165 100,140 170,150
+                    C230,160 250,110 320,120
+                    C390,130 400,80 470,95
+                    C530,110 570,55 630,65
+                    C660,70 680,40 700,45
+                  "
+                />
+
+              </svg>
+
+              <div className="chart-months">
+
+                <span>Jan</span>
+                <span>Feb</span>
+                <span>Mar</span>
+                <span>Apr</span>
+                <span>May</span>
+                <span>Jun</span>
+                <span>Jul</span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* Quick Actions */}
+
+        <div className="card quick-card">
+
+          <div className="card-header">
+
+            <div>
+
+              <h3>Quick Actions</h3>
+
+              <p>Manage your operations</p>
+
+            </div>
+
+          </div>
+
+          <div className="quick-actions">
+
+            {quickActions.map((action) => {
+
+              const Icon = action.icon;
+
+              return (
+
+                <button
+                  key={action.title}
+                  className="quick-action"
+                >
+
+                  <div className="quick-icon">
+
+                    <Icon size={20} />
+
+                  </div>
+
+                  <div>
+
+                    <strong>{action.title}</strong>
+
+                    <span>{action.description}</span>
+
+                  </div>
+
+                  <ArrowUpRight size={18} />
+
+                </button>
+
+              );
+
+            })}
+
+          </div>
+
+          <div className="stock-alert">
+
+            <div className="alert-icon">
+
+              <AlertTriangle size={20} />
+
+            </div>
+
+            <div>
+
+              <strong>Low Stock Alert</strong>
+
+              <span>12 medicines need attention</span>
+
+            </div>
+
+            <ArrowUpRight size={18} />
+
+          </div>
+
+        </div>
+
+      </section>
+            {/* Recent Orders */}
+
+      <section className="card orders-card">
+
+        <div className="card-header">
+
+          <div>
+
+            <h3>Recent Orders</h3>
+
+            <p>Latest orders from your customers</p>
+
+          </div>
+
+          <button className="view-all">
+
+            View All
+
+            <ArrowUpRight size={16} />
+
+          </button>
+
+        </div>
+
+        <div className="table-wrapper">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>ORDER ID</th>
+
+                <th>CUSTOMER</th>
+
+                <th>DATE</th>
+
+                <th>AMOUNT</th>
+
+                <th>STATUS</th>
+
+                <th></th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              {orders.map((order) => (
+
+                <tr key={order.id}>
+
+                  <td>
+
+                    <strong className="order-id">
+
+                      {order.id}
+
+                    </strong>
+
+                  </td>
+
+                  <td>
+
+                    <div className="customer">
+
+                      <div className="customer-avatar">
+
+                        {order.customer.charAt(0)}
+
+                      </div>
+
+                      <span>{order.customer}</span>
+
+                    </div>
+
+                  </td>
+
+                  <td>{order.date}</td>
+
+                  <td>
+
+                    <strong>{order.amount}</strong>
+
+                  </td>
+
+                  <td>
+
+                    <span
+                      className={`status ${order.status.toLowerCase()}`}
+                    >
+
+                      <span></span>
+
+                      {order.status}
+
+                    </span>
+
+                  </td>
+
+                  <td>
+
+                    <button className="more-button">
+
+                      <MoreHorizontal size={20} />
+
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+      {/* Bottom Grid */}
+
+      <section className="bottom-grid">
+
+        <div className="card activity-card">
+
+          <div className="card-header">
+
+            <div>
+
+              <h3>Business Activity</h3>
+
+              <p>Today's operations summary</p>
+
+            </div>
+
+            <Activity size={22} />
+
+          </div>
+
+          <div className="activity-items">
+
+            <div className="activity-item">
+
+              <div className="activity-icon blue">
+
+                <ShoppingCart size={18} />
+
+              </div>
+
+              <div>
+
+                <strong>24 New Orders</strong>
+
+                <span>Received today</span>
+
+              </div>
+
+              <b>+24</b>
+
+            </div>
+
+            <div className="activity-item">
+
+              <div className="activity-icon green">
+
+                <Package size={18} />
+
+              </div>
+
+              <div>
+
+                <strong>156 Medicines</strong>
+
+                <span>Stock updated</span>
+
+              </div>
+
+              <b>+156</b>
+
+            </div>
+
+            <div className="activity-item">
+
+              <div className="activity-icon purple">
+
+                <Truck size={18} />
+
+              </div>
+
+              <div>
+
+                <strong>8 Deliveries</strong>
+
+                <span>In Transit</span>
+
+              </div>
+
+              <b>8</b>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="card performance-card">
+
+          <div className="card-header">
+
+            <div>
+
+              <h3>Performance</h3>
+
+              <p>Overall business performance</p>
+
+            </div>
+
+            <span className="performance-percent">
+
+              87%
+
+            </span>
+
+          </div>
+
+          <div className="performance-circle">
+
+            <div className="circle-inner">
+
+              <strong>87%</strong>
+
+              <span>Excellent</span>
+
+            </div>
+
+          </div>
+
+          <div className="performance-footer">
+
+            <TrendingUp size={17} />
+
+            <span>
+
+              Your business is performing
+
+              <strong> 12% better </strong>
+
+              than last month.
+
+            </span>
+
+          </div>
+
+        </div>
+
+      </section>
 
     </div>
 
-  </div>
-
-</div>
-
-
-);
+  );
 }
 
 export default Dashboard;

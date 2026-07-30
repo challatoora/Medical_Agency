@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { userAPI } from "../services/api";
 
 function Users() {
@@ -17,18 +18,16 @@ function Users() {
     role: "user",
   });
 
-  // Fetch Users
   const fetchUsers = async () => {
     try {
       setLoading(true);
       setError("");
 
       const response = await userAPI.getAll();
-
       setUsers(response);
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-      setError(error.message || "Failed to load users");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load users");
     } finally {
       setLoading(false);
     }
@@ -38,17 +37,13 @@ function Users() {
     fetchUsers();
   }, []);
 
-  // Handle Input
   const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  // Add User
   const handleAddUser = () => {
     setEditingUser(null);
 
@@ -63,7 +58,6 @@ function Users() {
     setShowForm(true);
   };
 
-  // Edit User
   const handleEditUser = (user) => {
     setEditingUser(user);
 
@@ -78,13 +72,21 @@ function Users() {
     setShowForm(true);
   };
 
-  // Create / Update User
+  const handleDeleteUser = async (id) => {
+    if (!window.confirm("Delete this user?")) return;
+
+    try {
+      await userAPI.delete(id);
+      fetchUsers();
+    } catch (err) {
+      alert("Delete failed");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      setError("");
-
       if (editingUser) {
         await userAPI.update(editingUser.id, {
           name: formData.name,
@@ -103,140 +105,92 @@ function Users() {
           role: formData.role,
         });
 
-        alert("User registered successfully");
+        alert("User created successfully");
       }
 
       setShowForm(false);
+
       setEditingUser(null);
 
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        password: "",
-        role: "user",
-      });
-
-      await fetchUsers();
-    } catch (error) {
-      console.error("User operation failed:", error);
-      setError(error.message || "User operation failed");
+      fetchUsers();
+    } catch (err) {
+      alert("Operation failed");
     }
-  };
-
-  // Delete User
-  const handleDeleteUser = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      setError("");
-
-      await userAPI.delete(id);
-
-      alert("User deleted successfully");
-
-      await fetchUsers();
-    } catch (error) {
-      console.error("Delete user failed:", error);
-      setError(error.message || "Failed to delete user");
-    }
-  };
-
-  // Cancel Form
-  const handleCancel = () => {
-    setShowForm(false);
-    setEditingUser(null);
   };
 
   return (
     <div className="page-container">
+
       <div className="page-header">
+
         <div>
           <h1>Users</h1>
-          <p>Manage users and administrators</p>
+          <p>Manage medical agency users</p>
         </div>
 
-        <div>
-          <button onClick={fetchUsers}>Refresh</button>
+        <button className="primary-button" onClick={handleAddUser}>
+          <Plus size={18} />
+          Add User
+        </button>
 
-          <button onClick={handleAddUser}>Add User</button>
-        </div>
       </div>
 
-      {error && (
-        <div className="error-message">
-          <p>{error}</p>
-        </div>
-      )}
-
       {showForm && (
-        <div className="form-container">
-          <h2>
-            {editingUser ? "Update User" : "Register New User"}
-          </h2>
 
-          <form onSubmit={handleSubmit}>
-            <div>
-              <label>Name</label>
+        <div className="modal-overlay">
+
+          <div className="modal">
+
+            <div className="modal-header">
+
+              <h2>
+                {editingUser ? "Update User" : "Add User"}
+              </h2>
+
+              <button onClick={() => setShowForm(false)}>
+                <X size={20} />
+              </button>
+
+            </div>
+
+            <form onSubmit={handleSubmit}>
 
               <input
-                type="text"
                 name="name"
+                placeholder="Name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Enter name"
                 required
               />
-            </div>
-
-            <div>
-              <label>Email</label>
 
               <input
-                type="email"
                 name="email"
+                type="email"
+                placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Enter email"
                 required
               />
-            </div>
-
-            <div>
-              <label>Phone</label>
 
               <input
-                type="text"
                 name="phone"
+                placeholder="Phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="Enter phone number"
               />
-            </div>
 
-            {!editingUser && (
-              <div>
-                <label>Password</label>
+              {!editingUser && (
 
                 <input
-                  type="password"
                   name="password"
+                  type="password"
+                  placeholder="Password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Enter password"
                   required
                 />
-              </div>
-            )}
 
-            <div>
-              <label>Role</label>
+              )}
 
               <select
                 name="role"
@@ -246,75 +200,99 @@ function Users() {
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
               </select>
-            </div>
 
-            <div>
-              <button type="submit">
-                {editingUser ? "Update User" : "Register User"}
-              </button>
+              <div className="modal-buttons">
 
-              <button type="button" onClick={handleCancel}>
-                Cancel
-              </button>
-            </div>
-          </form>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => setShowForm(false)}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="primary-button"
+                >
+                  {editingUser ? "Update" : "Save"}
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
         </div>
+
       )}
 
-      {loading && (
-        <div className="loading-message">
-          <p>Loading users...</p>
-        </div>
-      )}
+      {loading && <h3>Loading...</h3>}
 
-      {!loading && users.length === 0 && (
-        <div>
-          <p>No users found.</p>
-        </div>
-      )}
+      {error && <h3>{error}</h3>}
 
-      {!loading && users.length > 0 && (
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Role</th>
-                <th>Actions</th>
+      {!loading && (
+
+        <table className="users-table">
+
+          <thead>
+
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            {users.map((user) => (
+
+              <tr key={user.id}>
+
+                <td>{user.id}</td>
+
+                <td>{user.name}</td>
+
+                <td>{user.email}</td>
+
+                <td>{user.phone}</td>
+
+                <td>{user.role}</td>
+
+                <td>
+
+                  <button
+                    className="icon-button"
+                    onClick={() => handleEditUser(user)}
+                  >
+                    <Pencil size={18} />
+                  </button>
+
+                  <button
+                    className="icon-button delete"
+                    onClick={() => handleDeleteUser(user.id)}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+
+                </td>
+
               </tr>
-            </thead>
 
-            <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
+            ))}
 
-                  <td>{user.name}</td>
+          </tbody>
 
-                  <td>{user.email}</td>
+        </table>
 
-                  <td>{user.phone || "-"}</td>
-
-                  <td>{user.role}</td>
-
-                  <td>
-                    <button onClick={() => handleEditUser(user)}>
-                      Edit
-                    </button>
-
-                    <button onClick={() => handleDeleteUser(user.id)}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       )}
+
     </div>
   );
 }
