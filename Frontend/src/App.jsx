@@ -1,12 +1,12 @@
 // 
 
-import React from "react";
-
 function App() {
   return (
-    <h1>
-      React Working
-    </h1>
+    <div>
+      <h1 style={{color:"red"}}>
+        Medical Agency App Running
+      </h1>
+    </div>
   );
 }
 
