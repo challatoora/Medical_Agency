@@ -1,7 +1,7 @@
-const API_URL = "http://52.201.247.34:5000";
+const API_HOST = "http://54.226.0.206";
 
-const request = async (url, options = {}) => {
-  const response = await fetch(`${API_URL}${url}`, {
+const request = async (baseURL, url, options = {}) => {
+  const response = await fetch(`${baseURL}${url}`, {
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),
@@ -10,134 +10,212 @@ const request = async (url, options = {}) => {
   });
 
   if (!response.ok) {
-    throw new Error(`API Error: ${response.status}`);
+    const errorText = await response.text();
+    throw new Error(`API Error ${response.status}: ${errorText}`);
   }
 
   return response.json();
 };
 
+
+// ========================================
+// USER SERVICE
+// Port: 5006
+// ========================================
+
+const USER_API = `${API_HOST}:5006/api/users`;
+
 export const userAPI = {
-  getAll: () => request("/users"),
+  getAll: () => request(USER_API, "/"),
+
+  getById: (id) =>
+    request(USER_API, `/${id}`),
 
   create: (data) =>
-    request("/users", {
+    request(USER_API, "/register", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  login: (data) =>
+    request(USER_API, "/login", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
   update: (id, data) =>
-    request(`/users/${id}`, {
+    request(USER_API, `/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     }),
 
   delete: (id) =>
-    request(`/users/${id}`, {
+    request(USER_API, `/${id}`, {
       method: "DELETE",
     }),
 };
+
+
+// ========================================
+// MEDICINE SERVICE
+// Port: 5002
+// ========================================
+
+const MEDICINE_API = `${API_HOST}:5002/api/medicines`;
 
 export const medicineAPI = {
-  getAll: () => request("/medicines"),
+  getAll: () =>
+    request(MEDICINE_API, "/"),
+
+  getById: (id) =>
+    request(MEDICINE_API, `/${id}`),
 
   create: (data) =>
-    request("/medicines", {
+    request(MEDICINE_API, "/", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
   update: (id, data) =>
-    request(`/medicines/${id}`, {
+    request(MEDICINE_API, `/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     }),
 
   delete: (id) =>
-    request(`/medicines/${id}`, {
+    request(MEDICINE_API, `/${id}`, {
       method: "DELETE",
     }),
 };
 
-export const supplierAPI = {
-  getAll: () => request("/suppliers"),
 
-  create: (data) =>
-    request("/suppliers", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+// ========================================
+// INVENTORY SERVICE
+// Port: 5003
+// ========================================
 
-  update: (id, data) =>
-    request(`/suppliers/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
-
-  delete: (id) =>
-    request(`/suppliers/${id}`, {
-      method: "DELETE",
-    }),
-};
+const INVENTORY_API = `${API_HOST}:5003/api/inventory`;
 
 export const inventoryAPI = {
-  getAll: () => request("/inventory"),
+  getAll: () =>
+    request(INVENTORY_API, "/"),
+
+  getById: (id) =>
+    request(INVENTORY_API, `/${id}`),
 
   create: (data) =>
-    request("/inventory", {
+    request(INVENTORY_API, "/", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
   update: (id, data) =>
-    request(`/inventory/${id}`, {
+    request(INVENTORY_API, `/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     }),
 
   delete: (id) =>
-    request(`/inventory/${id}`, {
+    request(INVENTORY_API, `/${id}`, {
       method: "DELETE",
     }),
 };
+
+
+// ========================================
+// SUPPLIER SERVICE
+// Port: 5004
+// ========================================
+
+const SUPPLIER_API = `${API_HOST}:5004/api/suppliers`;
+
+export const supplierAPI = {
+  getAll: () =>
+    request(SUPPLIER_API, "/"),
+
+  getById: (id) =>
+    request(SUPPLIER_API, `/${id}`),
+
+  create: (data) =>
+    request(SUPPLIER_API, "/", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  update: (id, data) =>
+    request(SUPPLIER_API, `/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  delete: (id) =>
+    request(SUPPLIER_API, `/${id}`, {
+      method: "DELETE",
+    }),
+};
+
+
+// ========================================
+// ORDER SERVICE
+// Port: 5005
+// ========================================
+
+const ORDER_API = `${API_HOST}:5005/api/orders`;
 
 export const orderAPI = {
-  getAll: () => request("/orders"),
+  getAll: () =>
+    request(ORDER_API, "/"),
+
+  getById: (id) =>
+    request(ORDER_API, `/${id}`),
 
   create: (data) =>
-    request("/orders", {
+    request(ORDER_API, "/", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
   update: (id, data) =>
-    request(`/orders/${id}`, {
+    request(ORDER_API, `/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     }),
 
   delete: (id) =>
-    request(`/orders/${id}`, {
+    request(ORDER_API, `/${id}`, {
       method: "DELETE",
     }),
 };
 
+
+// ========================================
+// BILLING SERVICE
+// Port: 5001
+// ========================================
+
+const BILLING_API = `${API_HOST}:5001/api/billing`;
+
 export const billingAPI = {
-  getAll: () => request("/billing"),
+  getAll: () =>
+    request(BILLING_API, "/"),
+
+  getById: (id) =>
+    request(BILLING_API, `/${id}`),
 
   create: (data) =>
-    request("/billing", {
+    request(BILLING_API, "/", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
   update: (id, data) =>
-    request(`/billing/${id}`, {
+    request(BILLING_API, `/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     }),
 
   delete: (id) =>
-    request(`/billing/${id}`, {
+    request(BILLING_API, `/${id}`, {
       method: "DELETE",
     }),
 };

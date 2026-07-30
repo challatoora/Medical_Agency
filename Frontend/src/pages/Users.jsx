@@ -1,100 +1,84 @@
-import React from "react";
-import { useEffect, useState } from "react";
-
+import React, { useEffect, useState } from "react";
 import { userAPI } from "../services/api";
 
-
 function Users() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-    const [users, setUsers] = useState([]);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      setError("");
 
-    useEffect(() => {
+      const response = await userAPI.getAll();
 
-        fetchUsers();
+      setUsers(response);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    }, []);
+  return (
+    <div>
+      <h1>Users</h1>
 
+      {loading && <p>Loading users...</p>}
 
-    const fetchUsers = async () => {
-
-        try {
-
-            const response =
-                await userAPI.get("/users");
-
-            setUsers(response.data);
-
-        } catch (error) {
-
-            console.error(
-                "Failed to fetch users",
-                error
-            );
-
-        }
-
-    };
-
-
-    return (
-
+      {error && (
         <div>
+          <p style={{ color: "red" }}>
+            Failed to load users: {error}
+          </p>
 
-            <h1>Users</h1>
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>ID</th>
-
-                        <th>Name</th>
-
-                        <th>Email</th>
-
-                        <th>Phone</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    {users.map((user) => (
-
-                        <tr key={user.id}>
-
-                            <td>
-                                {user.id}
-                            </td>
-
-                            <td>
-                                {user.name}
-                            </td>
-
-                            <td>
-                                {user.email}
-                            </td>
-
-                            <td>
-                                {user.phone}
-                            </td>
-
-                        </tr>
-
-                    ))}
-
-                </tbody>
-
-            </table>
-
+          <button onClick={fetchUsers}>
+            Retry
+          </button>
         </div>
+      )}
 
-    );
+      {!loading && !error && (
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Role</th>
+            </tr>
+          </thead>
 
+          <tbody>
+            {users.length === 0 ? (
+              <tr>
+                <td colSpan="5">
+                  No users found
+                </td>
+              </tr>
+            ) : (
+              users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.name}</td>
+                  <td>{user.email}</td>
+                  <td>{user.phone}</td>
+                  <td>{user.role}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
 }
 
 export default Users;

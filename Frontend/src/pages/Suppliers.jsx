@@ -1,100 +1,82 @@
-import React from "react";
-import { useEffect, useState } from "react";
-
+import React, { useEffect, useState } from "react";
 import { supplierAPI } from "../services/api";
 
-
 function Suppliers() {
+  const [suppliers, setSuppliers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-    const [suppliers, setSuppliers] = useState([]);
+  useEffect(() => {
+    fetchSuppliers();
+  }, []);
 
+  const fetchSuppliers = async () => {
+    try {
+      setLoading(true);
+      setError("");
 
-    useEffect(() => {
+      const response = await supplierAPI.getAll();
 
-        fetchSuppliers();
+      setSuppliers(response);
+    } catch (error) {
+      console.error("Failed to fetch suppliers:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    }, []);
+  return (
+    <div>
+      <h1>Suppliers</h1>
 
+      {loading && <p>Loading suppliers...</p>}
 
-    const fetchSuppliers = async () => {
-
-        try {
-
-            const response =
-                await supplierAPI.get("/suppliers");
-
-            setSuppliers(response.data);
-
-        } catch (error) {
-
-            console.error(
-                "Failed to fetch suppliers",
-                error
-            );
-
-        }
-
-    };
-
-
-    return (
-
+      {error && (
         <div>
+          <p style={{ color: "red" }}>
+            Failed to load suppliers: {error}
+          </p>
 
-            <h1>Suppliers</h1>
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>ID</th>
-
-                        <th>Name</th>
-
-                        <th>Phone</th>
-
-                        <th>Email</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    {suppliers.map((supplier) => (
-
-                        <tr key={supplier.id}>
-
-                            <td>
-                                {supplier.id}
-                            </td>
-
-                            <td>
-                                {supplier.name}
-                            </td>
-
-                            <td>
-                                {supplier.phone}
-                            </td>
-
-                            <td>
-                                {supplier.email}
-                            </td>
-
-                        </tr>
-
-                    ))}
-
-                </tbody>
-
-            </table>
-
+          <button onClick={fetchSuppliers}>
+            Retry
+          </button>
         </div>
+      )}
 
-    );
+      {!loading && !error && (
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+            </tr>
+          </thead>
 
+          <tbody>
+            {suppliers.length === 0 ? (
+              <tr>
+                <td colSpan="4">
+                  No suppliers found
+                </td>
+              </tr>
+            ) : (
+              suppliers.map((supplier) => (
+                <tr key={supplier.id}>
+                  <td>{supplier.id}</td>
+                  <td>{supplier.name}</td>
+                  <td>{supplier.phone}</td>
+                  <td>{supplier.email}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
 }
 
 export default Suppliers;
