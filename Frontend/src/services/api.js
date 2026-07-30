@@ -1,4 +1,3 @@
-```javascript
 const USER_API_URL = "http://54.226.0.206:5006/api/users";
 const MEDICINE_API_URL = "http://54.226.0.206:5001/api/medicines";
 const INVENTORY_API_URL = "http://54.226.0.206:5002/api/inventory";
@@ -7,210 +6,204 @@ const ORDER_API_URL = "http://54.226.0.206:5004/api/orders";
 const BILLING_API_URL = "http://54.226.0.206:5005/api/billing";
 
 const request = async (url, options = {}) => {
-  const response = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
+const response = await fetch(url, {
+headers: {
+"Content-Type": "application/json",
+...(options.headers || {}),
+},
+...options,
+});
 
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.status}`);
-  }
+if (!response.ok) {
+const errorData = await response.json().catch(() => ({}));
 
-  return response.json();
+```
+throw new Error(
+  errorData.message || `API Error: ${response.status}`
+);
+```
+
+}
+
+return response.json();
 };
-
 
 // ===============================
 // USER API
 // ===============================
 
 export const userAPI = {
+getAll: () =>
+request(USER_API_URL),
 
-  getAll: () =>
-    request(USER_API_URL),
+getById: (id) =>
+request(`${USER_API_URL}/${id}`),
 
-  getById: (id) =>
-    request(`${USER_API_URL}/${id}`),
+create: (data) =>
+request(`${USER_API_URL}/register`, {
+method: "POST",
+body: JSON.stringify(data),
+}),
 
-  create: (data) =>
-    request(USER_API_URL, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+login: (data) =>
+request(`${USER_API_URL}/login`, {
+method: "POST",
+body: JSON.stringify(data),
+}),
 
-  update: (id, data) =>
-    request(`${USER_API_URL}/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
+update: (id, data) =>
+request(`${USER_API_URL}/${id}`, {
+method: "PUT",
+body: JSON.stringify(data),
+}),
 
-  delete: (id) =>
-    request(`${USER_API_URL}/${id}`, {
-      method: "DELETE",
-    }),
-
+delete: (id) =>
+request(`${USER_API_URL}/${id}`, {
+method: "DELETE",
+}),
 };
-
 
 // ===============================
 // MEDICINE API
 // ===============================
 
 export const medicineAPI = {
+getAll: () =>
+request(MEDICINE_API_URL),
 
-  getAll: () =>
-    request(MEDICINE_API_URL),
+getById: (id) =>
+request(`${MEDICINE_API_URL}/${id}`),
 
-  getById: (id) =>
-    request(`${MEDICINE_API_URL}/${id}`),
+create: (data) =>
+request(MEDICINE_API_URL, {
+method: "POST",
+body: JSON.stringify(data),
+}),
 
-  create: (data) =>
-    request(MEDICINE_API_URL, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+update: (id, data) =>
+request(`${MEDICINE_API_URL}/${id}`, {
+method: "PUT",
+body: JSON.stringify(data),
+}),
 
-  update: (id, data) =>
-    request(`${MEDICINE_API_URL}/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
-
-  delete: (id) =>
-    request(`${MEDICINE_API_URL}/${id}`, {
-      method: "DELETE",
-    }),
-
+delete: (id) =>
+request(`${MEDICINE_API_URL}/${id}`, {
+method: "DELETE",
+}),
 };
-
 
 // ===============================
 // INVENTORY API
 // ===============================
 
 export const inventoryAPI = {
+getAll: () =>
+request(INVENTORY_API_URL),
 
-  getAll: () =>
-    request(INVENTORY_API_URL),
+getById: (id) =>
+request(`${INVENTORY_API_URL}/${id}`),
 
-  getById: (id) =>
-    request(`${INVENTORY_API_URL}/${id}`),
+create: (data) =>
+request(INVENTORY_API_URL, {
+method: "POST",
+body: JSON.stringify(data),
+}),
 
-  create: (data) =>
-    request(INVENTORY_API_URL, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+update: (id, data) =>
+request(`${INVENTORY_API_URL}/${id}`, {
+method: "PUT",
+body: JSON.stringify(data),
+}),
 
-  update: (id, data) =>
-    request(`${INVENTORY_API_URL}/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
-
-  delete: (id) =>
-    request(`${INVENTORY_API_URL}/${id}`, {
-      method: "DELETE",
-    }),
-
+delete: (id) =>
+request(`${INVENTORY_API_URL}/${id}`, {
+method: "DELETE",
+}),
 };
-
 
 // ===============================
 // SUPPLIER API
 // ===============================
 
 export const supplierAPI = {
+getAll: () =>
+request(SUPPLIER_API_URL),
 
-  getAll: () =>
-    request(SUPPLIER_API_URL),
+getById: (id) =>
+request(`${SUPPLIER_API_URL}/${id}`),
 
-  getById: (id) =>
-    request(`${SUPPLIER_API_URL}/${id}`),
+create: (data) =>
+request(SUPPLIER_API_URL, {
+method: "POST",
+body: JSON.stringify(data),
+}),
 
-  create: (data) =>
-    request(SUPPLIER_API_URL, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+update: (id, data) =>
+request(`${SUPPLIER_API_URL}/${id}`, {
+method: "PUT",
+body: JSON.stringify(data),
+}),
 
-  update: (id, data) =>
-    request(`${SUPPLIER_API_URL}/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
-
-  delete: (id) =>
-    request(`${SUPPLIER_API_URL}/${id}`, {
-      method: "DELETE",
-    }),
-
+delete: (id) =>
+request(`${SUPPLIER_API_URL}/${id}`, {
+method: "DELETE",
+}),
 };
-
 
 // ===============================
 // ORDER API
 // ===============================
 
 export const orderAPI = {
+getAll: () =>
+request(ORDER_API_URL),
 
-  getAll: () =>
-    request(ORDER_API_URL),
+getById: (id) =>
+request(`${ORDER_API_URL}/${id}`),
 
-  getById: (id) =>
-    request(`${ORDER_API_URL}/${id}`),
+create: (data) =>
+request(ORDER_API_URL, {
+method: "POST",
+body: JSON.stringify(data),
+}),
 
-  create: (data) =>
-    request(ORDER_API_URL, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+update: (id, data) =>
+request(`${ORDER_API_URL}/${id}`, {
+method: "PUT",
+body: JSON.stringify(data),
+}),
 
-  update: (id, data) =>
-    request(`${ORDER_API_URL}/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
-
-  delete: (id) =>
-    request(`${ORDER_API_URL}/${id}`, {
-      method: "DELETE",
-    }),
-
+delete: (id) =>
+request(`${ORDER_API_URL}/${id}`, {
+method: "DELETE",
+}),
 };
-
 
 // ===============================
 // BILLING API
 // ===============================
 
 export const billingAPI = {
+getAll: () =>
+request(BILLING_API_URL),
 
-  getAll: () =>
-    request(BILLING_API_URL),
+getById: (id) =>
+request(`${BILLING_API_URL}/${id}`),
 
-  getById: (id) =>
-    request(`${BILLING_API_URL}/${id}`),
+create: (data) =>
+request(BILLING_API_URL, {
+method: "POST",
+body: JSON.stringify(data),
+}),
 
-  create: (data) =>
-    request(BILLING_API_URL, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+update: (id, data) =>
+request(`${BILLING_API_URL}/${id}`, {
+method: "PUT",
+body: JSON.stringify(data),
+}),
 
-  update: (id, data) =>
-    request(`${BILLING_API_URL}/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
-
-  delete: (id) =>
-    request(`${BILLING_API_URL}/${id}`, {
-      method: "DELETE",
-    }),
-
+delete: (id) =>
+request(`${BILLING_API_URL}/${id}`, {
+method: "DELETE",
+}),
 };
-```
