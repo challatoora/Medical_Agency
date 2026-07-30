@@ -1,155 +1,177 @@
+import { billingAPI } from "../services/api";
+at lines **18, 31, and 37**. These are invalid JavaScript and are causing the Vite error.
+
+You should **replace the entire file** with this corrected version. I kept your existing `billingAPI.getAll()` structure.
+
+:::writing{variant="standard" id="74126"}
 import React, { useEffect, useState } from "react";
 import { billingAPI } from "../services/api";
 
 function Billing() {
-const [invoices, setInvoices] = useState([]);
-const [loading, setLoading] = useState(true);
-const [error, setError] = useState("");
+  const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-useEffect(() => {
-fetchInvoices();
-}, []);
+  const fetchInvoices = async () => {
+    try {
+      setLoading(true);
+      setError("");
 
-const fetchInvoices = async () => {
-try {
-setLoading(true);
-setError("");
+      const response = await billingAPI.getAll();
 
-```
-  const response = await billingAPI.getAll();
+      setInvoices(response);
+    } catch (error) {
+      console.error("Failed to fetch invoices:", error);
 
-  setInvoices(response);
-} catch (error) {
-  console.error("Failed to fetch invoices:", error);
+      setError(
+        error.message || "Unable to load billing records"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  setError(
-    error.message || "Unable to load billing records"
-  );
-} finally {
-  setLoading(false);
-}
-```
+  useEffect(() => {
+    fetchInvoices();
+  }, []);
 
-};
+  return (
+    <div className="page-container">
+      <div className="page-header">
+        <div>
+          <h1>Billing</h1>
+          <p>Manage medical agency invoices and payments</p>
+        </div>
 
-return ( <div className="page-container">
+        <button onClick={fetchInvoices}>
+          Refresh
+        </button>
+      </div>
 
-```
-  <div className="page-header">
-    <div>
-      <h1>Billing</h1>
-      <p>Manage medical agency invoices and payments</p>
-    </div>
+      {loading && (
+        <div className="loading-message">
+          <p>Loading invoices...</p>
+        </div>
+      )}
 
-    <button onClick={fetchInvoices}>
-      Refresh
-    </button>
-  </div>
+      {!loading && error && (
+        <div className="error-message">
+          <p>
+            Failed to load invoices: {error}
+          </p>
 
+          <button onClick={fetchInvoices}>
+            Retry
+          </button>
+        </div>
+      )}
 
-  {/* Loading */}
-  {loading && (
-    <div className="loading-message">
-      <p>Loading invoices...</p>
-    </div>
-  )}
-
-
-  {/* Error */}
-  {!loading && error && (
-    <div className="error-message">
-
-      <p>
-        Failed to load invoices: {error}
-      </p>
-
-      <button onClick={fetchInvoices}>
-        Retry
-      </button>
-
-    </div>
-  )}
-
-
-  {/* Success */}
-  {!loading && !error && (
-    <div className="table-container">
-
-      <table>
-
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Order ID</th>
-            <th>User ID</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Created At</th>
-          </tr>
-        </thead>
-
-
-        <tbody>
-
-          {invoices.length === 0 ? (
-
-            <tr>
-              <td colSpan="6">
-                No invoices found
-              </td>
-            </tr>
-
-          ) : (
-
-            invoices.map((invoice) => (
-
-              <tr key={invoice.id}>
-
-                <td>
-                  {invoice.id}
-                </td>
-
-                <td>
-                  {invoice.order_id}
-                </td>
-
-                <td>
-                  {invoice.user_id}
-                </td>
-
-                <td>
-                  ₹{Number(invoice.amount).toFixed(2)}
-                </td>
-
-                <td>
-                  {invoice.status}
-                </td>
-
-                <td>
-                  {invoice.created_at
-                    ? new Date(
-                        invoice.created_at
-                      ).toLocaleString()
-                    : "-"}
-                </td>
-
+      {!loading && !error && (
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Order ID</th>
+                <th>User ID</th>
+                <th>Invoice Number</th>
+                <th>Subtotal</th>
+                <th>Tax</th>
+                <th>Discount</th>
+                <th>Total Amount</th>
+                <th>Payment Status</th>
+                <th>Payment Method</th>
               </tr>
+            </thead>
 
-            ))
+            <tbody>
+              {invoices.length === 0 ? (
+                <tr>
+                  <td colSpan="10">
+                    No invoices found
+                  </td>
+                </tr>
+              ) : (
+                invoices.map((invoice) => (
+                  <tr
+                    key={
+                      invoice.id ||
+                      invoice.invoice_id
+                    }
+                  >
+                    <td>
+                      {invoice.id ||
+                        invoice.invoice_id ||
+                        "-"}
+                    </td>
 
-          )}
+                    <td>
+                      {invoice.order_id || "-"}
+                    </td>
 
-        </tbody>
+                    <td>
+                      {invoice.user_id || "-"}
+                    </td>
 
-      </table>
+                    <td>
+                      {invoice.invoice_number || "-"}
+                    </td>
 
+                    <td>
+                      ₹
+                      {Number(
+                        invoice.subtotal || 0
+                      ).toFixed(2)}
+                    </td>
+
+                    <td>
+                      ₹
+                      {Number(
+                        invoice.tax_amount || 0
+                      ).toFixed(2)}
+                    </td>
+
+                    <td>
+                      ₹
+                      {Number(
+                        invoice.discount_amount || 0
+                      ).toFixed(2)}
+                    </td>
+
+                    <td>
+                      <strong>
+                        ₹
+                        {Number(
+                          invoice.total_amount || 0
+                        ).toFixed(2)}
+                      </strong>
+                    </td>
+
+                    <td>
+                      {invoice.payment_status || "-"}
+                    </td>
+
+                    <td>
+                      {invoice.payment_method || "-"}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
-  )}
-
-</div>
-```
-
-);
+  );
 }
 
 export default Billing;
+:::
+
+### Fastest way to replace the file
+
+Run:
+
+```bash
+cd ~/Medical_Agency/Frontend
+nano src/pages/Billing.jsx
