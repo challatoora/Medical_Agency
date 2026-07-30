@@ -349,4 +349,4 @@ module.exports = {
     getOutOfStock,
     getExpiredInventory
 };
-```
+
