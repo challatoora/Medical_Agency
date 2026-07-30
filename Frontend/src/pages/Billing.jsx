@@ -1,6 +1,5 @@
 import { billingAPI } from "../services/api";
 import React, { useEffect, useState } from "react";
-import { billingAPI } from "../services/api";
 
 function Billing() {
   const [invoices, setInvoices] = useState([]);
