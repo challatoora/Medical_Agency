@@ -73,27 +73,25 @@ const createInvoice = (req, res) => {
 
 
     if (
-        !order_id ||
-        !user_id ||
-        subtotal === undefined ||
-        tax_amount === undefined
-    ) {
+    !order_id ||
+    !user_id ||
+    subtotal === undefined ||
+    tax_amount === undefined ||
+    isNaN(Number(subtotal)) ||
+    isNaN(Number(tax_amount))
+) {
+    return res.status(400).json({
+        message: "Valid Order ID, User ID, Subtotal and Tax are required"
+    });
+}
 
-        return res.status(400).json({
-            message: "Order ID, User ID, Subtotal and Tax are required"
-        });
-
-    }
-
-
-    const discount = discount_amount || 0;
+    const discount = Number(discount_amount) || 0;
 
 
     const totalAmount =
-        Number(subtotal) +
-        Number(tax_amount) -
-        Number(discount);
-
+    Number(subtotal) +
+    Number(tax_amount) -
+    discount;
 
     const invoiceNumber =
         "INV-" +
