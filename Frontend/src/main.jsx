@@ -1,10 +1,16 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
-import "./index.css";
+
+console.log("MAIN JSX LOADED");
+
+function Test() {
+  return (
+    <h1 style={{color:"red"}}>
+      REACT IS WORKING
+    </h1>
+  );
+}
 
 createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <Test />
 );
