@@ -1,7 +1,1 @@
-const app = require("./app");
-
-const PORT = 5003;
-
-app.listen(PORT, () => {
-    console.log(`Inventory Service Running on Port ${PORT}`);
-});
+const app = require("./app"); const { connectRedis } = require("./config/redis"); const PORT = 5003; const startServer = async () => { try { await connectRedis(); app.listen(PORT, "0.0.0.0", () => { console.log(`Inventory Service Running on Port ${PORT}`); }); } catch (error) { console.error("Failed to start Inventory Service:", error.message); } }; startServer();
