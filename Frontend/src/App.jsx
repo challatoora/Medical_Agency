@@ -51,9 +51,7 @@ function App() {
 
       default:
         return <Dashboard />;
-
     }
-
   };
 
 
@@ -63,14 +61,12 @@ function App() {
 
 
   return (
-
     <div className="app-container">
 
       <Sidebar
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
       />
-
 
       <main className="main-content">
 
@@ -80,45 +76,8 @@ function App() {
 
       </main>
 
-
     </div>
-
   );
-
 }
 
-
 export default App;
-
-// import React, { useState } from "react";
-
-// import Sidebar from "./components/Sidebar";
-// import Header from "./components/Header";
-
-// function App() {
-
-//   const [currentPage, setCurrentPage] = useState("Dashboard");
-
-//   return (
-//     <div className="app-container">
-
-//       <Sidebar
-//         currentPage={currentPage}
-//         setCurrentPage={setCurrentPage}
-//       />
-
-//       <main className="main-content">
-
-//         <Header />
-
-//         <h1 style={{padding:"50px"}}>
-//           Dashboard Test Working
-//         </h1>
-
-//       </main>
-
-//     </div>
-//   );
-// }
-
-// export default App;
