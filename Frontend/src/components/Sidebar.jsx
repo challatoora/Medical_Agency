@@ -13,24 +13,6 @@ import {
 } from "lucide-react";
 
 function Sidebar({ currentPage, setCurrentPage }) {
-    const user = JSON.parse(localStorage.getItem("user")) || {};
-
-    const name =
-    user.name ||
-    user.username ||
-    user.fullName ||
-    "User";
-
-    const role =
-    user.role ||
-    user.userRole ||
-    "Administrator";
-
-    const initials = name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
   const menuItems = [
     {
       icon: LayoutDashboard,
@@ -115,16 +97,9 @@ function Sidebar({ currentPage, setCurrentPage }) {
           <span>Settings</span>
         </button>
 
-        <button
-            className="nav-item logout"
-            onClick={() => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
-                window.location.reload();
-            }}
-        >
-            <LogOut size={20} />
-            <span>Logout</span>
+        <button className="nav-item logout">
+          <LogOut size={20} />
+          <span>Logout</span>
         </button>
 
         <div className="sidebar-user">
