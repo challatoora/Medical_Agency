@@ -13,6 +13,24 @@ import {
 } from "lucide-react";
 
 function Sidebar({ currentPage, setCurrentPage }) {
+    const user = JSON.parse(localStorage.getItem("user")) || {};
+
+    const name =
+    user.name ||
+    user.username ||
+    user.fullName ||
+    "User";
+
+    const role =
+    user.role ||
+    user.userRole ||
+    "Administrator";
+
+    const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
   const menuItems = [
     {
       icon: LayoutDashboard,

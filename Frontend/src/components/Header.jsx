@@ -6,10 +6,29 @@ import {
 } from "lucide-react";
 
 function Header() {
+
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+
+  const name =
+    user.name ||
+    user.username ||
+    user.fullName ||
+    "User";
+
+  const role =
+    user.role ||
+    user.userRole ||
+    "Administrator";
+
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
+
+
   return (
     <header className="header">
-
-      {/* Search */}
 
       <div className="search-box">
 
@@ -22,7 +41,6 @@ function Header() {
 
       </div>
 
-      {/* Right Side */}
 
       <div className="header-right">
 
@@ -34,25 +52,30 @@ function Header() {
 
         </button>
 
+
         <div className="header-divider"></div>
+
 
         <div className="profile">
 
           <div className="profile-avatar">
-            MR
+            {initials}
           </div>
+
 
           <div className="profile-info">
 
-            <strong>Murali Reddy</strong>
+            <strong>{name}</strong>
 
-            <span>Administrator</span>
+            <span>{role}</span>
 
           </div>
+
 
           <ChevronDown size={18} />
 
         </div>
+
 
       </div>
 
