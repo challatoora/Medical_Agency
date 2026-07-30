@@ -1,29 +1,74 @@
-const db = require("../config/db");
+// const db = require("../config/db");
 
-const getAllMedicines = (callback)=>{
+// const getAllMedicines = (callback)=>{
 
-db.query("SELECT * FROM medicines",callback);
+// db.query("SELECT * FROM medicines",callback);
 
-};
+// };
 
-const addMedicine = (medicine,callback)=>{
+// const addMedicine = (medicine,callback)=>{
 
-db.query(
+// db.query(
 
-"INSERT INTO medicines SET ?",
+// "INSERT INTO medicines SET ?",
 
-medicine,
+// medicine,
 
-callback
+// callback
 
+// );
+
+// };
+
+// module.exports={
+
+// getAllMedicines,
+
+// addMedicine
+
+// };
+const mongoose = require("mongoose");
+
+const medicineSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            required: true
+        },
+
+        category: {
+            type: String,
+            required: true
+        },
+
+        manufacturer: {
+            type: String
+        },
+
+        price: {
+            type: Number,
+            required: true
+        },
+
+        quantity: {
+            type: Number,
+            default: 0
+        },
+
+        expiry_date: {
+            type: Date
+        },
+
+        description: {
+            type: String
+        }
+    },
+    {
+        timestamps: true
+    }
 );
 
-};
-
-module.exports={
-
-getAllMedicines,
-
-addMedicine
-
-};
+module.exports = mongoose.model(
+    "Medicine",
+    medicineSchema
+);
