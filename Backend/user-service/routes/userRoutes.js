@@ -4,28 +4,52 @@ const router = express.Router();
 
 const userController = require("../controllers/userController");
 
+// ==============================
+// CREATE USER
+// POST /api/users
+// ==============================
+router.post("/", userController.createUser);
 
-// Register
+
+// ==============================
+// REGISTER USER
+// POST /api/users/register
+// ==============================
 router.post("/register", userController.registerUser);
 
 
-// Login
+// ==============================
+// LOGIN USER
+// POST /api/users/login
+// ==============================
 router.post("/login", userController.loginUser);
 
 
-// Get All Users
+// ==============================
+// GET ALL USERS
+// GET /api/users
+// ==============================
 router.get("/", userController.getAllUsers);
 
 
-// Get User By ID
+// ==============================
+// GET USER BY ID
+// GET /api/users/:id
+// ==============================
 router.get("/:id", userController.getUserById);
 
 
-// Update User
+// ==============================
+// UPDATE USER
+// PUT /api/users/:id
+// ==============================
 router.put("/:id", userController.updateUser);
 
 
-// Delete User
+// ==============================
+// DELETE USER
+// DELETE /api/users/:id
+// ==============================
 router.delete("/:id", userController.deleteUser);
 
 
