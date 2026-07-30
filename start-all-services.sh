@@ -1,5 +1,5 @@
 #!/bin/bash
-
+chmod +x start-all-services.sh
 BASE_DIR="$HOME/Medical_Agency/Backend"
 
 echo "========================================"
