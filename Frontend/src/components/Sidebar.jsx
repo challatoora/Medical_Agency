@@ -1,3 +1,4 @@
+
 import React from "react";
 import { NavLink } from "react-router-dom";
 import {
@@ -51,11 +52,14 @@ function Sidebar() {
 
   return (
     <aside className="sidebar">
+
+      {/* Logo */}
       <div className="sidebar-logo">
         <h2>CMR Medical</h2>
         <p>Agency Management</p>
       </div>
 
+      {/* Navigation */}
       <nav className="sidebar-nav">
         {menuItems.map((item) => {
           const Icon = item.icon;
@@ -74,6 +78,7 @@ function Sidebar() {
           );
         })}
       </nav>
+
     </aside>
   );
 }
