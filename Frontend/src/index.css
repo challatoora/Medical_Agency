@@ -43,6 +43,7 @@ button {
 
 .sidebar {
   width: 260px;
+  height: 100vh;
   min-height: 100vh;
   position: fixed;
   left: 0;
@@ -53,6 +54,7 @@ button {
   padding: 25px 18px;
   background: #101827;
   color: #ffffff;
+  overflow: hidden;
 }
 
 .brand {
@@ -61,6 +63,7 @@ button {
   gap: 12px;
   padding: 0 10px;
   margin-bottom: 42px;
+  flex-shrink: 0;
 }
 
 .brand-logo {
@@ -69,6 +72,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   border-radius: 13px;
   background: linear-gradient(
     135deg,
@@ -96,6 +100,24 @@ button {
 
 .sidebar-section {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Sidebar scrollbar */
+
+.sidebar-section::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-section::-webkit-scrollbar-thumb {
+  background: #263244;
+  border-radius: 10px;
 }
 
 .section-title {
@@ -155,16 +177,24 @@ button {
   color: #f87171;
 }
 
+/* =========================
+   SIDEBAR BOTTOM
+========================= */
+
 .sidebar-bottom {
+  flex-shrink: 0;
   margin-top: auto;
+  padding-top: 10px;
+  background: #101827;
 }
 
 .sidebar-user {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 8px 0;
-  margin-top: 16px;
+  min-height: 62px;
+  padding: 12px 8px 0;
+  margin-top: 12px;
   border-top: 1px solid #263244;
 }
 
@@ -173,6 +203,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   border-radius: 50%;
   color: #ffffff;
   font-weight: 700;
@@ -191,18 +222,27 @@ button {
 
 .user-details {
   flex: 1;
+  min-width: 0;
 }
 
 .user-details strong {
   display: block;
+  overflow: hidden;
+  color: #ffffff;
   font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user-details span {
   display: block;
   margin-top: 3px;
+  overflow: hidden;
   color: #64748b;
   font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mobile-close,
