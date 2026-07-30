@@ -154,7 +154,6 @@
 //     getExpiredInventory
 // };
 
-```javascript
 const { redisClient } = require("../config/redis");
 
 const INVENTORY_KEY = "inventory";
