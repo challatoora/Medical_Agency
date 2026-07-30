@@ -124,7 +124,6 @@ description: "Create new order",
 return ( <div className="app-container">
 
 
-  {/* Mobile Overlay */}
   {sidebarOpen && (
     <div
       className="mobile-overlay"
@@ -132,10 +131,10 @@ return ( <div className="app-container">
     />
   )}
 
-  {/* Sidebar */}
+  {/* SIDEBAR */}
   <aside className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
 
-    {/* Brand */}
+    {/* BRAND */}
     <div className="brand">
       <div className="brand-logo">
         <Pill size={26} />
@@ -154,7 +153,7 @@ return ( <div className="app-container">
       </button>
     </div>
 
-    {/* Main Menu */}
+    {/* MAIN MENU */}
     <div className="sidebar-section">
       <p className="section-title">MAIN MENU</p>
 
@@ -180,22 +179,20 @@ return ( <div className="app-container">
       </nav>
     </div>
 
-    {/* Sidebar Bottom */}
+    {/* SIDEBAR BOTTOM */}
     <div className="sidebar-bottom">
 
-      {/* Settings */}
       <button className="nav-item">
         <Settings size={20} />
         <span>Settings</span>
       </button>
 
-      {/* Logout */}
       <button className="nav-item logout">
         <LogOut size={20} />
         <span>Logout</span>
       </button>
 
-      {/* User Profile */}
+      {/* USER SECTION */}
       <div className="sidebar-user">
 
         <div className="user-avatar">
@@ -217,20 +214,18 @@ return ( <div className="app-container">
 
   </aside>
 
-  {/* Main Area */}
+  {/* MAIN CONTENT */}
   <main className="main-content">
 
-    {/* Header */}
+    {/* HEADER */}
     <header className="header">
 
-      {/* Mobile Menu */}
       <div className="mobile-menu">
         <button onClick={() => setSidebarOpen(true)}>
           <Menu size={24} />
         </button>
       </div>
 
-      {/* Search */}
       <div className="search-box">
         <Search size={20} />
 
@@ -244,7 +239,6 @@ return ( <div className="app-container">
         </span>
       </div>
 
-      {/* Header Right */}
       <div className="header-right">
 
         <button className="notification">
@@ -273,10 +267,10 @@ return ( <div className="app-container">
 
     </header>
 
-    {/* Dashboard Content */}
+    {/* DASHBOARD */}
     <div className="dashboard">
 
-      {/* Welcome */}
+      {/* WELCOME */}
       <section className="welcome-section">
 
         <div>
@@ -301,7 +295,7 @@ return ( <div className="app-container">
 
       </section>
 
-      {/* Stats */}
+      {/* STATS */}
       <section className="stats-grid">
 
         {stats.map((stat, index) => {
@@ -333,9 +327,7 @@ return ( <div className="app-container">
 
                 <span
                   className={`stat-change ${
-                    stat.positive
-                      ? "positive"
-                      : "negative"
+                    stat.positive ? "positive" : "negative"
                   }`}
                 >
                   {stat.positive ? (
@@ -355,10 +347,10 @@ return ( <div className="app-container">
 
       </section>
 
-      {/* Main Dashboard Grid */}
+      {/* MAIN DASHBOARD GRID */}
       <section className="dashboard-grid">
 
-        {/* Revenue Chart */}
+        {/* REVENUE */}
         <div className="card revenue-card">
 
           <div className="card-header">
@@ -475,7 +467,7 @@ return ( <div className="app-container">
 
         </div>
 
-        {/* Quick Actions */}
+        {/* QUICK ACTIONS */}
         <div className="card quick-card">
 
           <div className="card-header">
@@ -534,7 +526,7 @@ return ( <div className="app-container">
 
       </section>
 
-      {/* Recent Orders */}
+      {/* RECENT ORDERS */}
       <section className="card orders-card">
 
         <div className="card-header">
@@ -629,10 +621,10 @@ return ( <div className="app-container">
 
       </section>
 
-      {/* Bottom Activity */}
+      {/* BOTTOM GRID */}
       <section className="bottom-grid">
 
-        {/* Business Activity */}
+        {/* BUSINESS ACTIVITY */}
         <div className="card activity-card">
 
           <div className="card-header">
@@ -697,7 +689,7 @@ return ( <div className="app-container">
 
         </div>
 
-        {/* Performance */}
+        {/* PERFORMANCE */}
         <div className="card performance-card">
 
           <div className="card-header">
@@ -742,6 +734,7 @@ return ( <div className="app-container">
   </main>
 
 </div>
+
 
 );
 }
