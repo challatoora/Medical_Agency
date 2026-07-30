@@ -5,7 +5,7 @@ import Header from "./Header";
 function Layout({ children }) {
 return ( <div className="app-layout"> <Sidebar />
 
-```
+
   <div className="main-section">
     <Header />
 
@@ -14,7 +14,7 @@ return ( <div className="app-layout"> <Sidebar />
     </main>
   </div>
 </div>
-```
+
 
 );
 }

@@ -1,9 +1,4 @@
 import { billingAPI } from "../services/api";
-at lines **18, 31, and 37**. These are invalid JavaScript and are causing the Vite error.
-
-You should **replace the entire file** with this corrected version. I kept your existing `billingAPI.getAll()` structure.
-
-:::writing{variant="standard" id="74126"}
 import React, { useEffect, useState } from "react";
 import { billingAPI } from "../services/api";
 
@@ -166,12 +161,3 @@ function Billing() {
 }
 
 export default Billing;
-:::
-
-### Fastest way to replace the file
-
-Run:
-
-```bash
-cd ~/Medical_Agency/Frontend
-nano src/pages/Billing.jsx
