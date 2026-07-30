@@ -1,106 +1,93 @@
+import React from "react";
+import { NavLink } from "react-router-dom";
 import {
-  LayoutDashboard,
-  Pill,
-  Package,
-  Truck,
-  ShoppingCart,
-  CreditCard,
-  Users,
-  Settings,
-  LogOut,
-  HeartPulse
+LayoutDashboard,
+Users,
+Pill,
+Package,
+Truck,
+ShoppingCart,
+Receipt,
+X
 } from "lucide-react";
 
+function Sidebar({ onClose }) {
 const menuItems = [
-  {
-    name: "Dashboard",
-    icon: LayoutDashboard,
-    path: "/"
-  },
-  {
-    name: "Medicines",
-    icon: Pill,
-    path: "/medicines"
-  },
-  {
-    name: "Inventory",
-    icon: Package,
-    path: "/inventory"
-  },
-  {
-    name: "Suppliers",
-    icon: Truck,
-    path: "/suppliers"
-  },
-  {
-    name: "Orders",
-    icon: ShoppingCart,
-    path: "/orders"
-  },
-  {
-    name: "Billing",
-    icon: CreditCard,
-    path: "/billing"
-  },
-  {
-    name: "Users",
-    icon: Users,
-    path: "/users"
-  }
+{
+name: "Dashboard",
+path: "/",
+icon: LayoutDashboard
+},
+{
+name: "Users",
+path: "/users",
+icon: Users
+},
+{
+name: "Medicines",
+path: "/medicines",
+icon: Pill
+},
+{
+name: "Inventory",
+path: "/inventory",
+icon: Package
+},
+{
+name: "Suppliers",
+path: "/suppliers",
+icon: Truck
+},
+{
+name: "Orders",
+path: "/orders",
+icon: ShoppingCart
+},
+{
+name: "Billing",
+path: "/billing",
+icon: Receipt
+}
 ];
 
-function Sidebar() {
-  return (
-    <aside className="sidebar">
+return ( <aside className="sidebar"> <div className="sidebar-header"> <h2>CMR Medical Agency</h2>
 
-      <div className="logo-section">
-        <div className="logo-icon">
-          <HeartPulse size={24} />
-        </div>
+```
+    {onClose && (
+      <button
+        className="sidebar-close"
+        onClick={onClose}
+      >
+        <X size={24} />
+      </button>
+    )}
+  </div>
 
-        <div>
-          <h2>MedCare</h2>
-          <span>Medical Agency</span>
-        </div>
-      </div>
+  <nav className="sidebar-nav">
+    {menuItems.map((item) => {
+      const Icon = item.icon;
 
-      <nav className="sidebar-menu">
+      return (
+        <NavLink
+          key={item.path}
+          to={item.path}
+          className={({ isActive }) =>
+            isActive
+              ? "nav-item active"
+              : "nav-item"
+          }
+          onClick={onClose}
+        >
+          <Icon size={20} />
+          <span>{item.name}</span>
+        </NavLink>
+      );
+    })}
+  </nav>
+</aside>
+```
 
-        <p className="menu-title">MAIN MENU</p>
-
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-
-          return (
-            <a
-              href={item.path}
-              className={`menu-item ${
-                item.name === "Dashboard" ? "active" : ""
-              }`}
-              key={item.name}
-            >
-              <Icon size={20} />
-              <span>{item.name}</span>
-            </a>
-          );
-        })}
-
-        <p className="menu-title">SYSTEM</p>
-
-        <a href="/settings" className="menu-item">
-          <Settings size={20} />
-          <span>Settings</span>
-        </a>
-
-        <a href="/logout" className="menu-item logout">
-          <LogOut size={20} />
-          <span>Logout</span>
-        </a>
-
-      </nav>
-
-    </aside>
-  );
+);
 }
 
 export default Sidebar;
