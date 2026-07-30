@@ -4,18 +4,16 @@ const db = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "Root@123",
-    database: "cmr_medical"
+    database: "user_db"
 });
 
 db.connect((err) => {
-
     if (err) {
-        console.log("MySQL Connection Failed");
-        console.log(err);
+        console.error("MySQL Connection Failed");
+        console.error(err);
     } else {
         console.log("MySQL Connected Successfully");
     }
-
 });
 
 module.exports = db;

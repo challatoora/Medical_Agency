@@ -7,7 +7,7 @@ const getAllUsers = (req, res) => {
     userModel.getAllUsers((err, results) => {
 
         if (err) {
-            console.error(err);
+            console.error("Get All Users Error:", err);
 
             return res.status(500).json({
                 message: "Failed to fetch users"
@@ -15,9 +15,7 @@ const getAllUsers = (req, res) => {
         }
 
         res.status(200).json(results);
-
     });
-
 };
 
 
@@ -29,7 +27,7 @@ const getUserById = (req, res) => {
     userModel.getUserById(id, (err, results) => {
 
         if (err) {
-            console.error(err);
+            console.error("Get User Error:", err);
 
             return res.status(500).json({
                 message: "Failed to fetch user"
@@ -41,13 +39,10 @@ const getUserById = (req, res) => {
             return res.status(404).json({
                 message: "User not found"
             });
-
         }
 
         res.status(200).json(results[0]);
-
     });
-
 };
 
 
@@ -55,22 +50,20 @@ const getUserById = (req, res) => {
 const registerUser = (req, res) => {
 
     const {
-        full_name,
+        name,
         email,
         phone,
         password,
-        role,
-        status
+        role
     } = req.body;
 
 
     // Basic validation
-    if (!full_name || !email || !password) {
+    if (!name || !email || !password) {
 
         return res.status(400).json({
-            message: "Full name, email and password are required"
+            message: "Name, email and password are required"
         });
-
     }
 
 
@@ -78,13 +71,11 @@ const registerUser = (req, res) => {
     userModel.findUserByEmail(email, (err, results) => {
 
         if (err) {
-
-            console.error(err);
+            console.error("Find User Error:", err);
 
             return res.status(500).json({
                 message: "Database error"
             });
-
         }
 
 
@@ -93,30 +84,26 @@ const registerUser = (req, res) => {
             return res.status(409).json({
                 message: "Email already registered"
             });
-
         }
 
 
         const user = {
-            full_name,
+            name,
             email,
             phone,
             password,
-            role: role || "Staff",
-            status: status || "Active"
+            role: role || "user"
         };
 
 
         userModel.createUser(user, (err, result) => {
 
             if (err) {
-
-                console.error(err);
+                console.error("Create User Error:", err);
 
                 return res.status(500).json({
                     message: "Failed to register user"
                 });
-
             }
 
 
@@ -127,11 +114,8 @@ const registerUser = (req, res) => {
                 userId: result.insertId
 
             });
-
         });
-
     });
-
 };
 
 
@@ -149,20 +133,17 @@ const loginUser = (req, res) => {
         return res.status(400).json({
             message: "Email and password are required"
         });
-
     }
 
 
     userModel.findUserByEmail(email, (err, results) => {
 
         if (err) {
-
-            console.error(err);
+            console.error("Login Database Error:", err);
 
             return res.status(500).json({
                 message: "Database error"
             });
-
         }
 
 
@@ -171,7 +152,6 @@ const loginUser = (req, res) => {
             return res.status(401).json({
                 message: "Invalid email or password"
             });
-
         }
 
 
@@ -184,7 +164,6 @@ const loginUser = (req, res) => {
             return res.status(401).json({
                 message: "Invalid email or password"
             });
-
         }
 
 
@@ -194,17 +173,15 @@ const loginUser = (req, res) => {
 
             user: {
                 id: user.id,
-                full_name: user.full_name,
+                name: user.name,
                 email: user.email,
                 phone: user.phone,
                 role: user.role,
-                status: user.status
+                created_at: user.created_at,
+                updated_at: user.updated_at
             }
-
         });
-
     });
-
 };
 
 
@@ -213,19 +190,38 @@ const updateUser = (req, res) => {
 
     const { id } = req.params;
 
-    const user = req.body;
+    const {
+        name,
+        email,
+        phone,
+        role
+    } = req.body;
+
+
+    if (!name || !email) {
+
+        return res.status(400).json({
+            message: "Name and email are required"
+        });
+    }
+
+
+    const user = {
+        name,
+        email,
+        phone,
+        role
+    };
 
 
     userModel.updateUser(id, user, (err, result) => {
 
         if (err) {
-
-            console.error(err);
+            console.error("Update User Error:", err);
 
             return res.status(500).json({
                 message: "Failed to update user"
             });
-
         }
 
 
@@ -234,7 +230,6 @@ const updateUser = (req, res) => {
             return res.status(404).json({
                 message: "User not found"
             });
-
         }
 
 
@@ -243,9 +238,7 @@ const updateUser = (req, res) => {
             message: "User updated successfully"
 
         });
-
     });
-
 };
 
 
@@ -258,13 +251,11 @@ const deleteUser = (req, res) => {
     userModel.deleteUser(id, (err, result) => {
 
         if (err) {
-
-            console.error(err);
+            console.error("Delete User Error:", err);
 
             return res.status(500).json({
                 message: "Failed to delete user"
             });
-
         }
 
 
@@ -273,7 +264,6 @@ const deleteUser = (req, res) => {
             return res.status(404).json({
                 message: "User not found"
             });
-
         }
 
 
@@ -282,9 +272,7 @@ const deleteUser = (req, res) => {
             message: "User deleted successfully"
 
         });
-
     });
-
 };
 
 

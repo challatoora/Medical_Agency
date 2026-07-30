@@ -1,11 +1,17 @@
 const db = require("../config/db");
 
-
 // Get All Users
 const getAllUsers = (callback) => {
 
     const sql = `
-        SELECT id, full_name, email, phone, role, status, created_at
+        SELECT 
+            id,
+            name,
+            email,
+            phone,
+            role,
+            created_at,
+            updated_at
         FROM users
         ORDER BY id DESC
     `;
@@ -18,7 +24,14 @@ const getAllUsers = (callback) => {
 const getUserById = (id, callback) => {
 
     const sql = `
-        SELECT id, full_name, email, phone, role, status, created_at
+        SELECT 
+            id,
+            name,
+            email,
+            phone,
+            role,
+            created_at,
+            updated_at
         FROM users
         WHERE id = ?
     `;
@@ -32,17 +45,16 @@ const createUser = (user, callback) => {
 
     const sql = `
         INSERT INTO users
-        (full_name, email, phone, password, role, status)
-        VALUES (?, ?, ?, ?, ?, ?)
+        (name, email, password, phone, role)
+        VALUES (?, ?, ?, ?, ?)
     `;
 
     const values = [
-        user.full_name,
+        user.name,
         user.email,
-        user.phone,
         user.password,
-        user.role,
-        user.status
+        user.phone || null,
+        user.role || "user"
     ];
 
     db.query(sql, values, callback);
@@ -67,20 +79,19 @@ const updateUser = (id, user, callback) => {
 
     const sql = `
         UPDATE users
-        SET full_name = ?,
+        SET 
+            name = ?,
             email = ?,
             phone = ?,
-            role = ?,
-            status = ?
+            role = ?
         WHERE id = ?
     `;
 
     const values = [
-        user.full_name,
+        user.name,
         user.email,
-        user.phone,
-        user.role,
-        user.status,
+        user.phone || null,
+        user.role || "user",
         id
     ];
 
