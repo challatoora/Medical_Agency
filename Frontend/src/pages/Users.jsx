@@ -20,7 +20,7 @@ function Users() {
       setUsers(response);
     } catch (error) {
       console.error("Failed to fetch users:", error);
-      setError(error.message);
+      setError("Failed to load users");
     } finally {
       setLoading(false);
     }
@@ -32,19 +32,13 @@ function Users() {
 
       {loading && <p>Loading users...</p>}
 
-      {error && (
-        <div>
-          <p style={{ color: "red" }}>
-            Failed to load users: {error}
-          </p>
+      {error && <p>{error}</p>}
 
-          <button onClick={fetchUsers}>
-            Retry
-          </button>
-        </div>
+      {!loading && !error && users.length === 0 && (
+        <p>No users found.</p>
       )}
 
-      {!loading && !error && (
+      {!loading && !error && users.length > 0 && (
         <table>
           <thead>
             <tr>
@@ -57,23 +51,15 @@ function Users() {
           </thead>
 
           <tbody>
-            {users.length === 0 ? (
-              <tr>
-                <td colSpan="5">
-                  No users found
-                </td>
+            {users.map((user) => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.phone}</td>
+                <td>{user.role}</td>
               </tr>
-            ) : (
-              users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.phone}</td>
-                  <td>{user.role}</td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
       )}
