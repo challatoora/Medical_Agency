@@ -2,9 +2,9 @@
 
 function App() {
   return (
-    <div>
-      <h1 style={{color:"red"}}>
-        Medical Agency App Running
+    <div style={{padding:"50px"}}>
+      <h1 style={{color:"green"}}>
+        App Component Working
       </h1>
     </div>
   );
