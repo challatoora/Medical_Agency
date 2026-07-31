@@ -18,3 +18,8 @@ echo "Setup Completed Successfully."
 # ALTER USER 'root'@'localhost' IDENTIFIED BY 'Root@123';
 # FLUSH PRIVILEGES;
 # EXIT;
+#d28a12620099e3906dfb4b71893db6a69e4c2167
+
+# login
+#app.jsx
+#sidebar
