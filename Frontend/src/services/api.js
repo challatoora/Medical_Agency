@@ -1,5 +1,5 @@
 const USER_API_URL = "http://100.58.117.241:5006/api/users";
-const MEDICINE_API_URL = "http://54.226.0.206:5001/api/medicines";
+const MEDICINE_API_URL = "http://100.58.117.241:5001/api/medicines";
 const INVENTORY_API_URL = "http://54.226.0.206:5002/api/inventory";
 const SUPPLIER_API_URL = "http://54.226.0.206:5003/api/suppliers";
 const ORDER_API_URL = "http://54.226.0.206:5004/api/orders";
