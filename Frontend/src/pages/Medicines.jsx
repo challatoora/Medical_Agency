@@ -827,6 +827,375 @@
 // export default Medicines;
 /////////////////////////////////////////////////////////////////////////////////////
 
+// import React, { useEffect, useState } from "react";
+// import { medicineAPI } from "../services/api";
+// import "./Medicines.css";
+
+// function Medicines() {
+//   const [medicines, setMedicines] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState("");
+
+//   const [showForm, setShowForm] = useState(false);
+//   const [saving, setSaving] = useState(false);
+
+//   const [formData, setFormData] = useState({
+//     name: "",
+//     category: "",
+//     manufacturer: "",
+//     price: "",
+//     quantity: "",
+//     expiry_date: "",
+//     description: "",
+//   });
+
+//   const fetchMedicines = async () => {
+//     try {
+//       setLoading(true);
+//       setError("");
+
+//       const response = await medicineAPI.getAll();
+
+//       setMedicines(response);
+//     } catch (err) {
+//       console.error("Failed to fetch medicines:", err);
+//       setError(err.message || "Failed to load medicines");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchMedicines();
+//   }, []);
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+
+//     setFormData((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+//   };
+
+//   const handleAddMedicine = async (e) => {
+//     e.preventDefault();
+
+//     try {
+//       setSaving(true);
+//       setError("");
+
+//       const medicineData = {
+//         name: formData.name,
+//         category: formData.category,
+//         manufacturer: formData.manufacturer,
+//         price: Number(formData.price),
+//         quantity: Number(formData.quantity),
+//         expiry_date: formData.expiry_date || undefined,
+//         description: formData.description,
+//       };
+
+//       await medicineAPI.create(medicineData);
+
+//       alert("Medicine added successfully!");
+
+//       setFormData({
+//         name: "",
+//         category: "",
+//         manufacturer: "",
+//         price: "",
+//         quantity: "",
+//         expiry_date: "",
+//         description: "",
+//       });
+
+//       setShowForm(false);
+
+//       await fetchMedicines();
+//     } catch (err) {
+//       console.error("Failed to add medicine:", err);
+//       setError(err.message || "Failed to add medicine");
+//     } finally {
+//       setSaving(false);
+//     }
+//   };
+
+//   return (
+//     <div className="medicines-page">
+
+//       {/* PAGE HEADER */}
+//       <div className="medicines-page-header">
+//         <div>
+//           <h1>Medicines</h1>
+//           <p>Manage your medical inventory and medicines</p>
+//         </div>
+
+//         <button
+//           className="add-medicine-btn"
+//           onClick={() => setShowForm(true)}
+//         >
+//           + Add Medicine
+//         </button>
+//       </div>
+
+//       {/* ADD MEDICINE FORM */}
+//       {showForm && (
+//         <div className="medicine-form-card">
+//           <div className="medicine-form-header">
+//             <div>
+//               <h2>Add New Medicine</h2>
+//               <p>Enter the medicine details below</p>
+//             </div>
+
+//             <button
+//               type="button"
+//               className="close-form-btn"
+//               onClick={() => setShowForm(false)}
+//             >
+//               ×
+//             </button>
+//           </div>
+
+//           <form onSubmit={handleAddMedicine}>
+
+//             <div className="medicine-form-grid">
+
+//               <div className="form-group">
+//                 <label>Medicine Name *</label>
+//                 <input
+//                   type="text"
+//                   name="name"
+//                   value={formData.name}
+//                   onChange={handleChange}
+//                   placeholder="Enter medicine name"
+//                   required
+//                 />
+//               </div>
+
+//               <div className="form-group">
+//                 <label>Category *</label>
+//                 <input
+//                   type="text"
+//                   name="category"
+//                   value={formData.category}
+//                   onChange={handleChange}
+//                   placeholder="e.g. Antibiotic"
+//                   required
+//                 />
+//               </div>
+
+//               <div className="form-group">
+//                 <label>Manufacturer</label>
+//                 <input
+//                   type="text"
+//                   name="manufacturer"
+//                   value={formData.manufacturer}
+//                   onChange={handleChange}
+//                   placeholder="Enter manufacturer"
+//                 />
+//               </div>
+
+//               <div className="form-group">
+//                 <label>Price *</label>
+//                 <input
+//                   type="number"
+//                   name="price"
+//                   value={formData.price}
+//                   onChange={handleChange}
+//                   placeholder="Enter price"
+//                   min="0"
+//                   required
+//                 />
+//               </div>
+
+//               <div className="form-group">
+//                 <label>Quantity</label>
+//                 <input
+//                   type="number"
+//                   name="quantity"
+//                   value={formData.quantity}
+//                   onChange={handleChange}
+//                   placeholder="Enter quantity"
+//                   min="0"
+//                 />
+//               </div>
+
+//               <div className="form-group">
+//                 <label>Expiry Date</label>
+//                 <input
+//                   type="date"
+//                   name="expiry_date"
+//                   value={formData.expiry_date}
+//                   onChange={handleChange}
+//                 />
+//               </div>
+
+//             </div>
+
+//             <div className="form-group full-width">
+//               <label>Description</label>
+//               <textarea
+//                 name="description"
+//                 value={formData.description}
+//                 onChange={handleChange}
+//                 placeholder="Enter medicine description"
+//                 rows="4"
+//               />
+//             </div>
+
+//             {error && (
+//               <div className="medicine-error">
+//                 {error}
+//               </div>
+//             )}
+
+//             <div className="medicine-form-actions">
+
+//               <button
+//                 type="button"
+//                 className="cancel-medicine-btn"
+//                 onClick={() => setShowForm(false)}
+//                 disabled={saving}
+//               >
+//                 Cancel
+//               </button>
+
+//               <button
+//                 type="submit"
+//                 className="save-medicine-btn"
+//                 disabled={saving}
+//               >
+//                 {saving ? "Saving..." : "Add Medicine"}
+//               </button>
+
+//             </div>
+
+//           </form>
+//         </div>
+//       )}
+
+//       {/* MEDICINE INVENTORY */}
+//       <div className="medicines-card">
+
+//         <div className="medicines-card-header">
+
+//           <div>
+//             <h2>Medicine Inventory</h2>
+//             <p>All medicines available in your system</p>
+//           </div>
+
+//           <button
+//             className="refresh-btn"
+//             onClick={fetchMedicines}
+//             disabled={loading}
+//           >
+//             {loading ? "Loading..." : "Refresh"}
+//           </button>
+
+//         </div>
+
+//         {error && !showForm && (
+//           <div className="medicine-error">
+//             <p>Failed to load medicines: {error}</p>
+
+//             <button onClick={fetchMedicines}>
+//               Retry
+//             </button>
+//           </div>
+//         )}
+
+//         {loading && !error && (
+//           <div className="medicine-loading">
+//             Loading medicines...
+//           </div>
+//         )}
+
+//         {!loading && !error && (
+//           <div className="medicine-table-container">
+
+//             <table className="medicine-table">
+
+//               <thead>
+//                 <tr>
+//                   <th>ID</th>
+//                   <th>Name</th>
+//                   <th>Category</th>
+//                   <th>Manufacturer</th>
+//                   <th>Price</th>
+//                   <th>Quantity</th>
+//                   <th>Expiry Date</th>
+//                 </tr>
+//               </thead>
+
+//               <tbody>
+
+//                 {medicines.length === 0 ? (
+//                   <tr>
+//                     <td
+//                       colSpan="7"
+//                       className="no-medicines"
+//                     >
+//                       No medicines found
+//                     </td>
+//                   </tr>
+//                 ) : (
+//                   medicines.map((medicine) => (
+//                     <tr key={medicine._id}>
+
+//                       <td>
+//                         {medicine._id
+//                           ? medicine._id.substring(0, 8)
+//                           : "-"}
+//                       </td>
+
+//                       <td>
+//                         {medicine.name || "-"}
+//                       </td>
+
+//                       <td>
+//                         {medicine.category || "-"}
+//                       </td>
+
+//                       <td>
+//                         {medicine.manufacturer || "-"}
+//                       </td>
+
+//                       <td>
+//                         ₹{medicine.price || 0}
+//                       </td>
+
+//                       <td>
+//                         {medicine.quantity || 0}
+//                       </td>
+
+//                       <td>
+//                         {medicine.expiry_date
+//                           ? new Date(
+//                               medicine.expiry_date
+//                             ).toLocaleDateString()
+//                           : "-"}
+//                       </td>
+
+//                     </tr>
+//                   ))
+//                 )}
+
+//               </tbody>
+
+//             </table>
+
+//           </div>
+//         )}
+
+//       </div>
+
+//     </div>
+//   );
+// }
+
+// export default Medicines;
+
+//////////////////////////////////////////////////////////////////////////////////////
 import React, { useEffect, useState } from "react";
 import { medicineAPI } from "../services/api";
 import "./Medicines.css";
@@ -839,6 +1208,9 @@ function Medicines() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // Used to know if we are adding or editing
+  const [editingMedicine, setEditingMedicine] = useState(null);
+
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -848,6 +1220,10 @@ function Medicines() {
     expiry_date: "",
     description: "",
   });
+
+  // ===============================
+  // FETCH MEDICINES
+  // ===============================
 
   const fetchMedicines = async () => {
     try {
@@ -869,6 +1245,10 @@ function Medicines() {
     fetchMedicines();
   }, []);
 
+  // ===============================
+  // FORM CHANGE
+  // ===============================
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -878,7 +1258,30 @@ function Medicines() {
     }));
   };
 
-  const handleAddMedicine = async (e) => {
+  // ===============================
+  // RESET FORM
+  // ===============================
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      category: "",
+      manufacturer: "",
+      price: "",
+      quantity: "",
+      expiry_date: "",
+      description: "",
+    });
+
+    setEditingMedicine(null);
+    setShowForm(false);
+  };
+
+  // ===============================
+  // ADD / UPDATE MEDICINE
+  // ===============================
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -895,73 +1298,179 @@ function Medicines() {
         description: formData.description,
       };
 
-      await medicineAPI.create(medicineData);
+      // EDIT
+      if (editingMedicine) {
+        await medicineAPI.update(
+          editingMedicine._id,
+          medicineData
+        );
 
-      alert("Medicine added successfully!");
+        alert("Medicine updated successfully!");
+      }
 
-      setFormData({
-        name: "",
-        category: "",
-        manufacturer: "",
-        price: "",
-        quantity: "",
-        expiry_date: "",
-        description: "",
-      });
+      // ADD
+      else {
+        await medicineAPI.create(medicineData);
 
-      setShowForm(false);
+        alert("Medicine added successfully!");
+      }
+
+      resetForm();
 
       await fetchMedicines();
+
     } catch (err) {
-      console.error("Failed to add medicine:", err);
-      setError(err.message || "Failed to add medicine");
+      console.error("Failed to save medicine:", err);
+
+      setError(
+        err.message || "Failed to save medicine"
+      );
     } finally {
       setSaving(false);
+    }
+  };
+
+  // ===============================
+  // EDIT MEDICINE
+  // ===============================
+
+  const handleEdit = (medicine) => {
+    setEditingMedicine(medicine);
+
+    setFormData({
+      name: medicine.name || "",
+      category: medicine.category || "",
+      manufacturer: medicine.manufacturer || "",
+      price: medicine.price || "",
+      quantity: medicine.quantity || "",
+      expiry_date: medicine.expiry_date
+        ? medicine.expiry_date.substring(0, 10)
+        : "",
+      description: medicine.description || "",
+    });
+
+    setShowForm(true);
+  };
+
+  // ===============================
+  // DELETE MEDICINE
+  // ===============================
+
+  const handleDelete = async (id, name) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${name}"?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setError("");
+
+      await medicineAPI.delete(id);
+
+      alert("Medicine deleted successfully!");
+
+      await fetchMedicines();
+
+    } catch (err) {
+      console.error("Failed to delete medicine:", err);
+
+      setError(
+        err.message || "Failed to delete medicine"
+      );
     }
   };
 
   return (
     <div className="medicines-page">
 
-      {/* PAGE HEADER */}
+      {/* ===============================
+          PAGE HEADER
+      =============================== */}
+
       <div className="medicines-page-header">
+
         <div>
           <h1>Medicines</h1>
-          <p>Manage your medical inventory and medicines</p>
+
+          <p>
+            Manage your medical inventory and medicines
+          </p>
         </div>
 
         <button
           className="add-medicine-btn"
-          onClick={() => setShowForm(true)}
+          onClick={() => {
+            setEditingMedicine(null);
+
+            setFormData({
+              name: "",
+              category: "",
+              manufacturer: "",
+              price: "",
+              quantity: "",
+              expiry_date: "",
+              description: "",
+            });
+
+            setShowForm(true);
+          }}
         >
           + Add Medicine
         </button>
+
       </div>
 
-      {/* ADD MEDICINE FORM */}
+      {/* ===============================
+          ADD / EDIT FORM
+      =============================== */}
+
       {showForm && (
+
         <div className="medicine-form-card">
+
           <div className="medicine-form-header">
+
             <div>
-              <h2>Add New Medicine</h2>
-              <p>Enter the medicine details below</p>
+
+              <h2>
+                {editingMedicine
+                  ? "Edit Medicine"
+                  : "Add New Medicine"}
+              </h2>
+
+              <p>
+                {editingMedicine
+                  ? "Update the medicine details below"
+                  : "Enter the medicine details below"}
+              </p>
+
             </div>
 
             <button
               type="button"
               className="close-form-btn"
-              onClick={() => setShowForm(false)}
+              onClick={resetForm}
             >
               ×
             </button>
+
           </div>
 
-          <form onSubmit={handleAddMedicine}>
+          <form onSubmit={handleSubmit}>
 
             <div className="medicine-form-grid">
 
+              {/* NAME */}
+
               <div className="form-group">
-                <label>Medicine Name *</label>
+
+                <label>
+                  Medicine Name *
+                </label>
+
                 <input
                   type="text"
                   name="name"
@@ -970,10 +1479,17 @@ function Medicines() {
                   placeholder="Enter medicine name"
                   required
                 />
+
               </div>
 
+              {/* CATEGORY */}
+
               <div className="form-group">
-                <label>Category *</label>
+
+                <label>
+                  Category *
+                </label>
+
                 <input
                   type="text"
                   name="category"
@@ -982,10 +1498,17 @@ function Medicines() {
                   placeholder="e.g. Antibiotic"
                   required
                 />
+
               </div>
 
+              {/* MANUFACTURER */}
+
               <div className="form-group">
-                <label>Manufacturer</label>
+
+                <label>
+                  Manufacturer
+                </label>
+
                 <input
                   type="text"
                   name="manufacturer"
@@ -993,10 +1516,17 @@ function Medicines() {
                   onChange={handleChange}
                   placeholder="Enter manufacturer"
                 />
+
               </div>
 
+              {/* PRICE */}
+
               <div className="form-group">
-                <label>Price *</label>
+
+                <label>
+                  Price *
+                </label>
+
                 <input
                   type="number"
                   name="price"
@@ -1006,10 +1536,17 @@ function Medicines() {
                   min="0"
                   required
                 />
+
               </div>
 
+              {/* QUANTITY */}
+
               <div className="form-group">
-                <label>Quantity</label>
+
+                <label>
+                  Quantity
+                </label>
+
                 <input
                   type="number"
                   name="quantity"
@@ -1018,22 +1555,36 @@ function Medicines() {
                   placeholder="Enter quantity"
                   min="0"
                 />
+
               </div>
 
+              {/* EXPIRY DATE */}
+
               <div className="form-group">
-                <label>Expiry Date</label>
+
+                <label>
+                  Expiry Date
+                </label>
+
                 <input
                   type="date"
                   name="expiry_date"
                   value={formData.expiry_date}
                   onChange={handleChange}
                 />
+
               </div>
 
             </div>
 
+            {/* DESCRIPTION */}
+
             <div className="form-group full-width">
-              <label>Description</label>
+
+              <label>
+                Description
+              </label>
+
               <textarea
                 name="description"
                 value={formData.description}
@@ -1041,20 +1592,25 @@ function Medicines() {
                 placeholder="Enter medicine description"
                 rows="4"
               />
+
             </div>
 
             {error && (
+
               <div className="medicine-error">
                 {error}
               </div>
+
             )}
+
+            {/* FORM BUTTONS */}
 
             <div className="medicine-form-actions">
 
               <button
                 type="button"
                 className="cancel-medicine-btn"
-                onClick={() => setShowForm(false)}
+                onClick={resetForm}
                 disabled={saving}
               >
                 Cancel
@@ -1065,23 +1621,39 @@ function Medicines() {
                 className="save-medicine-btn"
                 disabled={saving}
               >
-                {saving ? "Saving..." : "Add Medicine"}
+                {saving
+                  ? "Saving..."
+                  : editingMedicine
+                  ? "Update Medicine"
+                  : "Add Medicine"}
               </button>
 
             </div>
 
           </form>
+
         </div>
+
       )}
 
-      {/* MEDICINE INVENTORY */}
+      {/* ===============================
+          MEDICINE INVENTORY
+      =============================== */}
+
       <div className="medicines-card">
 
         <div className="medicines-card-header">
 
           <div>
-            <h2>Medicine Inventory</h2>
-            <p>All medicines available in your system</p>
+
+            <h2>
+              Medicine Inventory
+            </h2>
+
+            <p>
+              All medicines available in your system
+            </p>
+
           </div>
 
           <button
@@ -1089,95 +1661,181 @@ function Medicines() {
             onClick={fetchMedicines}
             disabled={loading}
           >
-            {loading ? "Loading..." : "Refresh"}
+            {loading
+              ? "Loading..."
+              : "Refresh"}
           </button>
 
         </div>
 
-        {error && !showForm && (
-          <div className="medicine-error">
-            <p>Failed to load medicines: {error}</p>
+        {/* ERROR */}
 
-            <button onClick={fetchMedicines}>
+        {error && !showForm && (
+
+          <div className="medicine-error">
+
+            <p>
+              Failed to load medicines: {error}
+            </p>
+
+            <button
+              onClick={fetchMedicines}
+            >
               Retry
             </button>
+
           </div>
+
         )}
 
+        {/* LOADING */}
+
         {loading && !error && (
+
           <div className="medicine-loading">
             Loading medicines...
           </div>
+
         )}
 
+        {/* TABLE */}
+
         {!loading && !error && (
+
           <div className="medicine-table-container">
 
             <table className="medicine-table">
 
               <thead>
+
                 <tr>
+
                   <th>ID</th>
+
                   <th>Name</th>
+
                   <th>Category</th>
+
                   <th>Manufacturer</th>
+
                   <th>Price</th>
+
                   <th>Quantity</th>
+
                   <th>Expiry Date</th>
+
+                  <th>Actions</th>
+
                 </tr>
+
               </thead>
 
               <tbody>
 
                 {medicines.length === 0 ? (
+
                   <tr>
+
                     <td
-                      colSpan="7"
+                      colSpan="8"
                       className="no-medicines"
                     >
                       No medicines found
                     </td>
+
                   </tr>
+
                 ) : (
+
                   medicines.map((medicine) => (
+
                     <tr key={medicine._id}>
 
                       <td>
+
                         {medicine._id
                           ? medicine._id.substring(0, 8)
                           : "-"}
+
                       </td>
 
                       <td>
+
                         {medicine.name || "-"}
+
                       </td>
 
                       <td>
+
                         {medicine.category || "-"}
+
                       </td>
 
                       <td>
+
                         {medicine.manufacturer || "-"}
+
                       </td>
 
                       <td>
+
                         ₹{medicine.price || 0}
+
                       </td>
 
                       <td>
+
                         {medicine.quantity || 0}
+
                       </td>
 
                       <td>
+
                         {medicine.expiry_date
+
                           ? new Date(
                               medicine.expiry_date
                             ).toLocaleDateString()
+
                           : "-"}
+
+                      </td>
+
+                      {/* ACTIONS */}
+
+                      <td>
+
+                        <div className="medicine-actions">
+
+                          <button
+                            className="edit-medicine-btn"
+                            onClick={() =>
+                              handleEdit(medicine)
+                            }
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            className="delete-medicine-btn"
+                            onClick={() =>
+                              handleDelete(
+                                medicine._id,
+                                medicine.name
+                              )
+                            }
+                          >
+                            Delete
+                          </button>
+
+                        </div>
+
                       </td>
 
                     </tr>
+
                   ))
+
                 )}
 
               </tbody>
@@ -1185,6 +1843,7 @@ function Medicines() {
             </table>
 
           </div>
+
         )}
 
       </div>

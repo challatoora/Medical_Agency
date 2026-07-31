@@ -59,29 +59,63 @@ method: "DELETE",
 // MEDICINE API
 // ===============================
 
+// export const medicineAPI = {
+// getAll: () =>
+// request(MEDICINE_API_URL),
+
+// getById: (id) =>
+// request(`${MEDICINE_API_URL}/${id}`),
+
+// create: (data) =>
+// request(MEDICINE_API_URL, {
+// method: "POST",
+// body: JSON.stringify(data),
+// }),
+
+// update: (id, data) =>
+// request(`${MEDICINE_API_URL}/${id}`, {
+// method: "PUT",
+// body: JSON.stringify(data),
+// }),
+
+// delete: (id) =>
+// request(`${MEDICINE_API_URL}/${id}`, {
+// method: "DELETE",
+// }),
+// };
+
+// ===============================
+// MEDICINE API
+// ===============================
+
 export const medicineAPI = {
-getAll: () =>
-request(MEDICINE_API_URL),
+  // GET ALL
+  getAll: () =>
+    request(MEDICINE_API_URL),
 
-getById: (id) =>
-request(`${MEDICINE_API_URL}/${id}`),
+  // GET BY ID
+  getById: (id) =>
+    request(`${MEDICINE_API_URL}/${id}`),
 
-create: (data) =>
-request(MEDICINE_API_URL, {
-method: "POST",
-body: JSON.stringify(data),
-}),
+  // CREATE
+  create: (data) =>
+    request(MEDICINE_API_URL, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 
-update: (id, data) =>
-request(`${MEDICINE_API_URL}/${id}`, {
-method: "PUT",
-body: JSON.stringify(data),
-}),
+  // UPDATE
+  update: (id, data) =>
+    request(`${MEDICINE_API_URL}/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
 
-delete: (id) =>
-request(`${MEDICINE_API_URL}/${id}`, {
-method: "DELETE",
-}),
+  // DELETE
+  delete: (id) =>
+    request(`${MEDICINE_API_URL}/${id}`, {
+      method: "DELETE",
+    }),
 };
 
 // ===============================
