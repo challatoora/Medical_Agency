@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
@@ -12,25 +12,25 @@ import Suppliers from "./pages/Suppliers";
 import Orders from "./pages/Orders";
 import Billing from "./pages/Billing";
 
-
 function App() {
-
   const [currentPage, setCurrentPage] = useState("Dashboard");
 
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !!localStorage.getItem("token")
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
 
-
   const renderPage = () => {
-
     switch (currentPage) {
-
       case "Users":
         return <Users />;
 
@@ -54,28 +54,22 @@ function App() {
     }
   };
 
-
   if (!isLoggedIn) {
     return <Login onLogin={handleLogin} />;
   }
 
-
   return (
     <div className="app-container">
-
       <Sidebar
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
       />
 
       <main className="main-content">
-
         <Header />
 
         {renderPage()}
-
       </main>
-
     </div>
   );
 }
