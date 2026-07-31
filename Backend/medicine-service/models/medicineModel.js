@@ -1,49 +1,96 @@
+// const mongoose = require("mongoose");
+
+// const medicineSchema = new mongoose.Schema(
+//     {
+//         name: {
+//             type: String,
+//             required: true,
+//             trim: true
+//         },
+
+//         category: {
+//             type: String,
+//             required: true,
+//             trim: true
+//         },
+
+//         manufacturer: {
+//             type: String,
+//             trim: true
+//         },
+
+//         price: {
+//             type: Number,
+//             required: true
+//         },
+
+//         quantity: {
+//             type: Number,
+//             default: 0
+//         },
+
+//         expiry_date: {
+//             type: Date
+//         },
+
+//         description: {
+//             type: String,
+//             trim: true
+//         }
+//     },
+//     {
+//         timestamps: true
+//     }
+// );
+
+// module.exports = mongoose.model(
+//     "Medicine",
+//     medicineSchema
+// );
+
+
 const mongoose = require("mongoose");
 
 const medicineSchema = new mongoose.Schema(
-    {
-        name: {
-            type: String,
-            required: true,
-            trim: true
-        },
-
-        category: {
-            type: String,
-            required: true,
-            trim: true
-        },
-
-        manufacturer: {
-            type: String,
-            trim: true
-        },
-
-        price: {
-            type: Number,
-            required: true
-        },
-
-        quantity: {
-            type: Number,
-            default: 0
-        },
-
-        expiry_date: {
-            type: Date
-        },
-
-        description: {
-            type: String,
-            trim: true
-        }
+  {
+    name: {
+      type: String,
+      required: true,
     },
-    {
-        timestamps: true
-    }
+
+    category: {
+      type: String,
+      required: true,
+    },
+
+    manufacturer: {
+      type: String,
+    },
+
+    price: {
+      type: Number,
+      required: true,
+    },
+
+    quantity: {
+      type: Number,
+      default: 0,
+    },
+
+    expiry_date: {
+      type: Date,
+    },
+
+    description: {
+      type: String,
+    },
+  },
+  {
+    timestamps: true,
+  }
 );
 
 module.exports = mongoose.model(
-    "Medicine",
-    medicineSchema
+  "Medicine",
+  medicineSchema
 );
