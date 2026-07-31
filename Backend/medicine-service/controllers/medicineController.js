@@ -1,29 +1,64 @@
-const medicineModel = require("../models/medicineModel");
+const Medicine = require("../models/medicineModel");
 
-exports.getMedicines=(req,res)=>{
+// Get all medicines
+exports.getMedicines = async (req, res) => {
+    try {
+        const medicines = await Medicine.find().sort({
+            createdAt: -1
+        });
 
-medicineModel.getAllMedicines((err,result)=>{
+        res.status(200).json(medicines);
+    } catch (error) {
+        console.error(
+            "Error fetching medicines:",
+            error.message
+        );
 
-if(err) return res.status(500).json(err);
-
-res.json(result);
-
-});
-
+        res.status(500).json({
+            message: "Failed to fetch medicines",
+            error: error.message
+        });
+    }
 };
 
-exports.addMedicine=(req,res)=>{
+// Add new medicine
+exports.addMedicine = async (req, res) => {
+    try {
+        const {
+            name,
+            category,
+            manufacturer,
+            price,
+            quantity,
+            expiry_date,
+            description
+        } = req.body;
 
-medicineModel.addMedicine(req.body,(err,result)=>{
+        const medicine = new Medicine({
+            name,
+            category,
+            manufacturer,
+            price,
+            quantity,
+            expiry_date,
+            description
+        });
 
-if(err) return res.status(500).json(err);
+        const savedMedicine = await medicine.save();
 
-res.json({
+        res.status(201).json({
+            message: "Medicine Added Successfully",
+            medicine: savedMedicine
+        });
+    } catch (error) {
+        console.error(
+            "Error adding medicine:",
+            error.message
+        );
 
-message:"Medicine Added Successfully"
-
-});
-
-});
-
+        res.status(500).json({
+            message: "Failed to add medicine",
+            error: error.message
+        });
+    }
 };

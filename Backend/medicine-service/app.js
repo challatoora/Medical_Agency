@@ -11,8 +11,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/medicines", medicineRoutes);
-
 // Home Route
 app.get("/", (req, res) => {
     res.send("CMR Medical Agency - Medicine Service Running...");

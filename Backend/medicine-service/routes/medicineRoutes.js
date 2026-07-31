@@ -1,11 +1,11 @@
-const express=require("express");
+const express = require("express");
 
-const router=express.Router();
+const router = express.Router();
 
-const medicineController=require("../controllers/medicineController");
+const medicineController = require("../controllers/medicineController");
 
-router.get("/",medicineController.getMedicines);
+router.get("/", medicineController.getMedicines);
 
-router.post("/",medicineController.addMedicine);
+router.post("/", medicineController.addMedicine);
 
-module.exports=router;
+module.exports = router;
