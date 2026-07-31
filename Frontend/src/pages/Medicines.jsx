@@ -684,6 +684,148 @@
 // }
 
 // export default Medicines;
+//////////////////////////////////////////////////////////////////////////
+// import React, { useEffect, useState } from "react";
+// import { medicineAPI } from "../services/api";
+// import "./Medicines.css";
+
+// function Medicines() {
+//   const [medicines, setMedicines] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState("");
+
+//   const fetchMedicines = async () => {
+//     try {
+//       setLoading(true);
+//       setError("");
+
+//       const response = await medicineAPI.getAll();
+
+//       setMedicines(response);
+//     } catch (err) {
+//       console.error("Failed to fetch medicines:", err);
+//       setError(err.message || "Failed to load medicines");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchMedicines();
+//   }, []);
+
+//   return (
+//     <div className="medicines-page">
+//       <div className="medicines-page-header">
+//         <div>
+//           <h1>Medicines</h1>
+//           <p>Manage your medical inventory and medicines</p>
+//         </div>
+
+//         <button
+//           className="add-medicine-btn"
+//           onClick={() => alert("Add Medicine feature coming next")}
+//         >
+//           + Add Medicine
+//         </button>
+//       </div>
+
+//       <div className="medicines-card">
+//         <div className="medicines-card-header">
+//           <div>
+//             <h2>Medicine Inventory</h2>
+//             <p>All medicines available in your system</p>
+//           </div>
+
+//           <button
+//             className="refresh-btn"
+//             onClick={fetchMedicines}
+//             disabled={loading}
+//           >
+//             {loading ? "Loading..." : "Refresh"}
+//           </button>
+//         </div>
+
+//         {error && (
+//           <div className="medicine-error">
+//             <p>Failed to load medicines: {error}</p>
+
+//             <button onClick={fetchMedicines}>
+//               Retry
+//             </button>
+//           </div>
+//         )}
+
+//         {loading && !error && (
+//           <div className="medicine-loading">
+//             Loading medicines...
+//           </div>
+//         )}
+
+//         {!loading && !error && (
+//           <div className="medicine-table-container">
+//             <table className="medicine-table">
+//               <thead>
+//                 <tr>
+//                   <th>ID</th>
+//                   <th>Name</th>
+//                   <th>Category</th>
+//                   <th>Manufacturer</th>
+//                   <th>Price</th>
+//                   <th>Quantity</th>
+//                   <th>Expiry Date</th>
+//                 </tr>
+//               </thead>
+
+//               <tbody>
+//                 {medicines.length === 0 ? (
+//                   <tr>
+//                     <td colSpan="7" className="no-medicines">
+//                       No medicines found
+//                     </td>
+//                   </tr>
+//                 ) : (
+//                   medicines.map((medicine) => (
+//                     <tr key={medicine._id}>
+//                       <td>
+//                         {medicine._id
+//                           ? medicine._id.substring(0, 8)
+//                           : "-"}
+//                       </td>
+
+//                       <td>{medicine.name || "-"}</td>
+
+//                       <td>{medicine.category || "-"}</td>
+
+//                       <td>{medicine.manufacturer || "-"}</td>
+
+//                       <td>
+//                         ₹{medicine.price || 0}
+//                       </td>
+
+//                       <td>{medicine.quantity || 0}</td>
+
+//                       <td>
+//                         {medicine.expiry_date
+//                           ? new Date(
+//                               medicine.expiry_date
+//                             ).toLocaleDateString()
+//                           : "-"}
+//                       </td>
+//                     </tr>
+//                   ))
+//                 )}
+//               </tbody>
+//             </table>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default Medicines;
+/////////////////////////////////////////////////////////////////////////////////////
 
 import React, { useEffect, useState } from "react";
 import { medicineAPI } from "../services/api";
@@ -693,6 +835,19 @@ function Medicines() {
   const [medicines, setMedicines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "",
+    manufacturer: "",
+    price: "",
+    quantity: "",
+    expiry_date: "",
+    description: "",
+  });
 
   const fetchMedicines = async () => {
     try {
@@ -714,8 +869,61 @@ function Medicines() {
     fetchMedicines();
   }, []);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleAddMedicine = async (e) => {
+    e.preventDefault();
+
+    try {
+      setSaving(true);
+      setError("");
+
+      const medicineData = {
+        name: formData.name,
+        category: formData.category,
+        manufacturer: formData.manufacturer,
+        price: Number(formData.price),
+        quantity: Number(formData.quantity),
+        expiry_date: formData.expiry_date || undefined,
+        description: formData.description,
+      };
+
+      await medicineAPI.create(medicineData);
+
+      alert("Medicine added successfully!");
+
+      setFormData({
+        name: "",
+        category: "",
+        manufacturer: "",
+        price: "",
+        quantity: "",
+        expiry_date: "",
+        description: "",
+      });
+
+      setShowForm(false);
+
+      await fetchMedicines();
+    } catch (err) {
+      console.error("Failed to add medicine:", err);
+      setError(err.message || "Failed to add medicine");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="medicines-page">
+
+      {/* PAGE HEADER */}
       <div className="medicines-page-header">
         <div>
           <h1>Medicines</h1>
@@ -724,14 +932,153 @@ function Medicines() {
 
         <button
           className="add-medicine-btn"
-          onClick={() => alert("Add Medicine feature coming next")}
+          onClick={() => setShowForm(true)}
         >
           + Add Medicine
         </button>
       </div>
 
+      {/* ADD MEDICINE FORM */}
+      {showForm && (
+        <div className="medicine-form-card">
+          <div className="medicine-form-header">
+            <div>
+              <h2>Add New Medicine</h2>
+              <p>Enter the medicine details below</p>
+            </div>
+
+            <button
+              type="button"
+              className="close-form-btn"
+              onClick={() => setShowForm(false)}
+            >
+              ×
+            </button>
+          </div>
+
+          <form onSubmit={handleAddMedicine}>
+
+            <div className="medicine-form-grid">
+
+              <div className="form-group">
+                <label>Medicine Name *</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter medicine name"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Category *</label>
+                <input
+                  type="text"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  placeholder="e.g. Antibiotic"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Manufacturer</label>
+                <input
+                  type="text"
+                  name="manufacturer"
+                  value={formData.manufacturer}
+                  onChange={handleChange}
+                  placeholder="Enter manufacturer"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Price *</label>
+                <input
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  placeholder="Enter price"
+                  min="0"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Quantity</label>
+                <input
+                  type="number"
+                  name="quantity"
+                  value={formData.quantity}
+                  onChange={handleChange}
+                  placeholder="Enter quantity"
+                  min="0"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Expiry Date</label>
+                <input
+                  type="date"
+                  name="expiry_date"
+                  value={formData.expiry_date}
+                  onChange={handleChange}
+                />
+              </div>
+
+            </div>
+
+            <div className="form-group full-width">
+              <label>Description</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Enter medicine description"
+                rows="4"
+              />
+            </div>
+
+            {error && (
+              <div className="medicine-error">
+                {error}
+              </div>
+            )}
+
+            <div className="medicine-form-actions">
+
+              <button
+                type="button"
+                className="cancel-medicine-btn"
+                onClick={() => setShowForm(false)}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="save-medicine-btn"
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Add Medicine"}
+              </button>
+
+            </div>
+
+          </form>
+        </div>
+      )}
+
+      {/* MEDICINE INVENTORY */}
       <div className="medicines-card">
+
         <div className="medicines-card-header">
+
           <div>
             <h2>Medicine Inventory</h2>
             <p>All medicines available in your system</p>
@@ -744,9 +1091,10 @@ function Medicines() {
           >
             {loading ? "Loading..." : "Refresh"}
           </button>
+
         </div>
 
-        {error && (
+        {error && !showForm && (
           <div className="medicine-error">
             <p>Failed to load medicines: {error}</p>
 
@@ -764,7 +1112,9 @@ function Medicines() {
 
         {!loading && !error && (
           <div className="medicine-table-container">
+
             <table className="medicine-table">
+
               <thead>
                 <tr>
                   <th>ID</th>
@@ -778,32 +1128,45 @@ function Medicines() {
               </thead>
 
               <tbody>
+
                 {medicines.length === 0 ? (
                   <tr>
-                    <td colSpan="7" className="no-medicines">
+                    <td
+                      colSpan="7"
+                      className="no-medicines"
+                    >
                       No medicines found
                     </td>
                   </tr>
                 ) : (
                   medicines.map((medicine) => (
                     <tr key={medicine._id}>
+
                       <td>
                         {medicine._id
                           ? medicine._id.substring(0, 8)
                           : "-"}
                       </td>
 
-                      <td>{medicine.name || "-"}</td>
+                      <td>
+                        {medicine.name || "-"}
+                      </td>
 
-                      <td>{medicine.category || "-"}</td>
+                      <td>
+                        {medicine.category || "-"}
+                      </td>
 
-                      <td>{medicine.manufacturer || "-"}</td>
+                      <td>
+                        {medicine.manufacturer || "-"}
+                      </td>
 
                       <td>
                         ₹{medicine.price || 0}
                       </td>
 
-                      <td>{medicine.quantity || 0}</td>
+                      <td>
+                        {medicine.quantity || 0}
+                      </td>
 
                       <td>
                         {medicine.expiry_date
@@ -812,14 +1175,20 @@ function Medicines() {
                             ).toLocaleDateString()
                           : "-"}
                       </td>
+
                     </tr>
                   ))
                 )}
+
               </tbody>
+
             </table>
+
           </div>
         )}
+
       </div>
+
     </div>
   );
 }
