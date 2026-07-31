@@ -218,142 +218,127 @@
 //     deleteOrder
 // };
 
-const db = require("../config/db");
+/////////////////////
 
-// ==============================
+const orderModel = require("../models/orderModel");
+
 // GET ALL ORDERS
-// ==============================
+const getAllOrders = (req, res) => {
 
-const getAllOrders = (callback) => {
-
-    const sql = `
-        SELECT *
-        FROM orders
-        ORDER BY id DESC
-    `;
-
-    db.query(sql, callback);
-};
-
-// ==============================
-// GET ORDER BY ID
-// ==============================
-
-const getOrderById = (id, callback) => {
-
-    const sql = `
-        SELECT *
-        FROM orders
-        WHERE id = ?
-    `;
-
-    db.query(sql, [id], (err, results) => {
+    orderModel.getAllOrders((err, results) => {
 
         if (err) {
-            return callback(err);
+            console.error(err);
+
+            return res.status(500).json({
+                message: "Failed to fetch orders"
+            });
         }
 
-        if (results.length === 0) {
-            return callback(null, null);
-        }
-
-        callback(null, results[0]);
+        res.status(200).json(results);
 
     });
 
 };
 
-// ==============================
+// GET ORDER BY ID
+const getOrderById = (req, res) => {
+
+    orderModel.getOrderById(req.params.id, (err, order) => {
+
+        if (err) {
+            console.error(err);
+
+            return res.status(500).json({
+                message: "Failed to fetch order"
+            });
+        }
+
+        if (!order) {
+            return res.status(404).json({
+                message: "Order not found"
+            });
+        }
+
+        res.json(order);
+
+    });
+
+};
+
 // CREATE ORDER
-// ==============================
+const createOrder = (req, res) => {
 
-const createOrder = (order, callback) => {
+    orderModel.createOrder(req.body, (err, result) => {
 
-    const {
-        customer_name,
-        medicine_name,
-        quantity,
-        total_price,
-        status
-    } = order;
+        if (err) {
+            console.error(err);
 
-    const sql = `
-        INSERT INTO orders
-        (
-            customer_name,
-            medicine_name,
-            quantity,
-            total_price,
-            status
-        )
-        VALUES (?, ?, ?, ?, ?)
-    `;
+            return res.status(500).json({
+                message: "Failed to create order"
+            });
+        }
 
-    db.query(
-        sql,
-        [
-            customer_name,
-            medicine_name,
-            quantity,
-            total_price,
-            status || "Pending"
-        ],
-        callback
-    );
+        res.status(201).json({
+            message: "Order created successfully",
+            orderId: result.insertId
+        });
+
+    });
 
 };
 
-// ==============================
 // UPDATE ORDER
-// ==============================
+const updateOrder = (req, res) => {
 
-const updateOrder = (id, order, callback) => {
+    orderModel.updateOrder(req.params.id, req.body, (err, result) => {
 
-    const {
-        customer_name,
-        medicine_name,
-        quantity,
-        total_price,
-        status
-    } = order;
+        if (err) {
+            console.error(err);
 
-    const sql = `
-        UPDATE orders
-        SET
-            customer_name = ?,
-            medicine_name = ?,
-            quantity = ?,
-            total_price = ?,
-            status = ?
-        WHERE id = ?
-    `;
+            return res.status(500).json({
+                message: "Failed to update order"
+            });
+        }
 
-    db.query(
-        sql,
-        [
-            customer_name,
-            medicine_name,
-            quantity,
-            total_price,
-            status,
-            id
-        ],
-        callback
-    );
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Order not found"
+            });
+        }
+
+        res.json({
+            message: "Order updated successfully"
+        });
+
+    });
 
 };
 
-// ==============================
 // DELETE ORDER
-// ==============================
+const deleteOrder = (req, res) => {
 
-const deleteOrder = (id, callback) => {
+    orderModel.deleteOrder(req.params.id, (err, result) => {
 
-    db.query(
-        "DELETE FROM orders WHERE id = ?",
-        [id],
-        callback
-    );
+        if (err) {
+            console.error(err);
+
+            return res.status(500).json({
+                message: "Failed to delete order"
+            });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Order not found"
+            });
+        }
+
+        res.json({
+            message: "Order deleted successfully"
+        });
+
+    });
 
 };
 
