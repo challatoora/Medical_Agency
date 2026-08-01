@@ -88,21 +88,34 @@
 //////////////////////////
 
 
+
 import React, { useEffect, useState } from "react";
 import { orderAPI } from "../services/api";
 import "./Orders.css";
 
 function Orders() {
 
+  // ==============================
+  // STATE
+  // ==============================
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Get logged-in user
+
+  // ==============================
+  // LOGGED-IN USER
+  // ==============================
+
   const user =
     JSON.parse(localStorage.getItem("user")) || null;
 
-  // Check Admin
+
+  // ==============================
+  // CHECK ADMIN
+  // ==============================
+
   const isAdmin =
     user?.role?.toLowerCase().trim() === "admin";
 
@@ -118,20 +131,76 @@ function Orders() {
       setLoading(true);
       setError("");
 
+
+      // Get all orders from backend
+
       const response =
         await orderAPI.getAll();
 
-      setOrders(response);
 
-    } catch (err) {
+      // ==============================
+      // ADMIN
+      // ==============================
 
-      console.error(err);
+      if (isAdmin) {
 
-      setError(
-        err.message || "Failed to load orders"
+        // Admin can see ALL orders
+
+        setOrders(response);
+
+      }
+
+
+      // ==============================
+      // NORMAL USER
+      // ==============================
+
+      else {
+
+        // User can see ONLY their own orders
+
+        const myOrders =
+          response.filter(
+
+            (order) =>
+
+              order.customer_name
+                ?.toLowerCase()
+                .trim() ===
+
+              user?.name
+                ?.toLowerCase()
+                .trim()
+
+          );
+
+
+        setOrders(myOrders);
+
+      }
+
+
+    }
+
+    catch (err) {
+
+      console.error(
+        "Failed to fetch orders:",
+        err
       );
 
-    } finally {
+
+      setError(
+
+        err.message ||
+
+        "Failed to load orders"
+
+      );
+
+    }
+
+    finally {
 
       setLoading(false);
 
@@ -139,6 +208,10 @@ function Orders() {
 
   };
 
+
+  // ==============================
+  // LOAD ORDERS
+  // ==============================
 
   useEffect(() => {
 
@@ -149,25 +222,41 @@ function Orders() {
 
   // ==============================
   // COMPLETE ORDER
+  // ADMIN ONLY
   // ==============================
 
   const completeOrder = async (order) => {
 
+
+    // Confirm action
+
     const confirmComplete =
+
       window.confirm(
+
         `Mark Order #${order.id} as Completed?`
+
       );
 
+
     if (!confirmComplete) {
+
       return;
+
     }
 
 
     try {
 
+
+      // Update order
+
       await orderAPI.update(
+
         order.id,
+
         {
+
           customer_name:
             order.customer_name,
 
@@ -182,26 +271,44 @@ function Orders() {
 
           status:
             "Completed"
+
         }
+
       );
 
 
       alert(
+
         "Order completed successfully"
+
       );
 
 
-      // Refresh orders
+      // Refresh order list
+
       fetchOrders();
 
 
-    } catch (err) {
+    }
 
-      console.error(err);
+    catch (err) {
+
+
+      console.error(
+
+        "Complete order error:",
+
+        err
+
+      );
+
 
       alert(
+
         err.message ||
+
         "Failed to complete order"
+
       );
 
     }
@@ -219,7 +326,9 @@ function Orders() {
 
       <div className="orders-page">
 
-        <h1>Orders</h1>
+        <h1>
+          Orders
+        </h1>
 
         <p>
           Loading orders...
@@ -233,7 +342,7 @@ function Orders() {
 
 
   // ==============================
-  // UI
+  // PAGE
   // ==============================
 
   return (
@@ -241,7 +350,12 @@ function Orders() {
     <div className="orders-page">
 
 
+      {/* ==========================
+          PAGE HEADER
+      =========================== */}
+
       <div className="orders-page-header">
+
 
         <div>
 
@@ -249,14 +363,29 @@ function Orders() {
             Orders
           </h1>
 
+
           <p>
-            Manage customer orders
+
+            {isAdmin
+
+              ? "Manage all customer orders"
+
+              : "View your orders"
+
+            }
+
           </p>
 
         </div>
 
+
       </div>
 
+
+
+      {/* ==========================
+          ERROR
+      =========================== */}
 
       {error && (
 
@@ -269,25 +398,57 @@ function Orders() {
       )}
 
 
+
+      {/* ==========================
+          ORDERS CARD
+      =========================== */}
+
       <div className="orders-card">
 
+
+        {/* ========================
+            NO ORDERS
+        ========================= */}
 
         {orders.length === 0 ? (
 
           <div className="empty-orders">
 
+
             <h2>
+
               No Orders Found
+
             </h2>
 
+
             <p>
-              There are no orders available.
+
+              {isAdmin
+
+                ? "There are no customer orders yet."
+
+                : "You have not placed any orders yet."
+
+              }
+
             </p>
+
 
           </div>
 
-        ) : (
+        )
 
+
+        :
+
+
+        (
+
+
+          /* ========================
+             ORDERS TABLE
+          ========================= */
 
           <table className="orders-table">
 
@@ -296,29 +457,38 @@ function Orders() {
 
               <tr>
 
+
                 <th>
                   Order ID
                 </th>
+
 
                 <th>
                   Customer
                 </th>
 
+
                 <th>
                   Medicine
                 </th>
+
 
                 <th>
                   Quantity
                 </th>
 
+
                 <th>
                   Total
                 </th>
 
+
                 <th>
                   Status
                 </th>
+
+
+                {/* ADMIN ONLY */}
 
                 {isAdmin && (
 
@@ -328,120 +498,198 @@ function Orders() {
 
                 )}
 
+
               </tr>
 
             </thead>
 
 
+
             <tbody>
 
 
-              {orders.map((order) => (
+              {orders.map(
 
-                <tr key={order.id}>
-
-
-                  <td>
-
-                    #{order.id}
-
-                  </td>
+                (order) => (
 
 
-                  <td>
-
-                    {order.customer_name}
-
-                  </td>
+                  <tr
+                    key={order.id}
+                  >
 
 
-                  <td>
+                    {/* ORDER ID */}
 
-                    {order.medicine_name}
+                    <td>
 
-                  </td>
+                      #{order.id}
 
-
-                  <td>
-
-                    {order.quantity}
-
-                  </td>
+                    </td>
 
 
-                  <td>
 
-                    ₹{order.total_price}
+                    {/* CUSTOMER */}
 
-                  </td>
+                    <td>
 
+                      {order.customer_name}
 
-                  <td>
-
-                    <span
-                      className={
-                        order.status
-                          ?.toLowerCase() === "completed"
-                          ? "status-completed"
-                          : "status-pending"
-                      }
-                    >
-
-                      {order.status || "Pending"}
-
-                    </span>
-
-                  </td>
+                    </td>
 
 
-                  {isAdmin && (
+
+                    {/* MEDICINE */}
+
+                    <td>
+
+                      {order.medicine_name}
+
+                    </td>
+
+
+
+                    {/* QUANTITY */}
+
+                    <td>
+
+                      {order.quantity}
+
+                    </td>
+
+
+
+                    {/* TOTAL */}
+
+                    <td>
+
+                      ₹
+                      {order.total_price}
+
+                    </td>
+
+
+
+                    {/* STATUS */}
 
                     <td>
 
 
-                      {order.status
-                        ?.toLowerCase() ===
-                        "completed" ? (
+                      <span
 
-                        <span className="completed-text">
+                        className={
 
-                          ✓ Completed
+                          order.status
+                            ?.toLowerCase()
+                            .trim() ===
+                          "completed"
 
-                        </span>
+                            ? "status-completed"
 
-                      ) : (
+                            : "status-pending"
 
-                        <button
+                        }
 
-                          className="complete-order-btn"
+                      >
 
-                          onClick={() =>
-                            completeOrder(order)
-                          }
+                        {order.status ||
 
-                        >
+                          "Pending"
 
-                          Complete Order
+                        }
 
-                        </button>
-
-                      )}
+                      </span>
 
 
                     </td>
 
-                  )}
 
 
-                </tr>
+                    {/* ======================
+                        ADMIN ACTION
+                    ======================= */}
 
-              ))}
+                    {isAdmin && (
+
+
+                      <td>
+
+
+                        {order.status
+                          ?.toLowerCase()
+                          .trim() ===
+                        "completed"
+
+
+                          ?
+
+
+                          (
+
+                            <span
+
+                              className=
+                                "completed-text"
+
+                            >
+
+                              ✓ Completed
+
+                            </span>
+
+                          )
+
+
+                          :
+
+
+                          (
+
+
+                            <button
+
+                              className=
+                                "complete-order-btn"
+
+
+                              onClick={() =>
+
+                                completeOrder(
+                                  order
+                                )
+
+                              }
+
+                            >
+
+                              Complete Order
+
+                            </button>
+
+
+                          )
+
+                        }
+
+
+                      </td>
+
+
+                    )}
+
+
+                  </tr>
+
+
+                )
+
+              )}
 
 
             </tbody>
 
 
           </table>
+
 
         )}
 
