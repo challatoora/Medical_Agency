@@ -1196,6 +1196,7 @@
 // export default Medicines;
 
 //////////////////////////////////////////////////////////////////////////////////////
+
 import React, { useEffect, useState } from "react";
 import { medicineAPI } from "../services/api";
 import "./Medicines.css";
@@ -1220,6 +1221,13 @@ function Medicines() {
     expiry_date: "",
     description: "",
   });
+  const user = JSON.parse(localStorage.getItem("user"));
+  //const isAdmin = user?.role === "admin";
+  const isAdmin = user?.role?.toLowerCase().trim() === "admin";
+
+  console.log("USER:", user);
+  console.log("ROLE:", user?.role);
+  console.log("IS ADMIN:", isAdmin);
 
   // ===============================
   // FETCH MEDICINES
@@ -1400,9 +1408,10 @@ function Medicines() {
           </p>
         </div>
 
+        {isAdmin && (
         <button
-          className="add-medicine-btn"
-          onClick={() => {
+            className="add-medicine-btn"
+            onClick={() => {
             setEditingMedicine(null);
 
             setFormData({
@@ -1418,16 +1427,16 @@ function Medicines() {
             setShowForm(true);
           }}
         >
-          + Add Medicine
-        </button>
-
+         + Add Medicine
+</button>
+)}
       </div>
 
       {/* ===============================
           ADD / EDIT FORM
       =============================== */}
 
-      {showForm && (
+      {isAdmin && showForm && (
 
         <div className="medicine-form-card">
 
@@ -1724,8 +1733,7 @@ function Medicines() {
 
                   <th>Expiry Date</th>
 
-                  <th>Actions</th>
-
+                  {isAdmin && <th>Actions</th>}
                 </tr>
 
               </thead>
@@ -1801,36 +1809,38 @@ function Medicines() {
 
                       </td>
 
-                      {/* ACTIONS */}
+                     {/* ACTIONS */}
 
-                      <td>
+{isAdmin && (
+  <td>
 
-                        <div className="medicine-actions">
+    <div className="medicine-actions">
 
-                          <button
-                            className="edit-medicine-btn"
-                            onClick={() =>
-                              handleEdit(medicine)
-                            }
-                          >
-                            Edit
-                          </button>
+      <button
+        className="edit-medicine-btn"
+        onClick={() =>
+          handleEdit(medicine)
+        }
+      >
+        Edit
+      </button>
 
-                          <button
-                            className="delete-medicine-btn"
-                            onClick={() =>
-                              handleDelete(
-                                medicine._id,
-                                medicine.name
-                              )
-                            }
-                          >
-                            Delete
-                          </button>
+      <button
+        className="delete-medicine-btn"
+        onClick={() =>
+          handleDelete(
+            medicine._id,
+            medicine.name
+          )
+        }
+      >
+        Delete
+      </button>
 
-                        </div>
+    </div>
 
-                      </td>
+  </td>
+)}
 
                     </tr>
 
