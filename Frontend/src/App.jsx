@@ -420,7 +420,7 @@
 // export default App;
 
 import React, { useState, useEffect } from "react";
-
+import Cart from "./pages/Cart";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 
@@ -500,39 +500,42 @@ function App() {
 
   const renderPage = () => {
 
-    switch(currentPage) {
+  switch(currentPage) {
 
-      case "Users":
-        return <Users />;
-
-
-      case "Medicines":
-        return <Medicines />;
+    case "Users":
+      return <Users />;
 
 
-      case "Inventory":
-        return <Inventory />;
+    case "Medicines":
+      return <Medicines />;
 
 
-      case "Suppliers":
-        return <Suppliers />;
+    case "Inventory":
+      return <Inventory />;
 
 
-      case "Orders":
-        return <Orders />;
+    case "Suppliers":
+      return <Suppliers />;
 
 
-      case "Billing":
-        return <Billing />;
+    case "Orders":
+      return <Orders />;
 
 
-      default:
-        return <Dashboard />;
+    case "Billing":
+      return <Billing />;
 
-    }
 
-  };
+    case "Cart":
+      return <Cart />;
 
+
+    default:
+      return <Dashboard />;
+
+  }
+
+};
 
 
 

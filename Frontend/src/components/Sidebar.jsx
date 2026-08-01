@@ -474,22 +474,27 @@ function Sidebar({
 
   const userMenuItems = [
 
-    {
-      icon: LayoutDashboard,
-      label: "Dashboard",
-    },
+  {
+    icon: LayoutDashboard,
+    label: "Dashboard",
+  },
 
-    {
-      icon: Pill,
-      label: "Medicines",
-    },
+  {
+    icon: Pill,
+    label: "Medicines",
+  },
 
-    {
-      icon: ShoppingCart,
-      label: "Orders",
-    },
+  {
+    icon: ShoppingCart,
+    label: "Cart",
+  },
 
-  ];
+  {
+    icon: ShoppingCart,
+    label: "Orders",
+  },
+
+];
 
 
 

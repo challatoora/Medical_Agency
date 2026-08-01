@@ -1197,669 +1197,2003 @@
 
 //////////////////////////////////////////////////////////////////////////////////////
 
+// import React, { useEffect, useState } from "react";
+// import { medicineAPI } from "../services/api";
+// import "./Medicines.css";
+
+// function Medicines() {
+//   const [medicines, setMedicines] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState("");
+
+//   const [showForm, setShowForm] = useState(false);
+//   const [saving, setSaving] = useState(false);
+
+//   // Used to know if we are adding or editing
+//   const [editingMedicine, setEditingMedicine] = useState(null);
+
+//   const [formData, setFormData] = useState({
+//     name: "",
+//     category: "",
+//     manufacturer: "",
+//     price: "",
+//     quantity: "",
+//     expiry_date: "",
+//     description: "",
+//   });
+//   const user = JSON.parse(localStorage.getItem("user"));
+//   //const isAdmin = user?.role === "admin";
+//   const isAdmin = user?.role?.toLowerCase().trim() === "admin";
+
+//   console.log("USER:", user);
+//   console.log("ROLE:", user?.role);
+//   console.log("IS ADMIN:", isAdmin);
+
+//   // ===============================
+//   // FETCH MEDICINES
+//   // ===============================
+
+//   const fetchMedicines = async () => {
+//     try {
+//       setLoading(true);
+//       setError("");
+
+//       const response = await medicineAPI.getAll();
+
+//       setMedicines(response);
+//     } catch (err) {
+//       console.error("Failed to fetch medicines:", err);
+//       setError(err.message || "Failed to load medicines");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchMedicines();
+//   }, []);
+
+//   // ===============================
+//   // FORM CHANGE
+//   // ===============================
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+
+//     setFormData((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+//   };
+
+//   // ===============================
+//   // RESET FORM
+//   // ===============================
+
+//   const resetForm = () => {
+//     setFormData({
+//       name: "",
+//       category: "",
+//       manufacturer: "",
+//       price: "",
+//       quantity: "",
+//       expiry_date: "",
+//       description: "",
+//     });
+
+//     setEditingMedicine(null);
+//     setShowForm(false);
+//   };
+
+//   // ===============================
+//   // ADD / UPDATE MEDICINE
+//   // ===============================
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     try {
+//       setSaving(true);
+//       setError("");
+
+//       const medicineData = {
+//         name: formData.name,
+//         category: formData.category,
+//         manufacturer: formData.manufacturer,
+//         price: Number(formData.price),
+//         quantity: Number(formData.quantity),
+//         expiry_date: formData.expiry_date || undefined,
+//         description: formData.description,
+//       };
+
+//       // EDIT
+//       if (editingMedicine) {
+//         await medicineAPI.update(
+//           editingMedicine._id,
+//           medicineData
+//         );
+
+//         alert("Medicine updated successfully!");
+//       }
+
+//       // ADD
+//       else {
+//         await medicineAPI.create(medicineData);
+
+//         alert("Medicine added successfully!");
+//       }
+
+//       resetForm();
+
+//       await fetchMedicines();
+
+//     } catch (err) {
+//       console.error("Failed to save medicine:", err);
+
+//       setError(
+//         err.message || "Failed to save medicine"
+//       );
+//     } finally {
+//       setSaving(false);
+//     }
+//   };
+
+//   // ===============================
+//   // EDIT MEDICINE
+//   // ===============================
+
+//   const handleEdit = (medicine) => {
+//     setEditingMedicine(medicine);
+
+//     setFormData({
+//       name: medicine.name || "",
+//       category: medicine.category || "",
+//       manufacturer: medicine.manufacturer || "",
+//       price: medicine.price || "",
+//       quantity: medicine.quantity || "",
+//       expiry_date: medicine.expiry_date
+//         ? medicine.expiry_date.substring(0, 10)
+//         : "",
+//       description: medicine.description || "",
+//     });
+
+//     setShowForm(true);
+//   };
+
+//   // ===============================
+//   // DELETE MEDICINE
+//   // ===============================
+
+//   const handleDelete = async (id, name) => {
+//     const confirmed = window.confirm(
+//       `Are you sure you want to delete "${name}"?`
+//     );
+
+//     if (!confirmed) {
+//       return;
+//     }
+
+//     try {
+//       setError("");
+
+//       await medicineAPI.delete(id);
+
+//       alert("Medicine deleted successfully!");
+
+//       await fetchMedicines();
+
+//     } catch (err) {
+//       console.error("Failed to delete medicine:", err);
+
+//       setError(
+//         err.message || "Failed to delete medicine"
+//       );
+//     }
+//   };
+
+//   return (
+//     <div className="medicines-page">
+
+//       {/* ===============================
+//           PAGE HEADER
+//       =============================== */}
+
+//       <div className="medicines-page-header">
+
+//         <div>
+//           <h1>Medicines</h1>
+
+//           <p>
+//             Manage your medical inventory and medicines
+//           </p>
+//         </div>
+
+//         {isAdmin && (
+//         <button
+//             className="add-medicine-btn"
+//             onClick={() => {
+//             setEditingMedicine(null);
+
+//             setFormData({
+//               name: "",
+//               category: "",
+//               manufacturer: "",
+//               price: "",
+//               quantity: "",
+//               expiry_date: "",
+//               description: "",
+//             });
+
+//             setShowForm(true);
+//           }}
+//         >
+//          + Add Medicine
+// </button>
+// )}
+//       </div>
+
+//       {/* ===============================
+//           ADD / EDIT FORM
+//       =============================== */}
+
+//       {isAdmin && showForm && (
+
+//         <div className="medicine-form-card">
+
+//           <div className="medicine-form-header">
+
+//             <div>
+
+//               <h2>
+//                 {editingMedicine
+//                   ? "Edit Medicine"
+//                   : "Add New Medicine"}
+//               </h2>
+
+//               <p>
+//                 {editingMedicine
+//                   ? "Update the medicine details below"
+//                   : "Enter the medicine details below"}
+//               </p>
+
+//             </div>
+
+//             <button
+//               type="button"
+//               className="close-form-btn"
+//               onClick={resetForm}
+//             >
+//               ×
+//             </button>
+
+//           </div>
+
+//           <form onSubmit={handleSubmit}>
+
+//             <div className="medicine-form-grid">
+
+//               {/* NAME */}
+
+//               <div className="form-group">
+
+//                 <label>
+//                   Medicine Name *
+//                 </label>
+
+//                 <input
+//                   type="text"
+//                   name="name"
+//                   value={formData.name}
+//                   onChange={handleChange}
+//                   placeholder="Enter medicine name"
+//                   required
+//                 />
+
+//               </div>
+
+//               {/* CATEGORY */}
+
+//               <div className="form-group">
+
+//                 <label>
+//                   Category *
+//                 </label>
+
+//                 <input
+//                   type="text"
+//                   name="category"
+//                   value={formData.category}
+//                   onChange={handleChange}
+//                   placeholder="e.g. Antibiotic"
+//                   required
+//                 />
+
+//               </div>
+
+//               {/* MANUFACTURER */}
+
+//               <div className="form-group">
+
+//                 <label>
+//                   Manufacturer
+//                 </label>
+
+//                 <input
+//                   type="text"
+//                   name="manufacturer"
+//                   value={formData.manufacturer}
+//                   onChange={handleChange}
+//                   placeholder="Enter manufacturer"
+//                 />
+
+//               </div>
+
+//               {/* PRICE */}
+
+//               <div className="form-group">
+
+//                 <label>
+//                   Price *
+//                 </label>
+
+//                 <input
+//                   type="number"
+//                   name="price"
+//                   value={formData.price}
+//                   onChange={handleChange}
+//                   placeholder="Enter price"
+//                   min="0"
+//                   required
+//                 />
+
+//               </div>
+
+//               {/* QUANTITY */}
+
+//               <div className="form-group">
+
+//                 <label>
+//                   Quantity
+//                 </label>
+
+//                 <input
+//                   type="number"
+//                   name="quantity"
+//                   value={formData.quantity}
+//                   onChange={handleChange}
+//                   placeholder="Enter quantity"
+//                   min="0"
+//                 />
+
+//               </div>
+
+//               {/* EXPIRY DATE */}
+
+//               <div className="form-group">
+
+//                 <label>
+//                   Expiry Date
+//                 </label>
+
+//                 <input
+//                   type="date"
+//                   name="expiry_date"
+//                   value={formData.expiry_date}
+//                   onChange={handleChange}
+//                 />
+
+//               </div>
+
+//             </div>
+
+//             {/* DESCRIPTION */}
+
+//             <div className="form-group full-width">
+
+//               <label>
+//                 Description
+//               </label>
+
+//               <textarea
+//                 name="description"
+//                 value={formData.description}
+//                 onChange={handleChange}
+//                 placeholder="Enter medicine description"
+//                 rows="4"
+//               />
+
+//             </div>
+
+//             {error && (
+
+//               <div className="medicine-error">
+//                 {error}
+//               </div>
+
+//             )}
+
+//             {/* FORM BUTTONS */}
+
+//             <div className="medicine-form-actions">
+
+//               <button
+//                 type="button"
+//                 className="cancel-medicine-btn"
+//                 onClick={resetForm}
+//                 disabled={saving}
+//               >
+//                 Cancel
+//               </button>
+
+//               <button
+//                 type="submit"
+//                 className="save-medicine-btn"
+//                 disabled={saving}
+//               >
+//                 {saving
+//                   ? "Saving..."
+//                   : editingMedicine
+//                   ? "Update Medicine"
+//                   : "Add Medicine"}
+//               </button>
+
+//             </div>
+
+//           </form>
+
+//         </div>
+
+//       )}
+
+//       {/* ===============================
+//           MEDICINE INVENTORY
+//       =============================== */}
+
+//       <div className="medicines-card">
+
+//         <div className="medicines-card-header">
+
+//           <div>
+
+//             <h2>
+//               Medicine Inventory
+//             </h2>
+
+//             <p>
+//               All medicines available in your system
+//             </p>
+
+//           </div>
+
+//           <button
+//             className="refresh-btn"
+//             onClick={fetchMedicines}
+//             disabled={loading}
+//           >
+//             {loading
+//               ? "Loading..."
+//               : "Refresh"}
+//           </button>
+
+//         </div>
+
+//         {/* ERROR */}
+
+//         {error && !showForm && (
+
+//           <div className="medicine-error">
+
+//             <p>
+//               Failed to load medicines: {error}
+//             </p>
+
+//             <button
+//               onClick={fetchMedicines}
+//             >
+//               Retry
+//             </button>
+
+//           </div>
+
+//         )}
+
+//         {/* LOADING */}
+
+//         {loading && !error && (
+
+//           <div className="medicine-loading">
+//             Loading medicines...
+//           </div>
+
+//         )}
+
+//         {/* TABLE */}
+
+//         {!loading && !error && (
+
+//           <div className="medicine-table-container">
+
+//             <table className="medicine-table">
+
+//               <thead>
+
+//                 <tr>
+
+//                   <th>ID</th>
+
+//                   <th>Name</th>
+
+//                   <th>Category</th>
+
+//                   <th>Manufacturer</th>
+
+//                   <th>Price</th>
+
+//                   <th>Quantity</th>
+
+//                   <th>Expiry Date</th>
+
+//                   {isAdmin && <th>Actions</th>}
+//                 </tr>
+
+//               </thead>
+
+//               <tbody>
+
+//                 {medicines.length === 0 ? (
+
+//                   <tr>
+
+//                     <td
+//                       colSpan="8"
+//                       className="no-medicines"
+//                     >
+//                       No medicines found
+//                     </td>
+
+//                   </tr>
+
+//                 ) : (
+
+//                   medicines.map((medicine) => (
+
+//                     <tr key={medicine._id}>
+
+//                       <td>
+
+//                         {medicine._id
+//                           ? medicine._id.substring(0, 8)
+//                           : "-"}
+
+//                       </td>
+
+//                       <td>
+
+//                         {medicine.name || "-"}
+
+//                       </td>
+
+//                       <td>
+
+//                         {medicine.category || "-"}
+
+//                       </td>
+
+//                       <td>
+
+//                         {medicine.manufacturer || "-"}
+
+//                       </td>
+
+//                       <td>
+
+//                         ₹{medicine.price || 0}
+
+//                       </td>
+
+//                       <td>
+
+//                         {medicine.quantity || 0}
+
+//                       </td>
+
+//                       <td>
+
+//                         {medicine.expiry_date
+
+//                           ? new Date(
+//                               medicine.expiry_date
+//                             ).toLocaleDateString()
+
+//                           : "-"}
+
+//                       </td>
+
+//                      {/* ACTIONS */}
+
+// {isAdmin && (
+//   <td>
+
+//     <div className="medicine-actions">
+
+//       <button
+//         className="edit-medicine-btn"
+//         onClick={() =>
+//           handleEdit(medicine)
+//         }
+//       >
+//         Edit
+//       </button>
+
+//       <button
+//         className="delete-medicine-btn"
+//         onClick={() =>
+//           handleDelete(
+//             medicine._id,
+//             medicine.name
+//           )
+//         }
+//       >
+//         Delete
+//       </button>
+
+//     </div>
+
+//   </td>
+// )}
+
+//                     </tr>
+
+//                   ))
+
+//                 )}
+
+//               </tbody>
+
+//             </table>
+
+//           </div>
+
+//         )}
+
+//       </div>
+
+//     </div>
+//   );
+// }
+
+// export default Medicines;
+
+// import React, { useEffect, useState } from "react";
+// import { medicineAPI } from "../services/api";
+// import "./Medicines.css";
+
+// function Medicines() {
+
+//   const [medicines, setMedicines] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState("");
+
+//   const [showForm, setShowForm] = useState(false);
+//   const [saving, setSaving] = useState(false);
+//   const [editingMedicine, setEditingMedicine] = useState(null);
+
+
+//   const user = JSON.parse(localStorage.getItem("user"));
+
+//   const isAdmin =
+//     user?.role?.toLowerCase().trim() === "admin";
+
+
+//   const [cart,setCart] = useState(
+//     JSON.parse(localStorage.getItem("cart")) || []
+//   );
+
+
+//   const [formData,setFormData] = useState({
+//     name:"",
+//     category:"",
+//     manufacturer:"",
+//     price:"",
+//     quantity:"",
+//     expiry_date:"",
+//     description:""
+//   });
+
+
+
+//   const fetchMedicines = async()=>{
+
+//     try{
+
+//       setLoading(true);
+
+//       const response =
+//         await medicineAPI.getAll();
+
+//       setMedicines(response);
+
+//     }
+//     catch(err){
+
+//       setError(
+//         err.message || "Failed to load medicines"
+//       );
+
+//     }
+//     finally{
+
+//       setLoading(false);
+
+//     }
+
+//   };
+
+
+//   useEffect(()=>{
+
+//     fetchMedicines();
+
+//   },[]);
+
+
+
+//   const handleChange=(e)=>{
+
+//     setFormData({
+
+//       ...formData,
+
+//       [e.target.name]:e.target.value
+
+//     });
+
+//   };
+
+
+
+//   const resetForm=()=>{
+
+//     setFormData({
+//       name:"",
+//       category:"",
+//       manufacturer:"",
+//       price:"",
+//       quantity:"",
+//       expiry_date:"",
+//       description:""
+//     });
+
+//     setEditingMedicine(null);
+//     setShowForm(false);
+
+//   };
+
+
+
+//   const handleSubmit=async(e)=>{
+
+//     e.preventDefault();
+
+
+//     try{
+
+//       setSaving(true);
+
+
+//       const data={
+
+//         ...formData,
+
+//         price:Number(formData.price),
+
+//         quantity:Number(formData.quantity)
+
+//       };
+
+
+//       if(editingMedicine){
+
+//         await medicineAPI.update(
+//           editingMedicine._id,
+//           data
+//         );
+
+//         alert("Medicine updated");
+
+//       }
+//       else{
+
+//         await medicineAPI.create(data);
+
+//         alert("Medicine added");
+
+//       }
+
+
+//       resetForm();
+
+//       fetchMedicines();
+
+
+//     }
+//     catch(err){
+
+//       setError(err.message);
+
+//     }
+//     finally{
+
+//       setSaving(false);
+
+//     }
+
+//   };
+
+
+
+
+//   const handleEdit=(medicine)=>{
+
+//     setEditingMedicine(medicine);
+
+
+//     setFormData({
+
+//       name:medicine.name || "",
+
+//       category:medicine.category || "",
+
+//       manufacturer:medicine.manufacturer || "",
+
+//       price:medicine.price || "",
+
+//       quantity:medicine.quantity || "",
+
+//       expiry_date:
+//       medicine.expiry_date
+//       ? medicine.expiry_date.substring(0,10)
+//       :"",
+
+//       description:medicine.description || ""
+
+//     });
+
+
+//     setShowForm(true);
+
+//   };
+
+
+
+
+//   const handleDelete=async(id,name)=>{
+
+
+//     const confirmDelete =
+//     window.confirm(
+//       `Delete ${name}?`
+//     );
+
+
+//     if(!confirmDelete)
+//       return;
+
+
+//     await medicineAPI.delete(id);
+
+
+//     alert("Medicine deleted");
+
+
+//     fetchMedicines();
+
+
+//   };
+
+
+
+
+//   const addToCart=(medicine)=>{
+
+
+//     let oldCart =
+//     JSON.parse(localStorage.getItem("cart")) || [];
+
+
+//     const exists =
+//     oldCart.find(
+//       item=>item._id===medicine._id
+//     );
+
+
+//     let updated;
+
+
+//     if(exists){
+
+
+//       updated =
+//       oldCart.map(item=>
+
+//         item._id===medicine._id
+
+//         ?
+
+//         {
+//           ...item,
+//           cartQuantity:item.cartQuantity+1
+//         }
+
+//         :
+
+//         item
+
+//       );
+
+
+//     }
+//     else{
+
+
+//       updated=[
+
+//         ...oldCart,
+
+//         {
+//           ...medicine,
+//           cartQuantity:1
+//         }
+
+//       ];
+
+
+//     }
+
+
+//     setCart(updated);
+
+
+//     localStorage.setItem(
+//       "cart",
+//       JSON.stringify(updated)
+//     );
+
+
+//     alert(
+//       `${medicine.name} added to cart`
+//     );
+
+//   };
+
+
+
+
+// return (
+
+// <div className="medicines-page">
+
+
+// <div className="medicines-page-header">
+
+
+// <div>
+
+// <h1>Medicines</h1>
+
+// <p>
+// Manage your medical inventory and medicines
+// </p>
+
+// </div>
+
+
+
+// {isAdmin &&
+
+// <button
+// className="add-medicine-btn"
+// onClick={()=>{
+// setEditingMedicine(null);
+// setShowForm(true);
+// }}
+// >
+
+// + Add Medicine
+
+// </button>
+
+// }
+
+
+// </div>
+
+
+
+
+
+// {isAdmin && showForm &&
+
+
+// <div className="medicine-form-card">
+
+
+// <h2>
+
+// {
+// editingMedicine
+// ?
+// "Edit Medicine"
+// :
+// "Add Medicine"
+// }
+
+// </h2>
+
+
+
+// <form onSubmit={handleSubmit}>
+
+
+// <input
+// name="name"
+// placeholder="Name"
+// value={formData.name}
+// onChange={handleChange}
+// />
+
+
+// <input
+// name="category"
+// placeholder="Category"
+// value={formData.category}
+// onChange={handleChange}
+// />
+
+
+// <input
+// name="manufacturer"
+// placeholder="Manufacturer"
+// value={formData.manufacturer}
+// onChange={handleChange}
+// />
+
+
+// <input
+// name="price"
+// placeholder="Price"
+// value={formData.price}
+// onChange={handleChange}
+// />
+
+
+// <input
+// name="quantity"
+// placeholder="Quantity"
+// value={formData.quantity}
+// onChange={handleChange}
+// />
+
+
+
+// <button type="submit">
+
+// {
+// saving
+// ?
+// "Saving..."
+// :
+// "Save"
+// }
+
+// </button>
+
+
+// <button
+// type="button"
+// onClick={resetForm}
+// >
+
+// Cancel
+
+// </button>
+
+
+// </form>
+
+
+// </div>
+
+// }
+
+
+
+
+
+// <div className="medicines-card">
+
+
+// <table className="medicine-table">
+
+
+// <thead>
+
+// <tr>
+
+// <th>ID</th>
+// <th>Name</th>
+// <th>Category</th>
+// <th>Price</th>
+// <th>Quantity</th>
+// <th>Actions</th>
+
+// </tr>
+
+// </thead>
+
+
+
+// <tbody>
+
+
+// {
+
+// medicines.map((medicine)=>(
+
+
+// <tr key={medicine._id}>
+
+
+// <td>
+// {
+// medicine._id.substring(0,8)
+// }
+// </td>
+
+
+// <td>
+// {medicine.name}
+// </td>
+
+
+// <td>
+// {medicine.category}
+// </td>
+
+
+// <td>
+// ₹{medicine.price}
+// </td>
+
+
+// <td>
+// {medicine.quantity}
+// </td>
+
+
+
+// <td>
+
+
+// {isAdmin ?
+
+
+// <>
+
+
+// <button
+// className="edit-medicine-btn"
+// onClick={()=>
+// handleEdit(medicine)
+// }
+// >
+
+// Edit
+
+// </button>
+
+
+// <button
+// className="delete-medicine-btn"
+// onClick={()=>
+// handleDelete(
+// medicine._id,
+// medicine.name
+// )
+// }
+// >
+
+// Delete
+
+// </button>
+
+
+// </>
+
+
+// :
+
+
+// <button
+// className="add-cart-btn"
+// onClick={()=>
+// addToCart(medicine)
+// }
+// >
+
+// 🛒 Add Cart
+
+// </button>
+
+
+// }
+
+
+
+// </td>
+
+
+// </tr>
+
+
+// ))
+
+// }
+
+// </tbody>
+
+
+// </table>
+
+
+// </div>
+
+
+
+// </div>
+
+// );
+
+
+// }
+
+
+// export default Medicines;
+
 import React, { useEffect, useState } from "react";
 import { medicineAPI } from "../services/api";
 import "./Medicines.css";
 
+
 function Medicines() {
-  const [medicines, setMedicines] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
-  const [showForm, setShowForm] = useState(false);
-  const [saving, setSaving] = useState(false);
 
-  // Used to know if we are adding or editing
-  const [editingMedicine, setEditingMedicine] = useState(null);
+  const [medicines,setMedicines] = useState([]);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    category: "",
-    manufacturer: "",
-    price: "",
-    quantity: "",
-    expiry_date: "",
-    description: "",
+  const [loading,setLoading] = useState(true);
+
+  const [error,setError] = useState("");
+
+  const [showForm,setShowForm] = useState(false);
+
+  const [saving,setSaving] = useState(false);
+
+  const [editingMedicine,setEditingMedicine] = useState(null);
+
+
+
+  const user =
+    JSON.parse(localStorage.getItem("user"));
+
+
+  const isAdmin =
+    user?.role?.toLowerCase().trim() === "admin";
+
+
+
+  const [formData,setFormData] = useState({
+
+    name:"",
+    category:"",
+    manufacturer:"",
+    price:"",
+    quantity:"",
+    expiry_date:"",
+    description:""
+
   });
-  const user = JSON.parse(localStorage.getItem("user"));
-  //const isAdmin = user?.role === "admin";
-  const isAdmin = user?.role?.toLowerCase().trim() === "admin";
 
-  console.log("USER:", user);
-  console.log("ROLE:", user?.role);
-  console.log("IS ADMIN:", isAdmin);
 
-  // ===============================
-  // FETCH MEDICINES
-  // ===============================
 
-  const fetchMedicines = async () => {
-    try {
+  const fetchMedicines = async()=>{
+
+    try{
+
       setLoading(true);
+
       setError("");
 
-      const response = await medicineAPI.getAll();
+      const response =
+        await medicineAPI.getAll();
+
 
       setMedicines(response);
-    } catch (err) {
-      console.error("Failed to fetch medicines:", err);
-      setError(err.message || "Failed to load medicines");
-    } finally {
-      setLoading(false);
+
+
     }
+    catch(err){
+
+      setError(
+        err.message ||
+        "Failed to load medicines"
+      );
+
+    }
+    finally{
+
+      setLoading(false);
+
+    }
+
   };
 
-  useEffect(() => {
+
+
+  useEffect(()=>{
+
     fetchMedicines();
-  }, []);
 
-  // ===============================
-  // FORM CHANGE
-  // ===============================
+  },[]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
-  // ===============================
-  // RESET FORM
-  // ===============================
 
-  const resetForm = () => {
+
+  const handleChange=(e)=>{
+
     setFormData({
-      name: "",
-      category: "",
-      manufacturer: "",
-      price: "",
-      quantity: "",
-      expiry_date: "",
-      description: "",
+
+      ...formData,
+
+      [e.target.name]:
+      e.target.value
+
     });
 
-    setEditingMedicine(null);
-    setShowForm(false);
   };
 
-  // ===============================
-  // ADD / UPDATE MEDICINE
-  // ===============================
 
-  const handleSubmit = async (e) => {
+
+
+
+  const resetForm=()=>{
+
+
+    setFormData({
+
+      name:"",
+      category:"",
+      manufacturer:"",
+      price:"",
+      quantity:"",
+      expiry_date:"",
+      description:""
+
+    });
+
+
+    setEditingMedicine(null);
+
+    setShowForm(false);
+
+
+  };
+
+
+
+
+
+
+  const handleSubmit=async(e)=>{
+
+
     e.preventDefault();
 
-    try {
-      setSaving(true);
-      setError("");
 
-      const medicineData = {
-        name: formData.name,
-        category: formData.category,
-        manufacturer: formData.manufacturer,
-        price: Number(formData.price),
-        quantity: Number(formData.quantity),
-        expiry_date: formData.expiry_date || undefined,
-        description: formData.description,
+    try{
+
+
+      setSaving(true);
+
+
+      const data={
+
+
+        ...formData,
+
+
+        price:Number(formData.price),
+
+
+        quantity:Number(formData.quantity)
+
+
       };
 
-      // EDIT
-      if (editingMedicine) {
+
+
+      if(editingMedicine){
+
+
         await medicineAPI.update(
+
           editingMedicine._id,
-          medicineData
+
+          data
+
         );
 
-        alert("Medicine updated successfully!");
+
+        alert(
+          "Medicine updated successfully"
+        );
+
+
       }
 
-      // ADD
-      else {
-        await medicineAPI.create(medicineData);
+      else{
 
-        alert("Medicine added successfully!");
+
+        await medicineAPI.create(data);
+
+
+        alert(
+          "Medicine added successfully"
+        );
+
+
       }
+
+
 
       resetForm();
 
-      await fetchMedicines();
 
-    } catch (err) {
-      console.error("Failed to save medicine:", err);
+      fetchMedicines();
+
+
+
+    }
+    catch(err){
+
 
       setError(
-        err.message || "Failed to save medicine"
+        err.message
       );
-    } finally {
-      setSaving(false);
+
+
     }
+    finally{
+
+
+      setSaving(false);
+
+
+    }
+
+
   };
 
-  // ===============================
-  // EDIT MEDICINE
-  // ===============================
 
-  const handleEdit = (medicine) => {
+
+
+
+
+  const handleEdit=(medicine)=>{
+
+
     setEditingMedicine(medicine);
 
+
+
     setFormData({
-      name: medicine.name || "",
-      category: medicine.category || "",
-      manufacturer: medicine.manufacturer || "",
-      price: medicine.price || "",
-      quantity: medicine.quantity || "",
-      expiry_date: medicine.expiry_date
-        ? medicine.expiry_date.substring(0, 10)
-        : "",
-      description: medicine.description || "",
+
+      name:medicine.name || "",
+
+      category:medicine.category || "",
+
+      manufacturer:
+      medicine.manufacturer || "",
+
+      price:
+      medicine.price || "",
+
+      quantity:
+      medicine.quantity || "",
+
+      expiry_date:
+      medicine.expiry_date || "",
+
+      description:
+      medicine.description || ""
+
     });
 
+
+
     setShowForm(true);
+
+
   };
 
-  // ===============================
-  // DELETE MEDICINE
-  // ===============================
 
-  const handleDelete = async (id, name) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${name}"?`
-    );
 
-    if (!confirmed) {
+
+
+
+
+  const handleDelete=async(id,name)=>{
+
+
+    const confirmDelete =
+      window.confirm(
+        `Delete ${name}?`
+      );
+
+
+    if(!confirmDelete)
       return;
-    }
 
-    try {
-      setError("");
+
+
+    try{
+
 
       await medicineAPI.delete(id);
 
-      alert("Medicine deleted successfully!");
 
-      await fetchMedicines();
-
-    } catch (err) {
-      console.error("Failed to delete medicine:", err);
-
-      setError(
-        err.message || "Failed to delete medicine"
+      alert(
+        "Medicine deleted successfully"
       );
+
+
+      fetchMedicines();
+
+
     }
+    catch(err){
+
+
+      alert(
+        err.message
+      );
+
+
+    }
+
+
   };
 
-  return (
-    <div className="medicines-page">
 
-      {/* ===============================
-          PAGE HEADER
-      =============================== */}
 
-      <div className="medicines-page-header">
 
-        <div>
-          <h1>Medicines</h1>
 
-          <p>
-            Manage your medical inventory and medicines
-          </p>
-        </div>
-
-        {isAdmin && (
-        <button
-            className="add-medicine-btn"
-            onClick={() => {
-            setEditingMedicine(null);
 
-            setFormData({
-              name: "",
-              category: "",
-              manufacturer: "",
-              price: "",
-              quantity: "",
-              expiry_date: "",
-              description: "",
-            });
 
-            setShowForm(true);
-          }}
-        >
-         + Add Medicine
-</button>
-)}
-      </div>
+  const addToCart=(medicine)=>{
 
-      {/* ===============================
-          ADD / EDIT FORM
-      =============================== */}
 
-      {isAdmin && showForm && (
+    let cart =
+    JSON.parse(
+      localStorage.getItem("cart")
+    ) || [];
 
-        <div className="medicine-form-card">
 
-          <div className="medicine-form-header">
 
-            <div>
+    const existing =
+      cart.find(
+        item =>
+        item._id === medicine._id
+      );
 
-              <h2>
-                {editingMedicine
-                  ? "Edit Medicine"
-                  : "Add New Medicine"}
-              </h2>
 
-              <p>
-                {editingMedicine
-                  ? "Update the medicine details below"
-                  : "Enter the medicine details below"}
-              </p>
 
-            </div>
+    if(existing){
 
-            <button
-              type="button"
-              className="close-form-btn"
-              onClick={resetForm}
-            >
-              ×
-            </button>
 
-          </div>
+      cart =
+      cart.map(item=>
 
-          <form onSubmit={handleSubmit}>
+        item._id === medicine._id
 
-            <div className="medicine-form-grid">
+        ?
 
-              {/* NAME */}
+        {
+          ...item,
+          cartQuantity:
+          item.cartQuantity + 1
+        }
 
-              <div className="form-group">
+        :
 
-                <label>
-                  Medicine Name *
-                </label>
+        item
 
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Enter medicine name"
-                  required
-                />
+      );
 
-              </div>
 
-              {/* CATEGORY */}
+    }
 
-              <div className="form-group">
+    else{
 
-                <label>
-                  Category *
-                </label>
 
-                <input
-                  type="text"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  placeholder="e.g. Antibiotic"
-                  required
-                />
+      cart.push({
 
-              </div>
+        ...medicine,
 
-              {/* MANUFACTURER */}
+        cartQuantity:1
 
-              <div className="form-group">
+      });
 
-                <label>
-                  Manufacturer
-                </label>
 
-                <input
-                  type="text"
-                  name="manufacturer"
-                  value={formData.manufacturer}
-                  onChange={handleChange}
-                  placeholder="Enter manufacturer"
-                />
+    }
 
-              </div>
 
-              {/* PRICE */}
 
-              <div className="form-group">
 
-                <label>
-                  Price *
-                </label>
+    localStorage.setItem(
 
-                <input
-                  type="number"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  placeholder="Enter price"
-                  min="0"
-                  required
-                />
+      "cart",
 
-              </div>
+      JSON.stringify(cart)
 
-              {/* QUANTITY */}
+    );
 
-              <div className="form-group">
 
-                <label>
-                  Quantity
-                </label>
 
-                <input
-                  type="number"
-                  name="quantity"
-                  value={formData.quantity}
-                  onChange={handleChange}
-                  placeholder="Enter quantity"
-                  min="0"
-                />
+    alert(
+      `${medicine.name} added to cart`
+    );
 
-              </div>
 
-              {/* EXPIRY DATE */}
+  };
 
-              <div className="form-group">
 
-                <label>
-                  Expiry Date
-                </label>
 
-                <input
-                  type="date"
-                  name="expiry_date"
-                  value={formData.expiry_date}
-                  onChange={handleChange}
-                />
 
-              </div>
 
-            </div>
 
-            {/* DESCRIPTION */}
 
-            <div className="form-group full-width">
+return (
 
-              <label>
-                Description
-              </label>
+<div className="medicines-page">
 
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Enter medicine description"
-                rows="4"
-              />
 
-            </div>
+<div className="medicines-page-header">
 
-            {error && (
 
-              <div className="medicine-error">
-                {error}
-              </div>
+<div>
 
-            )}
+<h1>
+Medicines
+</h1>
 
-            {/* FORM BUTTONS */}
+<p>
+Manage your medical inventory and medicines
+</p>
 
-            <div className="medicine-form-actions">
+</div>
 
-              <button
-                type="button"
-                className="cancel-medicine-btn"
-                onClick={resetForm}
-                disabled={saving}
-              >
-                Cancel
-              </button>
 
-              <button
-                type="submit"
-                className="save-medicine-btn"
-                disabled={saving}
-              >
-                {saving
-                  ? "Saving..."
-                  : editingMedicine
-                  ? "Update Medicine"
-                  : "Add Medicine"}
-              </button>
 
-            </div>
-
-          </form>
-
-        </div>
-
-      )}
-
-      {/* ===============================
-          MEDICINE INVENTORY
-      =============================== */}
-
-      <div className="medicines-card">
-
-        <div className="medicines-card-header">
-
-          <div>
-
-            <h2>
-              Medicine Inventory
-            </h2>
-
-            <p>
-              All medicines available in your system
-            </p>
-
-          </div>
-
-          <button
-            className="refresh-btn"
-            onClick={fetchMedicines}
-            disabled={loading}
-          >
-            {loading
-              ? "Loading..."
-              : "Refresh"}
-          </button>
-
-        </div>
-
-        {/* ERROR */}
-
-        {error && !showForm && (
-
-          <div className="medicine-error">
-
-            <p>
-              Failed to load medicines: {error}
-            </p>
-
-            <button
-              onClick={fetchMedicines}
-            >
-              Retry
-            </button>
-
-          </div>
-
-        )}
-
-        {/* LOADING */}
-
-        {loading && !error && (
-
-          <div className="medicine-loading">
-            Loading medicines...
-          </div>
-
-        )}
-
-        {/* TABLE */}
-
-        {!loading && !error && (
-
-          <div className="medicine-table-container">
-
-            <table className="medicine-table">
-
-              <thead>
-
-                <tr>
-
-                  <th>ID</th>
-
-                  <th>Name</th>
-
-                  <th>Category</th>
-
-                  <th>Manufacturer</th>
-
-                  <th>Price</th>
-
-                  <th>Quantity</th>
-
-                  <th>Expiry Date</th>
-
-                  {isAdmin && <th>Actions</th>}
-                </tr>
-
-              </thead>
-
-              <tbody>
-
-                {medicines.length === 0 ? (
-
-                  <tr>
-
-                    <td
-                      colSpan="8"
-                      className="no-medicines"
-                    >
-                      No medicines found
-                    </td>
-
-                  </tr>
-
-                ) : (
-
-                  medicines.map((medicine) => (
-
-                    <tr key={medicine._id}>
-
-                      <td>
-
-                        {medicine._id
-                          ? medicine._id.substring(0, 8)
-                          : "-"}
-
-                      </td>
-
-                      <td>
-
-                        {medicine.name || "-"}
-
-                      </td>
-
-                      <td>
-
-                        {medicine.category || "-"}
-
-                      </td>
-
-                      <td>
-
-                        {medicine.manufacturer || "-"}
-
-                      </td>
-
-                      <td>
-
-                        ₹{medicine.price || 0}
-
-                      </td>
-
-                      <td>
-
-                        {medicine.quantity || 0}
-
-                      </td>
-
-                      <td>
-
-                        {medicine.expiry_date
-
-                          ? new Date(
-                              medicine.expiry_date
-                            ).toLocaleDateString()
-
-                          : "-"}
-
-                      </td>
-
-                     {/* ACTIONS */}
 
 {isAdmin && (
-  <td>
 
-    <div className="medicine-actions">
+<button
 
-      <button
-        className="edit-medicine-btn"
-        onClick={() =>
-          handleEdit(medicine)
-        }
-      >
-        Edit
-      </button>
+className="add-medicine-btn"
 
-      <button
-        className="delete-medicine-btn"
-        onClick={() =>
-          handleDelete(
-            medicine._id,
-            medicine.name
-          )
-        }
-      >
-        Delete
-      </button>
+onClick={()=>{
 
-    </div>
+setEditingMedicine(null);
 
-  </td>
+setShowForm(true);
+
+}}
+
+>
+
++ Add Medicine
+
+</button>
+
 )}
 
-                    </tr>
 
-                  ))
 
-                )}
+</div>
 
-              </tbody>
 
-            </table>
 
-          </div>
 
-        )}
 
-      </div>
+{isAdmin && showForm && (
 
-    </div>
-  );
+
+<div className="medicine-form-card">
+
+
+<h2>
+
+{
+editingMedicine
+?
+"Edit Medicine"
+:
+"Add Medicine"
 }
+
+</h2>
+
+
+
+<form onSubmit={handleSubmit}>
+
+
+<input
+name="name"
+placeholder="Medicine Name"
+value={formData.name}
+onChange={handleChange}
+/>
+
+
+<input
+name="category"
+placeholder="Category"
+value={formData.category}
+onChange={handleChange}
+/>
+
+
+<input
+name="manufacturer"
+placeholder="Manufacturer"
+value={formData.manufacturer}
+onChange={handleChange}
+/>
+
+
+<input
+name="price"
+placeholder="Price"
+value={formData.price}
+onChange={handleChange}
+/>
+
+
+<input
+name="quantity"
+placeholder="Quantity"
+value={formData.quantity}
+onChange={handleChange}
+/>
+
+
+
+<button disabled={saving}>
+
+{
+saving
+?
+"Saving..."
+:
+"Save"
+}
+
+</button>
+
+
+
+<button
+type="button"
+onClick={resetForm}
+>
+
+Cancel
+
+</button>
+
+
+</form>
+
+
+</div>
+
+)}
+
+
+
+
+
+
+
+<div className="medicines-card">
+
+
+<table className="medicine-table">
+
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>Category</th>
+
+<th>Price</th>
+
+<th>Quantity</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+
+
+<tbody>
+
+
+
+{medicines.map((medicine)=>(
+
+
+<tr key={medicine._id}>
+
+
+<td>
+
+{
+medicine._id
+?
+medicine._id.substring(0,8)
+:
+"-"
+}
+
+</td>
+
+
+
+<td>
+{medicine.name}
+</td>
+
+
+<td>
+{medicine.category}
+</td>
+
+
+<td>
+₹{medicine.price}
+</td>
+
+
+<td>
+{medicine.quantity}
+</td>
+
+
+
+
+<td>
+
+
+{isAdmin ? (
+
+
+<>
+
+
+<button
+
+className="edit-medicine-btn"
+
+onClick={()=>
+handleEdit(medicine)
+}
+
+>
+
+Edit
+
+</button>
+
+
+
+
+<button
+
+className="delete-medicine-btn"
+
+onClick={()=>
+handleDelete(
+medicine._id,
+medicine.name
+)
+}
+
+>
+
+Delete
+
+</button>
+
+
+
+</>
+
+
+)
+
+:(
+
+
+<button
+
+className="add-cart-btn"
+
+onClick={()=>
+addToCart(medicine)
+}
+
+>
+
+🛒 Add Cart
+
+</button>
+
+
+)}
+
+
+
+</td>
+
+
+
+</tr>
+
+
+
+))}
+
+
+
+</tbody>
+
+
+
+</table>
+
+
+</div>
+
+
+
+</div>
+
+
+);
+
+
+}
+
+
 
 export default Medicines;
