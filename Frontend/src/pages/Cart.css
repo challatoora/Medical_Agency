@@ -1,0 +1,38 @@
+.cart-page {
+  padding: 30px;
+}
+
+.cart-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cart-table th,
+.cart-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.cart-total {
+  margin-top: 20px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.checkout-btn {
+  margin-top: 20px;
+  padding: 12px 25px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
