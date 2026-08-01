@@ -500,36 +500,34 @@ function App() {
 
   const renderPage = () => {
 
-    switch(currentPage) {
+  switch (currentPage) {
 
-      case "Users":
-        return <Users />;
+    case "Users":
+      return <Users />;
 
+    case "Medicines":
+      return <Medicines />;
 
-      case "Medicines":
-        return <Medicines />;
+    case "Inventory":
+      return <Inventory />;
 
+    case "Suppliers":
+      return <Suppliers />;
 
-      case "Inventory":
-        return <Inventory />;
+    case "Orders":
+      return <Orders />;
 
+    case "Cart":
+      return <Cart setCurrentPage={setCurrentPage} />;
 
-      case "Suppliers":
-        return <Suppliers />;
+    case "Billing":
+      return <Billing />;
 
+    case "Dashboard":
+    default:
+      return <Dashboard />;
 
-      case "Orders":
-        return <Orders />;
-
-
-      case "Billing":
-        return <Billing />;
-
-
-      default:
-        return <Dashboard />;
-
-    }
+  }
 
 };
 
