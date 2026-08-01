@@ -15,6 +15,9 @@ npm install express mysql2 cors dotenv
 npm install --save-dev nodemon
 
 echo "Setup Completed Successfully."
+
+npm install lucide-react
+npm install lucide-react recharts
 # ALTER USER 'root'@'localhost' IDENTIFIED BY 'Root@123';
 # FLUSH PRIVILEGES;
 # EXIT;

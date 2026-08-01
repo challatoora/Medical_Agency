@@ -1,15 +1,15 @@
-// const USER_API_URL = "http://100.58.117.241:5006/api/users";
-// const MEDICINE_API_URL = "http://100.58.117.241:5001/api/medicines";
-// const INVENTORY_API_URL = "http://100.58.117.241:5003/api/inventory";
-// const SUPPLIER_API_URL = "http://100.58.117.241:5002/api/suppliers";
-// const ORDER_API_URL = "http://100.58.117.241:5004/api/orders";
-// const BILLING_API_URL = "http://100.58.117.241:5005/api/billing";
-const USER_API_URL = "http://mreddy.online/api/users";
-const MEDICINE_API_URL = "http://mreddy.online/api/medicines";
-const INVENTORY_API_URL = "http://mreddy.online/api/inventory";
-const SUPPLIER_API_URL = "http://mreddy.online/api/suppliers";
-const ORDER_API_URL = "http://mreddy.online/api/orders";
-const BILLING_API_URL = "http://mreddy.online/api/billing";
+const USER_API_URL = "http://50.16.167.95:5006/api/users";
+const MEDICINE_API_URL = "http://50.16.167.95:5001/api/medicines";
+const INVENTORY_API_URL = "http://50.16.167.95:5003/api/inventory";
+const SUPPLIER_API_URL = "http://50.16.167.95:5002/api/suppliers";
+const ORDER_API_URL = "http://50.16.167.95:5004/api/orders";
+const BILLING_API_URL = "http://50.16.167.95:5005/api/billing";
+// const USER_API_URL = "http://mreddy.online/api/users";
+// const MEDICINE_API_URL = "http://mreddy.online/api/medicines";
+// const INVENTORY_API_URL = "http://mreddy.online/api/inventory";
+// const SUPPLIER_API_URL = "http://mreddy.online/api/suppliers";
+// const ORDER_API_URL = "http://mreddy.online/api/orders";
+// const BILLING_API_URL = "http://mreddy.online/api/billing";
 
 const request = async (url, options = {}) => {
 const response = await fetch(url, {
