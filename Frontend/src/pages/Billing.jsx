@@ -632,21 +632,51 @@
 // export default Billing;
 
 import React, { useEffect, useState } from "react";
-import { billingAPI } from "../services/api";
+import {
+  orderAPI,
+  billingAPI
+} from "../services/api";
+
 import "./Billing.css";
 
 
 function Billing() {
 
+  // ==========================================
+  // CART
+  // ==========================================
 
-  const [cart,setCart] = useState([]);
-
-  const [user,setUser] = useState(null);
+  const [cart, setCart] = useState([]);
 
 
+  // ==========================================
+  // LOGGED-IN USER
+  // ==========================================
 
-  useEffect(()=>{
+  const [user, setUser] = useState(null);
 
+
+  // ==========================================
+  // PAYMENT
+  // ==========================================
+
+  const [paymentMethod, setPaymentMethod] =
+    useState("Cash");
+
+
+  // ==========================================
+  // BILLING STATUS
+  // ==========================================
+
+  const [loading, setLoading] =
+    useState(false);
+
+
+  // ==========================================
+  // LOAD CART + USER
+  // ==========================================
+
+  useEffect(() => {
 
     const cartData =
       JSON.parse(
@@ -664,20 +694,18 @@ function Billing() {
 
     setUser(userData);
 
-
-  },[]);
-
+  }, []);
 
 
+  // ==========================================
+  // SUBTOTAL
+  // ==========================================
 
+  const subtotal = cart.reduce(
 
-
-  const totalAmount = cart.reduce(
-
-    (sum,item)=>
+    (sum, item) =>
 
       sum +
-
       (
         Number(item.price) *
         Number(item.cartQuantity)
@@ -688,270 +716,569 @@ function Billing() {
   );
 
 
+  // ==========================================
+  // TAX 18%
+  // ==========================================
+
+  const taxAmount =
+    subtotal * 0.18;
 
 
+  // ==========================================
+  // DISCOUNT
+  // ==========================================
+
+  const discountAmount = 0;
+
+
+  // ==========================================
+  // FINAL TOTAL
+  // ==========================================
+
+  const totalAmount =
+    subtotal +
+    taxAmount -
+    discountAmount;
+
+
+  // ==========================================
+  // GENERATE BILL
+  // ==========================================
 
   const generateBill = async () => {
 
-  try {
+    // Check cart
+
+    if (cart.length === 0) {
+
+      alert(
+        "Your cart is empty"
+      );
+
+      return;
+
+    }
 
 
-    const billData = {
+    // Check user
+
+    if (!user?.id) {
+
+      alert(
+        "User information not found"
+      );
+
+      return;
+
+    }
 
 
-      customer_name:
-      user?.name || "Customer",
+    try {
+
+      setLoading(true);
 
 
-      items: cart.map(item => ({
+      // ========================================
+      // STEP 1
+      // CREATE ORDER
+      // ========================================
 
-        medicine_id:item._id,
+      const orderData = {
 
-        medicine_name:item.name,
+        customer_name:
+          user?.name || "Customer",
 
-        quantity:item.cartQuantity,
+        medicine_name:
+          cart
+            .map(item => item.name)
+            .join(", "),
 
-        price:item.price
+        quantity:
+          cart.reduce(
+            (total, item) =>
+              total +
+              Number(item.cartQuantity),
 
-      })),
+            0
+          ),
+
+        total_price:
+          totalAmount,
+
+        status:
+          "Pending"
+
+      };
 
 
-      total_amount: totalAmount
+      console.log(
+        "Creating Order:",
+        orderData
+      );
 
 
-    };
+      const orderResponse =
+        await orderAPI.create(
+          orderData
+        );
 
 
+      console.log(
+        "Order Response:",
+        orderResponse
+      );
 
-    const response =
-      await billingAPI.create(
+
+      // ========================================
+      // GET ORDER ID
+      // ========================================
+
+      const orderId =
+        orderResponse.orderId ||
+        orderResponse.id;
+
+
+      if (!orderId) {
+
+        throw new Error(
+          "Order ID was not returned"
+        );
+
+      }
+
+
+      // ========================================
+      // STEP 2
+      // CREATE BILL / INVOICE
+      // ========================================
+
+      const billData = {
+
+        order_id:
+          Number(orderId),
+
+        user_id:
+          Number(user.id),
+
+        subtotal:
+          Number(subtotal),
+
+        tax_amount:
+          Number(taxAmount),
+
+        discount_amount:
+          Number(discountAmount),
+
+        payment_status:
+          "Pending",
+
+        payment_method:
+          paymentMethod
+
+      };
+
+
+      console.log(
+        "Creating Invoice:",
         billData
       );
 
 
+      const billResponse =
+        await billingAPI.create(
+          billData
+        );
 
-    console.log(
-      "Bill Response:",
-      response
-    );
 
+      console.log(
+        "Invoice Response:",
+        billResponse
+      );
 
 
-    alert(
-      "Bill generated successfully"
-    );
+      // ========================================
+      // SUCCESS
+      // ========================================
 
+      alert(
 
+        `Invoice created successfully!\n\n` +
 
-    localStorage.removeItem(
-      "cart"
-    );
+        `Invoice Number: ${
+          billResponse.invoiceNumber ||
+          "Generated"
+        }\n\n` +
 
+        `Total Amount: ₹${
+          totalAmount.toFixed(2)
+        }`
 
-    setCart([]);
+      );
 
 
+      // ========================================
+      // CLEAR CART
+      // ========================================
 
-  }
+      localStorage.removeItem(
+        "cart"
+      );
 
-  catch(err){
 
+      setCart([]);
 
-    console.error(err);
 
+    }
 
-    alert(
-      "Billing failed"
-    );
+    catch (err) {
 
+      console.error(
+        "Billing Error:",
+        err
+      );
 
-  }
 
+      alert(
 
-};
+        err.message ||
+        "Failed to generate bill"
 
+      );
 
+    }
 
+    finally {
 
+      setLoading(false);
 
-return (
+    }
 
-<div className="billing-page">
+  };
 
 
-<h1>
-Billing
-</h1>
+  // ==========================================
+  // RETURN
+  // ==========================================
 
+  return (
 
+    <div className="billing-page">
 
 
-<div className="billing-card">
+      {/* ======================================
+          PAGE TITLE
+      ====================================== */}
 
+      <h1>
+        Billing
+      </h1>
 
 
-<h2>
-Customer Details
-</h2>
+      {/* ======================================
+          CUSTOMER DETAILS
+      ====================================== */}
 
+      <div className="billing-card">
 
-<p>
-Name :
-{
-user?.name || "Customer"
-}
-</p>
 
+        <h2>
+          Customer Details
+        </h2>
 
 
-<p>
-Role :
-{
-user?.role || "USER"
-}
-</p>
+        <p>
 
+          <strong>
+            Name:
+          </strong>
 
+          {" "}
 
-</div>
+          {user?.name || "Customer"}
 
+        </p>
 
 
+        <p>
 
+          <strong>
+            Role:
+          </strong>
 
+          {" "}
 
-<div className="billing-card">
+          {user?.role || "USER"}
 
+        </p>
 
-<h2>
-Order Summary
-</h2>
 
+        <p>
 
+          <strong>
+            User ID:
+          </strong>
 
-<table className="billing-table">
+          {" "}
 
+          {user?.id || "-"}
 
-<thead>
+        </p>
 
-<tr>
 
-<th>
-Medicine
-</th>
+      </div>
 
 
-<th>
-Price
-</th>
+      {/* ======================================
+          ORDER SUMMARY
+      ====================================== */}
 
+      <div className="billing-card">
 
-<th>
-Quantity
-</th>
 
+        <h2>
+          Order Summary
+        </h2>
 
-<th>
-Amount
-</th>
 
+        {cart.length === 0 ? (
 
-</tr>
+          <p>
+            Your cart is empty.
+          </p>
 
-</thead>
+        ) : (
 
+          <table className="billing-table">
 
 
-<tbody>
+            <thead>
 
+              <tr>
 
-{
+                <th>
+                  Medicine
+                </th>
 
-cart.map(item=>(
+                <th>
+                  Price
+                </th>
 
+                <th>
+                  Quantity
+                </th>
 
-<tr key={item._id}>
+                <th>
+                  Amount
+                </th>
 
+              </tr>
 
-<td>
-{item.name}
-</td>
+            </thead>
 
 
+            <tbody>
 
-<td>
-₹{item.price}
-</td>
 
+              {cart.map(item => (
 
 
-<td>
-{item.cartQuantity}
-</td>
+                <tr
+                  key={item._id}
+                >
 
 
+                  <td>
+                    {item.name}
+                  </td>
 
-<td>
 
-₹
-{
-item.price *
-item.cartQuantity
-}
+                  <td>
+                    ₹{Number(item.price).toFixed(2)}
+                  </td>
 
-</td>
 
+                  <td>
+                    {item.cartQuantity}
+                  </td>
 
-</tr>
 
+                  <td>
 
-))
+                    ₹
+                    {(
+                      Number(item.price) *
+                      Number(item.cartQuantity)
+                    ).toFixed(2)}
 
-}
+                  </td>
 
 
+                </tr>
 
-</tbody>
 
+              ))}
 
-</table>
 
+            </tbody>
 
 
+          </table>
 
-<h2 className="billing-total">
+        )}
 
-Total Payable :
-₹{totalAmount}
 
-</h2>
+        {/* ====================================
+            BILL CALCULATION
+        ==================================== */}
 
+        {cart.length > 0 && (
 
+          <div className="billing-calculation">
 
 
-<button
+            <p>
 
-className="generate-bill-btn"
+              <span>
+                Subtotal:
+              </span>
 
-onClick={generateBill}
+              <strong>
+                ₹{subtotal.toFixed(2)}
+              </strong>
 
->
+            </p>
 
-Generate Bill
 
-</button>
+            <p>
 
+              <span>
+                Tax (18%):
+              </span>
 
+              <strong>
+                ₹{taxAmount.toFixed(2)}
+              </strong>
 
-</div>
+            </p>
 
 
+            <p>
 
+              <span>
+                Discount:
+              </span>
 
-</div>
+              <strong>
+                ₹{discountAmount.toFixed(2)}
+              </strong>
 
-);
+            </p>
 
+
+            <hr />
+
+
+            <h2 className="billing-total">
+
+              <span>
+                Total Payable:
+              </span>
+
+              <strong>
+                ₹{totalAmount.toFixed(2)}
+              </strong>
+
+            </h2>
+
+
+          </div>
+
+        )}
+
+
+        {/* ====================================
+            PAYMENT METHOD
+        ==================================== */}
+
+        {cart.length > 0 && (
+
+          <div className="payment-section">
+
+
+            <h3>
+              Payment Method
+            </h3>
+
+
+            <select
+
+              value={paymentMethod}
+
+              onChange={(e) =>
+                setPaymentMethod(
+                  e.target.value
+                )
+              }
+
+            >
+
+              <option value="Cash">
+                Cash
+              </option>
+
+              <option value="Card">
+                Card
+              </option>
+
+              <option value="UPI">
+                UPI
+              </option>
+
+            </select>
+
+
+          </div>
+
+        )}
+
+
+        {/* ====================================
+            GENERATE BILL BUTTON
+        ==================================== */}
+
+        {cart.length > 0 && (
+
+          <button
+
+            className="generate-bill-btn"
+
+            onClick={
+              generateBill
+            }
+
+            disabled={loading}
+
+          >
+
+            {loading
+
+              ? "Generating Bill..."
+
+              : "Generate Bill"
+
+            }
+
+          </button>
+
+        )}
+
+
+      </div>
+
+
+    </div>
+
+  );
 
 }
 
