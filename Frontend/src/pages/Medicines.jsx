@@ -2482,12 +2482,25 @@ function Medicines() {
 
 
 
+  // =========================
+  // USER ROLE CHECK
+  // =========================
+
   const user =
-    JSON.parse(localStorage.getItem("user"));
+    JSON.parse(localStorage.getItem("user")) || {};
+
+
+  const role =
+    user.role?.toLowerCase().trim();
 
 
   const isAdmin =
-    user?.role?.toLowerCase().trim() === "admin";
+    role === "admin";
+
+
+  const isUser =
+    role === "user";
+
 
 
 
@@ -2505,20 +2518,18 @@ function Medicines() {
 
 
 
+
+
   const fetchMedicines = async()=>{
 
     try{
 
       setLoading(true);
 
-      setError("");
-
       const response =
         await medicineAPI.getAll();
 
-
       setMedicines(response);
-
 
     }
     catch(err){
@@ -2536,6 +2547,7 @@ function Medicines() {
     }
 
   };
+
 
 
 
@@ -2566,8 +2578,8 @@ function Medicines() {
 
 
 
-  const resetForm=()=>{
 
+  const resetForm=()=>{
 
     setFormData({
 
@@ -2586,7 +2598,6 @@ function Medicines() {
 
     setShowForm(false);
 
-
   };
 
 
@@ -2594,8 +2605,8 @@ function Medicines() {
 
 
 
-  const handleSubmit=async(e)=>{
 
+  const handleSubmit=async(e)=>{
 
     e.preventDefault();
 
@@ -2606,17 +2617,14 @@ function Medicines() {
       setSaving(true);
 
 
-      const data={
 
+      const data={
 
         ...formData,
 
-
         price:Number(formData.price),
 
-
         quantity:Number(formData.quantity)
-
 
       };
 
@@ -2635,12 +2643,11 @@ function Medicines() {
 
 
         alert(
-          "Medicine updated successfully"
+          "Medicine updated"
         );
 
 
       }
-
       else{
 
 
@@ -2648,7 +2655,7 @@ function Medicines() {
 
 
         alert(
-          "Medicine added successfully"
+          "Medicine added"
         );
 
 
@@ -2658,7 +2665,6 @@ function Medicines() {
 
       resetForm();
 
-
       fetchMedicines();
 
 
@@ -2666,18 +2672,12 @@ function Medicines() {
     }
     catch(err){
 
-
-      setError(
-        err.message
-      );
-
+      setError(err.message);
 
     }
     finally{
 
-
       setSaving(false);
-
 
     }
 
@@ -2689,11 +2689,11 @@ function Medicines() {
 
 
 
+
   const handleEdit=(medicine)=>{
 
 
     setEditingMedicine(medicine);
-
 
 
     setFormData({
@@ -2720,7 +2720,6 @@ function Medicines() {
     });
 
 
-
     setShowForm(true);
 
 
@@ -2732,47 +2731,33 @@ function Medicines() {
 
 
 
+
   const handleDelete=async(id,name)=>{
 
 
-    const confirmDelete =
-      window.confirm(
+    if(
+      !window.confirm(
         `Delete ${name}?`
-      );
-
-
-    if(!confirmDelete)
-      return;
+      )
+    )
+    return;
 
 
 
-    try{
+    await medicineAPI.delete(id);
 
 
-      await medicineAPI.delete(id);
+    alert(
+      "Medicine deleted"
+    );
 
 
-      alert(
-        "Medicine deleted successfully"
-      );
-
-
-      fetchMedicines();
-
-
-    }
-    catch(err){
-
-
-      alert(
-        err.message
-      );
-
-
-    }
+    fetchMedicines();
 
 
   };
+
+
 
 
 
@@ -2791,10 +2776,11 @@ function Medicines() {
 
 
     const existing =
-      cart.find(
-        item =>
-        item._id === medicine._id
-      );
+    cart.find(
+      item =>
+      item._id === medicine._id
+    );
+
 
 
 
@@ -2809,9 +2795,12 @@ function Medicines() {
         ?
 
         {
+
           ...item,
+
           cartQuantity:
           item.cartQuantity + 1
+
         }
 
         :
@@ -2839,7 +2828,6 @@ function Medicines() {
 
 
 
-
     localStorage.setItem(
 
       "cart",
@@ -2862,10 +2850,10 @@ function Medicines() {
 
 
 
-
 return (
 
 <div className="medicines-page">
+
 
 
 <div className="medicines-page-header">
@@ -2878,7 +2866,7 @@ Medicines
 </h1>
 
 <p>
-Manage your medical inventory and medicines
+Available medicines
 </p>
 
 </div>
@@ -2886,7 +2874,9 @@ Manage your medical inventory and medicines
 
 
 
-{isAdmin && (
+
+{
+isAdmin &&
 
 <button
 
@@ -2906,8 +2896,7 @@ setShowForm(true);
 
 </button>
 
-)}
-
+}
 
 
 </div>
@@ -2916,8 +2905,10 @@ setShowForm(true);
 
 
 
-{isAdmin && showForm && (
 
+
+{
+isAdmin && showForm &&
 
 <div className="medicine-form-card">
 
@@ -2930,9 +2921,11 @@ editingMedicine
 "Edit Medicine"
 :
 "Add Medicine"
+
 }
 
 </h2>
+
 
 
 
@@ -2979,7 +2972,6 @@ onChange={handleChange}
 />
 
 
-
 <button disabled={saving}>
 
 {
@@ -2988,10 +2980,10 @@ saving
 "Saving..."
 :
 "Save"
+
 }
 
 </button>
-
 
 
 <button
@@ -3009,7 +3001,8 @@ Cancel
 
 </div>
 
-)}
+}
+
 
 
 
@@ -3037,7 +3030,7 @@ Cancel
 
 <th>Quantity</th>
 
-<th>Actions</th>
+<th>Action</th>
 
 </tr>
 
@@ -3045,28 +3038,21 @@ Cancel
 
 
 
+
 <tbody>
 
 
+{
 
-{medicines.map((medicine)=>(
+medicines.map(medicine=>(
 
 
 <tr key={medicine._id}>
 
 
 <td>
-
-{
-medicine._id
-?
-medicine._id.substring(0,8)
-:
-"-"
-}
-
+{medicine._id.substring(0,8)}
 </td>
-
 
 
 <td>
@@ -3091,14 +3077,15 @@ medicine._id.substring(0,8)
 
 
 
+
 <td>
 
 
-{isAdmin ? (
+{
 
+isAdmin &&
 
 <>
-
 
 <button
 
@@ -3134,15 +3121,18 @@ Delete
 
 </button>
 
-
-
 </>
 
+}
 
-)
 
-:(
 
+
+
+
+{
+
+isUser &&
 
 <button
 
@@ -3158,8 +3148,7 @@ addToCart(medicine)
 
 </button>
 
-
-)}
+}
 
 
 
@@ -3170,13 +3159,14 @@ addToCart(medicine)
 </tr>
 
 
+))
 
-))}
+
+}
 
 
 
 </tbody>
-
 
 
 </table>
@@ -3193,7 +3183,6 @@ addToCart(medicine)
 
 
 }
-
 
 
 export default Medicines;
