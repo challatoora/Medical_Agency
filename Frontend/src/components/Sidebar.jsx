@@ -443,6 +443,7 @@ function Sidebar({
       label: "Medicines",
     },
 
+
     {
       icon: Package,
       label: "Inventory",
@@ -492,6 +493,11 @@ function Sidebar({
   {
     icon: ShoppingCart,
     label: "Orders",
+  },
+
+  {
+  icon: CreditCard,
+  label: "Billing",
   },
 
 ];
