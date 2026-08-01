@@ -1,51 +1,58 @@
 import React, { useEffect, useState } from "react";
 import "./Cart.css";
 
-function Cart() {
+
+function Cart({ setCurrentPage }) {
 
 
-  const [cart,setCart] = useState([]);
+  const [cart, setCart] = useState([]);
 
 
 
-  useEffect(()=>{
+  useEffect(() => {
+
+    loadCart();
+
+  }, []);
+
+
+
+  const loadCart = () => {
 
     const data =
-    JSON.parse(localStorage.getItem("cart")) || [];
+      JSON.parse(localStorage.getItem("cart")) || [];
 
     setCart(data);
 
-  },[]);
+  };
 
 
 
 
-  const updateQuantity=(id,type)=>{
+  const updateQuantity = (id, type) => {
 
 
-    let updated = cart.map(item=>{
+    const updatedCart = cart.map(item => {
 
 
-      if(item._id===id){
+      if (item._id === id) {
 
 
-        let qty=item.cartQuantity;
+        let quantity = item.cartQuantity;
 
 
-        if(type==="plus"){
+        if (type === "plus") {
 
-          qty++;
-
-        }
-        else{
-
-          qty--;
+          quantity++;
 
         }
 
 
-        if(qty<1)
-          qty=1;
+        if (type === "minus" && quantity > 1) {
+
+          quantity--;
+
+        }
 
 
 
@@ -53,7 +60,7 @@ function Cart() {
 
           ...item,
 
-          cartQuantity:qty
+          cartQuantity: quantity
 
         };
 
@@ -68,12 +75,12 @@ function Cart() {
 
 
 
-    setCart(updated);
+    setCart(updatedCart);
 
 
     localStorage.setItem(
       "cart",
-      JSON.stringify(updated)
+      JSON.stringify(updatedCart)
     );
 
 
@@ -83,21 +90,29 @@ function Cart() {
 
 
 
-  const removeItem=(id)=>{
 
 
-    const updated =
-    cart.filter(
-      item=>item._id!==id
+  const removeItem = (id) => {
+
+
+    const updatedCart = cart.filter(
+
+      item => item._id !== id
+
     );
 
 
-    setCart(updated);
+
+    setCart(updatedCart);
+
 
 
     localStorage.setItem(
+
       "cart",
-      JSON.stringify(updated)
+
+      JSON.stringify(updatedCart)
+
     );
 
 
@@ -107,16 +122,18 @@ function Cart() {
 
 
 
-  const total = cart.reduce(
 
-    (sum,item)=>
 
-    sum +
-    (
-      Number(item.price)
-      *
-      Number(item.cartQuantity)
-    ),
+  const totalAmount = cart.reduce(
+
+    (total, item) =>
+
+      total +
+
+      (
+        Number(item.price) *
+        Number(item.cartQuantity)
+      ),
 
     0
 
@@ -126,212 +143,270 @@ function Cart() {
 
 
 
-return (
 
-<div className="cart-page">
-
-
-<h1>
-Shopping Cart
-</h1>
+  return (
 
 
-
-{
-
-cart.length===0 ?
+    <div className="cart-page">
 
 
-<h3>
-Cart is empty
-</h3>
-
-
-:
-
-
-<div className="cart-card">
-
-
-<table>
-
-
-<thead>
-
-<tr>
-
-<th>
-Medicine
-</th>
-
-<th>
-Price
-</th>
-
-<th>
-Quantity
-</th>
-
-<th>
-Total
-</th>
-
-<th>
-Action
-</th>
-
-</tr>
-
-</thead>
+      <h1>
+        Shopping Cart
+      </h1>
 
 
 
-<tbody>
+
+      {
+        cart.length === 0 ?
 
 
-{
+        (
 
-cart.map(item=>(
+          <div className="cart-card">
 
+            <h2>
+              Your cart is empty
+            </h2>
 
-<tr key={item._id}>
-
-
-<td>
-{item.name}
-</td>
+          </div>
 
 
-
-<td>
-₹{item.price}
-</td>
+        )
 
 
+        :
 
-<td>
+
+        (
 
 
-<button
-onClick={()=>
-updateQuantity(
-item._id,
-"minus"
-)
+        <div className="cart-card">
+
+
+          <table className="cart-table">
+
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Medicine
+                </th>
+
+
+                <th>
+                  Price
+                </th>
+
+
+                <th>
+                  Quantity
+                </th>
+
+
+                <th>
+                  Total
+                </th>
+
+
+                <th>
+                  Action
+                </th>
+
+
+              </tr>
+
+
+            </thead>
+
+
+
+
+
+            <tbody>
+
+
+            {
+
+              cart.map(item => (
+
+
+                <tr key={item._id}>
+
+
+                  <td>
+
+                    {item.name}
+
+                  </td>
+
+
+
+                  <td>
+
+                    ₹{item.price}
+
+                  </td>
+
+
+
+
+                  <td>
+
+
+                    <button
+
+                    onClick={() =>
+                      updateQuantity(
+                        item._id,
+                        "minus"
+                      )
+                    }
+
+                    >
+                      -
+                    </button>
+
+
+                    &nbsp;
+
+                    {item.cartQuantity}
+
+                    &nbsp;
+
+
+                    <button
+
+                    onClick={() =>
+                      updateQuantity(
+                        item._id,
+                        "plus"
+                      )
+                    }
+
+                    >
+                      +
+                    </button>
+
+
+                  </td>
+
+
+
+
+
+                  <td>
+
+                    ₹
+                    {
+                      item.price *
+                      item.cartQuantity
+                    }
+
+                  </td>
+
+
+
+
+
+                  <td>
+
+
+                    <button
+
+                    className="delete-medicine-btn"
+
+                    onClick={() =>
+                      removeItem(
+                        item._id
+                      )
+                    }
+
+                    >
+
+                    Remove
+
+                    </button>
+
+
+                  </td>
+
+
+
+
+                </tr>
+
+
+              ))
+
+            }
+
+
+            </tbody>
+
+
+          </table>
+
+
+
+
+
+
+          <div className="cart-total">
+
+
+            Total Amount :
+
+            ₹{totalAmount}
+
+
+          </div>
+
+
+
+
+
+
+
+          <button
+
+          className="checkout-btn"
+
+          onClick={() => {
+
+            setCurrentPage("Billing");
+
+          }}
+
+          >
+
+            Proceed To Billing
+
+          </button>
+
+
+
+
+
+        </div>
+
+
+        )
+
+
+      }
+
+
+
+    </div>
+
+
+  );
+
 }
->
 
--
-
-</button>
-
-
-
-<span>
-
- {item.cartQuantity}
-
-</span>
-
-
-
-<button
-onClick={()=>
-updateQuantity(
-item._id,
-"plus"
-)
-}
->
-
-+
-
-</button>
-
-
-</td>
-
-
-
-<td>
-
-₹
-{
-item.price *
-item.cartQuantity
-}
-
-</td>
-
-
-
-<td>
-
-
-<button
-
-onClick={()=>
-removeItem(item._id)
-}
-
->
-
-Remove
-
-</button>
-
-
-</td>
-
-
-
-</tr>
-
-
-))
-
-
-}
-
-
-</tbody>
-
-
-</table>
-
-
-
-<h2>
-
-Total Amount :
-₹{total}
-
-</h2>
-
-
-
-<button className="checkout-btn">
-
-Proceed To Billing
-
-</button>
-
-
-
-</div>
-
-
-}
-
-
-
-</div>
-
-
-);
-
-
-}
 
 
 export default Cart;

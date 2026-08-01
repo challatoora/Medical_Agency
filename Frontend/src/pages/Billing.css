@@ -1,0 +1,51 @@
+.billing-page {
+  padding: 30px;
+}
+
+
+.billing-card {
+
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  margin-bottom:20px;
+
+}
+
+
+.billing-table {
+
+ width:100%;
+ border-collapse:collapse;
+
+}
+
+
+.billing-table th,
+.billing-table td {
+
+ padding:12px;
+ border-bottom:1px solid #ddd;
+ text-align:center;
+
+}
+
+
+.billing-total {
+
+ margin-top:20px;
+
+}
+
+
+.generate-bill-btn {
+
+ margin-top:20px;
+ padding:12px 25px;
+ background:#16a34a;
+ color:white;
+ border:none;
+ border-radius:8px;
+ cursor:pointer;
+
+}

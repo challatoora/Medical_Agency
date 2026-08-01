@@ -239,3 +239,37 @@ request(`${BILLING_API_URL}/${id}`, {
 method: "DELETE",
 }),
 };
+
+export const billingAPI = {
+
+  create: async (data) => {
+
+    const response = await fetch(
+      "http://100.58.117.241:5005/api/billing",
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify(data)
+      }
+    );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        "Failed to create bill"
+      );
+
+    }
+
+
+    return response.json();
+
+  }
+
+
+};
