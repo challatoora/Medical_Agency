@@ -275,25 +275,25 @@ method: "DELETE",
 
 // };
 
-export const orderAPI = {
+// export const orderAPI = {
 
-  create: async (data) => {
+//   create: async (data) => {
 
-    const response = await fetch(
-      `${ORDER_API_URL}/orders`,
-      {
-        method: "POST",
+//     const response = await fetch(
+//       `${ORDER_API_URL}/orders`,
+//       {
+//         method: "POST",
 
-        headers:{
-          "Content-Type":"application/json"
-        },
+//         headers:{
+//           "Content-Type":"application/json"
+//         },
 
-        body: JSON.stringify(data)
-      }
-    );
+//         body: JSON.stringify(data)
+//       }
+//     );
 
-    return response.json();
+//     return response.json();
 
-  }
+//   }
 
-};
+// };
