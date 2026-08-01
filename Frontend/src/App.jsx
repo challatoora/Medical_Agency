@@ -500,43 +500,38 @@ function App() {
 
   const renderPage = () => {
 
-  switch(currentPage) {
+    switch(currentPage) {
 
-    case "Users":
-      return <Users />;
-
-
-    case "Medicines":
-      return <Medicines />;
+      case "Users":
+        return <Users />;
 
 
-    case "Inventory":
-      return <Inventory />;
+      case "Medicines":
+        return <Medicines />;
 
 
-    case "Suppliers":
-      return <Suppliers />;
+      case "Inventory":
+        return <Inventory />;
 
 
-    case "Orders":
-      return <Orders />;
+      case "Suppliers":
+        return <Suppliers />;
 
 
-    case "Billing":
-      return <Billing />;
+      case "Orders":
+        return <Orders />;
 
 
-    case "Cart":
-      return <Cart />;
+      case "Billing":
+        return <Billing />;
 
 
-    default:
-      return <Dashboard />;
+      default:
+        return <Dashboard />;
 
-  }
+    }
 
 };
-
 
 
   if (!isLoggedIn) {

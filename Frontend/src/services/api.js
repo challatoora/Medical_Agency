@@ -4,6 +4,7 @@ const INVENTORY_API_URL = "http://50.16.167.95:5003/api/inventory";
 const SUPPLIER_API_URL = "http://50.16.167.95:5002/api/suppliers";
 const ORDER_API_URL = "http://50.16.167.95:5004/api/orders";
 const BILLING_API_URL = "http://50.16.167.95:5005/api/billing";
+const ORDER_API_URL = "http://50.16.167.95:5004/api";
 // const USER_API_URL = "http://mreddy.online/api/users";
 // const MEDICINE_API_URL = "http://mreddy.online/api/medicines";
 // const INVENTORY_API_URL = "http://mreddy.online/api/inventory";
@@ -273,3 +274,26 @@ method: "DELETE",
 
 
 // };
+
+export const orderAPI = {
+
+  create: async (data) => {
+
+    const response = await fetch(
+      `${ORDER_API_URL}/orders`,
+      {
+        method: "POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body: JSON.stringify(data)
+      }
+    );
+
+    return response.json();
+
+  }
+
+};
