@@ -10,43 +10,35 @@ function Orders() {
   // ==============================
   // LOAD ALL ORDERS
   // ==============================
-
   const loadOrders = async () => {
-
     try {
-
       setLoading(true);
 
-      const response =
-        await orderAPI.getAll();
+      const user = JSON.parse(localStorage.getItem("user"));
 
-      console.log(
-        "Orders from database:",
-        response
-      );
+      const response = await orderAPI.getAll();
 
-      setOrders(response);
+      let filteredOrders = response;
+
+      // Normal users see only their own orders
+      if (user?.role !== "admin") {
+        filteredOrders = response.filter(
+          (order) => Number(order.user_id) === Number(user.id)
+        );
+      }
+
+      console.log("Logged-in user:", user);
+      console.log("Orders shown:", filteredOrders);
+
+      setOrders(filteredOrders);
 
     } catch (error) {
-
-      console.error(
-        "Failed to load orders:",
-        error
-      );
-
-      alert(
-        "Failed to load orders"
-      );
-
+      console.error("Failed to load orders:", error);
+      alert("Failed to load orders");
     } finally {
-
       setLoading(false);
-
     }
-
   };
-
-
   // ==============================
   // LOAD ORDERS ON PAGE OPEN
   // ==============================
