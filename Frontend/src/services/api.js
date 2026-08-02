@@ -184,45 +184,6 @@ method: "DELETE",
 }),
 };
 
-// ===============================
-// BILLING API
-// ===============================
-
-// export const billingAPI = {
-// getAll: () =>
-// request(BILLING_API_URL),
-
-// getById: (id) =>
-// request(`${BILLING_API_URL}/${id}`),
-
-// create: (data) =>
-// request(BILLING_API_URL, {
-// method: "POST",
-// body: JSON.stringify(data),
-// }),
-
-// update: (id, data) =>
-// request(`${BILLING_API_URL}/${id}`, {
-// method: "PUT",
-// body: JSON.stringify(data),
-// }),
-
-// delete: (id) =>
-// request(`${BILLING_API_URL}/${id}`, {
-// method: "DELETE",
-// }),
-// };
-
-// ===============================
-// BILLING API
-// ===============================
-
-// ===============================
-// BILLING API
-// ===============================
-const ORDER_API_URL =
-  "http://18.206.210.238:5004/api/orders";
-
 // orderAPI
 export const orderAPI = {
   getAll: () =>
