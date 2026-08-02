@@ -220,20 +220,62 @@ method: "DELETE",
 // ===============================
 // BILLING API
 // ===============================
+const ORDER_API_URL =
+  "http://18.206.210.238:5004/api/orders";
 
+const BILLING_API_URL =
+  "http://18.206.210.238:5005/api/billing";
+
+
+// orderAPI
+export const orderAPI = {
+  getAll: () =>
+    request(ORDER_API_URL),
+
+  getById: (id) =>
+    request(
+      `${ORDER_API_URL}/${id}`
+    ),
+
+  create: (data) =>
+    request(
+      ORDER_API_URL,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    ),
+
+  update: (id, data) =>
+    request(
+      `${ORDER_API_URL}/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }
+    ),
+
+  delete: (id) =>
+    request(
+      `${ORDER_API_URL}/${id}`,
+      {
+        method: "DELETE",
+      }
+    ),
+};
+
+
+// billingAPI
 export const billingAPI = {
 
-  // GET ALL INVOICES
   getAll: () =>
     request(BILLING_API_URL),
 
-  // GET INVOICE BY ID
   getById: (id) =>
     request(
       `${BILLING_API_URL}/${id}`
     ),
 
-  // CREATE INVOICE
   create: (data) =>
     request(
       BILLING_API_URL,
@@ -243,7 +285,6 @@ export const billingAPI = {
       }
     ),
 
-  // UPDATE INVOICE
   update: (id, data) =>
     request(
       `${BILLING_API_URL}/${id}`,
@@ -253,9 +294,6 @@ export const billingAPI = {
       }
     ),
 
-  // UPDATE PAYMENT STATUS
-  // Example:
-  // Pending -> Paid
   updatePaymentStatus: (
     id,
     data
@@ -268,9 +306,6 @@ export const billingAPI = {
       }
     ),
 
-  // UPDATE PAYMENT METHOD
-  // Example:
-  // Cash / UPI / Card
   updatePaymentMethod: (
     id,
     data
@@ -283,7 +318,6 @@ export const billingAPI = {
       }
     ),
 
-  // DELETE INVOICE
   delete: (id) =>
     request(
       `${BILLING_API_URL}/${id}`,
@@ -291,4 +325,5 @@ export const billingAPI = {
         method: "DELETE",
       }
     ),
+
 };

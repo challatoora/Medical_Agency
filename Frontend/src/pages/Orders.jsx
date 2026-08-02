@@ -1,389 +1,224 @@
 import React, { useEffect, useState } from "react";
-import { orderAPI, billingAPI } from "../services/api";
-import "./Cart.css";
+import { orderAPI } from "../services/api";
+import "./Orders.css";
 
-function Cart({ setCurrentPage }) {
+function Orders() {
 
-  const [cart, setCart] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [loading, setLoading] = useState(false);
+  // ==============================
+  // LOAD ALL ORDERS
+  // ==============================
 
+  const loadOrders = async () => {
+
+    try {
+
+      setLoading(true);
+
+      const response =
+        await orderAPI.getAll();
+
+      console.log(
+        "Orders from database:",
+        response
+      );
+
+      setOrders(response);
+
+    } catch (error) {
+
+      console.error(
+        "Failed to load orders:",
+        error
+      );
+
+      alert(
+        "Failed to load orders"
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
+
+  // ==============================
+  // LOAD ORDERS ON PAGE OPEN
+  // ==============================
 
   useEffect(() => {
 
-    loadCart();
+    loadOrders();
 
   }, []);
 
 
-  const loadCart = () => {
-
-    const data =
-      JSON.parse(
-        localStorage.getItem("cart")
-      ) || [];
-
-    setCart(data);
-
-  };
-
-
   // ==============================
-  // UPDATE QUANTITY
+  // UPDATE ORDER STATUS
   // ==============================
 
-  const updateQuantity = (id, type) => {
-
-    const updatedCart = cart.map((item) => {
-
-      if (item._id === id) {
-
-        let quantity =
-          Number(item.cartQuantity) || 1;
-
-
-        if (type === "plus") {
-
-          quantity++;
-
-        }
-
-
-        if (
-          type === "minus" &&
-          quantity > 1
-        ) {
-
-          quantity--;
-
-        }
-
-
-        return {
-
-          ...item,
-
-          cartQuantity: quantity
-
-        };
-
-      }
-
-
-      return item;
-
-    });
-
-
-    setCart(updatedCart);
-
-
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(updatedCart)
-    );
-
-  };
-
-
-  // ==============================
-  // REMOVE ITEM
-  // ==============================
-
-  const removeItem = (id) => {
-
-    const updatedCart =
-      cart.filter(
-        (item) =>
-          item._id !== id
-      );
-
-
-    setCart(updatedCart);
-
-
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(updatedCart)
-    );
-
-  };
-
-
-  // ==============================
-  // TOTAL
-  // ==============================
-
-  const totalAmount =
-    cart.reduce(
-
-      (total, item) =>
-
-        total +
-
-        Number(item.price) *
-
-        Number(
-          item.cartQuantity || 1
-        ),
-
-      0
-
-    );
-
-
-  // ==============================
-  // CREATE ORDER + PAYMENT
-  // ==============================
-
-  const createOrderAndPayment =
-    async () => {
-
-      try {
-
-        setLoading(true);
-
-
-        // GET LOGGED-IN USER
-
-        const userData =
-          JSON.parse(
-            localStorage.getItem(
-              "user"
-            )
-          );
-
-
-        const customerName =
-          userData?.name ||
-          "Customer";
-
-
-        const userId =
-          userData?.id ||
-          userData?._id;
-
-
-        if (!userId) {
-
-          alert(
-            "User information not found. Please login again."
-          );
-
-          return;
-
-        }
-
-
-        // ==============================
-        // PREPARE ORDER DATA
-        // ==============================
-
-        const medicineNames =
-          cart
-            .map(
-              (item) =>
-                item.name
-            )
-            .join(", ");
-
-
-        const totalQuantity =
-          cart.reduce(
-
-            (sum, item) =>
-
-              sum +
-
-              Number(
-                item.cartQuantity || 1
-              ),
-
-            0
-
-          );
-
-
-        // ==============================
-        // CREATE ORDER
-        // ==============================
-
-        const orderData = {
-
+  const updateStatus = async (
+    order,
+    newStatus
+  ) => {
+
+    try {
+
+      await orderAPI.update(
+        order.id,
+        {
           customer_name:
-            customerName,
+            order.customer_name,
 
           medicine_name:
-            medicineNames,
+            order.medicine_name,
 
           quantity:
-            totalQuantity,
+            order.quantity,
 
           total_price:
-            totalAmount,
+            order.total_price,
 
           status:
-            "Pending"
-
-        };
-
-
-        const orderResponse =
-          await orderAPI.create(
-            orderData
-          );
-
-
-        console.log(
-          "Order Created:",
-          orderResponse
-        );
-
-
-        const orderId =
-          orderResponse.orderId;
-
-
-        if (!orderId) {
-
-          throw new Error(
-            "Order ID was not returned"
-          );
-
+            newStatus
         }
+      );
+
+      alert(
+        "Order status updated successfully"
+      );
+
+      loadOrders();
+
+    } catch (error) {
+
+      console.error(
+        "Status update failed:",
+        error
+      );
+
+      alert(
+        "Failed to update order status"
+      );
+
+    }
+
+  };
 
 
-        // ==============================
-        // CREATE INVOICE
-        // ==============================
+  // ==============================
+  // DELETE ORDER
+  // ==============================
 
-        const invoiceData = {
+  const deleteOrder = async (
+    id
+  ) => {
 
-          order_id:
-            orderId,
+    const confirmDelete =
+      window.confirm(
+        "Are you sure you want to delete this order?"
+      );
 
-          user_id:
-            userId,
+    if (!confirmDelete) {
+      return;
+    }
 
-          subtotal:
-            totalAmount,
+    try {
 
-          tax_amount:
-            0,
+      await orderAPI.delete(id);
 
-          discount_amount:
-            0,
+      alert(
+        "Order deleted successfully"
+      );
 
-          payment_status:
-            "SUCCESS",
+      loadOrders();
 
-          payment_method:
-            "Dummy Payment"
+    } catch (error) {
 
-        };
+      console.error(
+        "Delete order failed:",
+        error
+      );
 
+      alert(
+        "Failed to delete order"
+      );
 
-        const invoiceResponse =
-          await billingAPI.create(
-            invoiceData
-          );
+    }
 
-
-        console.log(
-          "Invoice Created:",
-          invoiceResponse
-        );
-
-
-        // ==============================
-        // PAYMENT SUCCESS
-        // ==============================
-
-        alert(
-
-          "Payment Successful!\n\n" +
-
-          "Invoice Number: " +
-
-          invoiceResponse.invoiceNumber +
-
-          "\n\n" +
-
-          "Order Status: Pending\n\n" +
-
-          "Admin will complete your order."
-
-        );
+  };
 
 
-        // ==============================
-        // CLEAR CART
-        // ==============================
+  // ==============================
+  // LOADING
+  // ==============================
 
-        localStorage.removeItem(
-          "cart"
-        );
+  if (loading) {
 
+    return (
 
-        setCart([]);
+      <div className="orders-page">
 
+        <h1>
+          Orders
+        </h1>
 
-        // ==============================
-        // GO TO ORDERS
-        // ==============================
-
-        setCurrentPage(
-          "Orders"
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "Order/Payment Error:",
-          error
-        );
-
-
-        alert(
-          error.message ||
-          "Failed to create order"
-        );
-
-      } finally {
-
-        setLoading(false);
-
-      }
-
-    };
-
-
-  return (
-
-    <div className="cart-page">
-
-      <h1>
-        Shopping Cart
-      </h1>
-
-
-      {cart.length === 0 ? (
-
-        <div className="cart-card">
+        <div className="orders-card">
 
           <h2>
-            Your cart is empty
+            Loading Orders...
           </h2>
 
         </div>
 
-      ) : (
+      </div>
 
-        <div className="cart-card">
+    );
+
+  }
+
+
+  // ==============================
+  // RETURN UI
+  // ==============================
+
+  return (
+
+    <div className="orders-page">
+
+      <div className="orders-header">
+
+        <h1>
+          Orders
+        </h1>
+
+        <button
+          className="refresh-orders-btn"
+          onClick={loadOrders}
+        >
+          Refresh
+        </button>
+
+      </div>
+
+
+      <div className="orders-card">
+
+        {orders.length === 0 ? (
+
+          <h2>
+            No Orders Found
+          </h2>
+
+        ) : (
 
           <table
-            className="cart-table"
+            className="orders-table"
           >
 
             <thead>
@@ -391,11 +226,15 @@ function Cart({ setCurrentPage }) {
               <tr>
 
                 <th>
-                  Medicine
+                  Order ID
                 </th>
 
                 <th>
-                  Price
+                  Customer
+                </th>
+
+                <th>
+                  Medicine
                 </th>
 
                 <th>
@@ -403,7 +242,15 @@ function Cart({ setCurrentPage }) {
                 </th>
 
                 <th>
-                  Total
+                  Total Price
+                </th>
+
+                <th>
+                  Order Date
+                </th>
+
+                <th>
+                  Status
                 </th>
 
                 <th>
@@ -417,81 +264,103 @@ function Cart({ setCurrentPage }) {
 
             <tbody>
 
-              {cart.map(
-                (item) => (
+              {orders.map(
+                (order) => (
 
                   <tr
-                    key={item._id}
+                    key={
+                      order.id
+                    }
                   >
 
                     <td>
-                      {item.name}
+                      #{order.id}
                     </td>
 
 
                     <td>
-                      ₹{item.price}
+                      {
+                        order.customer_name
+                      }
                     </td>
 
 
                     <td>
-
-                      <button
-
-                        onClick={() =>
-                          updateQuantity(
-                            item._id,
-                            "minus"
-                          )
-                        }
-
-                      >
-                        -
-                      </button>
-
-
-                      <span
-                        style={{
-                          margin:
-                            "0 10px"
-                        }}
-                      >
-
-                        {
-                          item.cartQuantity
-                        }
-
-                      </span>
-
-
-                      <button
-
-                        onClick={() =>
-                          updateQuantity(
-                            item._id,
-                            "plus"
-                          )
-                        }
-
-                      >
-                        +
-                      </button>
-
+                      {
+                        order.medicine_name
+                      }
                     </td>
 
 
                     <td>
+                      {
+                        order.quantity
+                      }
+                    </td>
 
+
+                    <td>
                       ₹
                       {
-                        Number(
-                          item.price
-                        ) *
-
-                        Number(
-                          item.cartQuantity
-                        )
+                        order.total_price
                       }
+                    </td>
+
+
+                    <td>
+
+                      {
+                        order.order_date
+                          ? new Date(
+                              order.order_date
+                            ).toLocaleString()
+                          : "-"
+                      }
+
+                    </td>
+
+
+                    <td>
+
+                      <select
+
+                        value={
+                          order.status ||
+                          "Pending"
+                        }
+
+                        onChange={(
+                          e
+                        ) =>
+                          updateStatus(
+                            order,
+                            e.target.value
+                          )
+                        }
+
+                      >
+
+                        <option value="Pending">
+                          Pending
+                        </option>
+
+                        <option value="Processing">
+                          Processing
+                        </option>
+
+                        <option value="Shipped">
+                          Shipped
+                        </option>
+
+                        <option value="Completed">
+                          Completed
+                        </option>
+
+                        <option value="Cancelled">
+                          Cancelled
+                        </option>
+
+                      </select>
 
                     </td>
 
@@ -501,17 +370,17 @@ function Cart({ setCurrentPage }) {
                       <button
 
                         className=
-                          "delete-medicine-btn"
+                          "delete-order-btn"
 
                         onClick={() =>
-                          removeItem(
-                            item._id
+                          deleteOrder(
+                            order.id
                           )
                         }
 
                       >
 
-                        Remove
+                        Delete
 
                       </button>
 
@@ -526,44 +395,9 @@ function Cart({ setCurrentPage }) {
 
           </table>
 
+        )}
 
-          <div
-            className="cart-total"
-          >
-
-            Total Amount:
-            ₹{totalAmount}
-
-          </div>
-
-
-          <button
-
-            className=
-              "checkout-btn"
-
-            onClick={
-              createOrderAndPayment
-            }
-
-            disabled={loading}
-
-          >
-
-            {loading
-
-              ? "Processing Payment..."
-
-              : "Proceed To Payment"
-
-            }
-
-          </button>
-
-
-        </div>
-
-      )}
+      </div>
 
     </div>
 
@@ -572,4 +406,4 @@ function Cart({ setCurrentPage }) {
 }
 
 
-export default Cart;
+export default Orders;
