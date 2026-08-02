@@ -22,8 +22,5 @@ npm install lucide-react recharts
 # FLUSH PRIVILEGES;
 # EXIT;
 #d28a12620099e3906dfb4b71893db6a69e4c2167
-
-# login
-#app.jsx
-#sidebar
 #eb9dbe3356029f9643250cb4d09a913d3a7918b0
+#b77e0fbb9611c770185c317fad168e42ad7212f7
