@@ -5,68 +5,123 @@ import "./Billing.css";
 function Billing() {
 const [order, setOrder] = useState(null);
 const [user, setUser] = useState(null);
-
 const [invoice, setInvoice] = useState(null);
 
-const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+const [showPaymentPopup, setShowPaymentPopup] =
+useState(false);
 
-const [paymentMethod, setPaymentMethod] = useState("UPI");
+const [paymentMethod, setPaymentMethod] =
+useState("UPI");
 
-const [paymentLoading, setPaymentLoading] = useState(false);
+const [paymentLoading, setPaymentLoading] =
+useState(false);
 
-const [paymentSuccess, setPaymentSuccess] = useState(false);
+const [paymentSuccess, setPaymentSuccess] =
+useState(false);
 
 const [error, setError] = useState("");
 
-// ===============================
-// LOAD CURRENT ORDER
-// ===============================
+// ==========================================
+// LOAD USER
+// ==========================================
 
 useEffect(() => {
-loadBillingData();
+const savedUser =
+localStorage.getItem("user");
+
+
+if (savedUser) {
+  try {
+    setUser(JSON.parse(savedUser));
+  } catch (err) {
+    console.error(
+      "User data error:",
+      err
+    );
+  }
+}
+
+
 }, []);
 
-const loadBillingData = () => {
-try {
-const orderData = JSON.parse(
-localStorage.getItem("currentOrder")
+// ==========================================
+// LOAD ORDER
+// ==========================================
+
+useEffect(() => {
+loadCurrentOrder();
+
+
+// Check again when window gets focus
+const handleFocus = () => {
+  loadCurrentOrder();
+};
+
+window.addEventListener(
+  "focus",
+  handleFocus
+);
+
+return () => {
+  window.removeEventListener(
+    "focus",
+    handleFocus
+  );
+};
+
+
+}, []);
+
+// ==========================================
+// LOAD CURRENT ORDER FROM LOCAL STORAGE
+// ==========================================
+
+const loadCurrentOrder = () => {
+const savedOrder =
+localStorage.getItem(
+"currentOrder"
 );
 
 
-  const userData = JSON.parse(
-    localStorage.getItem("user")
-  );
+console.log(
+  "Loading currentOrder:",
+  savedOrder
+);
 
-  console.log("Current Order:", orderData);
-  console.log("Current User:", userData);
+if (
+  !savedOrder ||
+  savedOrder === "null" ||
+  savedOrder === "undefined"
+) {
+  setOrder(null);
+  setInvoice(null);
+  setPaymentSuccess(false);
+  return;
+}
 
-  setOrder(orderData);
-  setUser(userData);
+try {
+  const parsedOrder =
+    JSON.parse(savedOrder);
 
-  // Reset page state when there is no active order
-  if (!orderData) {
-    setInvoice(null);
-    setPaymentSuccess(false);
-  }
+  setOrder(parsedOrder);
 } catch (err) {
   console.error(
-    "Failed to load billing data:",
+    "Invalid currentOrder:",
     err
   );
 
-  setError(
-    "Failed to load billing information."
-  );
+  setOrder(null);
 }
 
 
 };
 
-// ===============================
-// GET ORDER DATA
-// ===============================
+// ==========================================
+// ORDER DETAILS
+// ==========================================
 
-const orderId = order?.orderId;
+const orderId =
+order?.orderId;
 
 const customerName =
 order?.customerName ||
@@ -83,34 +138,29 @@ Number(order?.quantity) || 0;
 const totalAmount =
 Number(order?.totalAmount) || 0;
 
-// ===============================
-// GENERATE INVOICE
-// ===============================
+// ==========================================
+// GENERATE BILL
+// ==========================================
 
 const generateBill = async () => {
 try {
 setError("");
 
 
-  // Check current order
   if (!order) {
     alert(
-      "No active order found. Please place an order first."
+      "No active order found."
     );
-
     return;
   }
 
-  // Check Order ID
   if (!orderId) {
     alert(
       "Order ID not found."
     );
-
     return;
   }
 
-  // Check User
   if (
     !user?.id &&
     !user?._id
@@ -118,24 +168,17 @@ setError("");
     alert(
       "User information not found."
     );
-
     return;
   }
 
-  // Check Amount
   if (
     totalAmount <= 0
   ) {
     alert(
-      "Order amount is invalid."
+      "Invalid order amount."
     );
-
     return;
   }
-
-  // ===============================
-  // BILL DATA
-  // ===============================
 
   const billData = {
     order_id:
@@ -166,10 +209,6 @@ setError("");
     billData
   );
 
-  // ===============================
-  // CREATE INVOICE
-  // ===============================
-
   const response =
     await billingAPI.create(
       billData
@@ -179,10 +218,6 @@ setError("");
     "Invoice Created:",
     response
   );
-
-  // ===============================
-  // SAVE INVOICE
-  // ===============================
 
   setInvoice({
     id:
@@ -202,16 +237,10 @@ setError("");
       "Pending"
   });
 
-  // ===============================
-  // OPEN PAYMENT POPUP
-  // ===============================
-
   setShowPaymentPopup(
     true
   );
-}
-
-catch (err) {
+} catch (err) {
   console.error(
     "Invoice creation failed:",
     err
@@ -226,64 +255,15 @@ catch (err) {
 
 };
 
-// ===============================
-// CLEAR COMPLETED BILL
-// ===============================
-
-const clearCompletedBill = () => {
-console.log(
-"Clearing completed order and billing data..."
-);
-
-
-// Clear current order
-localStorage.removeItem(
-  "currentOrder"
-);
-
-// Clear order ID
-localStorage.removeItem(
-  "orderId"
-);
-
-// Clear billing amount
-localStorage.removeItem(
-  "billingAmount"
-);
-
-// Clear cart
-localStorage.removeItem(
-  "cart"
-);
-
-// Clear React state
-setOrder(null);
-
-setInvoice(null);
-
-setPaymentSuccess(
-  false
-);
-
-setShowPaymentPopup(
-  false
-);
-
-
-};
-
-// ===============================
+// ==========================================
 // CONFIRM PAYMENT
-// ===============================
+// ==========================================
 
 const confirmPayment = async () => {
 try {
-setPaymentLoading(
-true
-);
+setPaymentLoading(true);
+setError("");
 
-
-  setError("");
 
   if (!invoice?.id) {
     alert(
@@ -293,10 +273,7 @@ true
     return;
   }
 
-  // ===============================
   // UPDATE PAYMENT METHOD
-  // ===============================
-
   await billingAPI.updatePaymentMethod(
     invoice.id,
     {
@@ -305,10 +282,7 @@ true
     }
   );
 
-  // ===============================
   // UPDATE PAYMENT STATUS
-  // ===============================
-
   await billingAPI.updatePaymentStatus(
     invoice.id,
     {
@@ -321,62 +295,54 @@ true
     "Payment Successful"
   );
 
-  // ===============================
-  // UPDATE INVOICE UI
-  // ===============================
+  // ==========================================
+  // CLEAR ALL OLD BILLING DATA
+  // ==========================================
 
-  setInvoice(
-    (previousInvoice) => ({
-      ...previousInvoice,
-
-      paymentStatus:
-        "Paid",
-
-      paymentMethod:
-        paymentMethod
-    })
+  localStorage.removeItem(
+    "currentOrder"
   );
 
-  // ===============================
-  // CLOSE PAYMENT POPUP
-  // ===============================
-
-  setShowPaymentPopup(
-    false
+  localStorage.removeItem(
+    "orderId"
   );
 
-  // ===============================
-  // SHOW SUCCESS MESSAGE
-  // ===============================
-
-  setPaymentSuccess(
-    true
+  localStorage.removeItem(
+    "billingAmount"
   );
-
-  // ===============================
-  // CLEAR CART
-  // ===============================
 
   localStorage.removeItem(
     "cart"
   );
 
-  /*
-    IMPORTANT:
+  console.log(
+    "Cleared currentOrder:",
+    localStorage.getItem(
+      "currentOrder"
+    )
+  );
 
-    We DO NOT clear currentOrder
-    immediately here.
+  // ==========================================
+  // CLEAR REACT STATE
+  // ==========================================
 
-    This allows the user to see
-    the successful payment details.
+  setOrder(null);
 
-    The user can then click
-    "Finish" and the completed
-    billing data will be removed.
-  */
-}
+  setInvoice(null);
 
-catch (err) {
+  setPaymentSuccess(false);
+
+  setShowPaymentPopup(false);
+
+  // ==========================================
+  // SUCCESS MESSAGE
+  // ==========================================
+
+  alert(
+    "Payment successful! Bill completed."
+  );
+
+} catch (err) {
   console.error(
     "Payment failed:",
     err
@@ -386,9 +352,7 @@ catch (err) {
     err.message ||
     "Payment failed"
   );
-}
-
-finally {
+} finally {
   setPaymentLoading(
     false
   );
@@ -397,9 +361,9 @@ finally {
 
 };
 
-// ===============================
+// ==========================================
 // NO ACTIVE ORDER
-// ===============================
+// ==========================================
 
 if (!order) {
 return ( <div className="billing-page">
@@ -409,39 +373,20 @@ return ( <div className="billing-page">
       Billing
     </h1>
 
-    {error && (
-      <div
-        style={{
-          background:
-            "#fee2e2",
-          color:
-            "#b91c1c",
-          padding:
-            "12px",
-          marginBottom:
-            "20px",
-          borderRadius:
-            "8px"
-        }}
-      >
-        {error}
-      </div>
-    )}
-
     <div className="billing-card">
 
       <h2>
-        No Active Order
+        No Active Bill
       </h2>
 
       <p>
-        There is no active order available
-        for billing.
+        There is no pending order
+        available for billing.
       </p>
 
       <p>
-        Please add medicines to your cart
-        and place a new order.
+        Please place a new order
+        from the Medicines page.
       </p>
 
     </div>
@@ -452,6 +397,10 @@ return ( <div className="billing-page">
 
 }
 
+// ==========================================
+// BILLING PAGE
+// ==========================================
+
 return ( <div className="billing-page">
 
 
@@ -459,9 +408,7 @@ return ( <div className="billing-page">
     Billing
   </h1>
 
-  {/* ===============================
-      ERROR
-  =============================== */}
+  {/* ERROR */}
 
   {error && (
     <div
@@ -482,9 +429,7 @@ return ( <div className="billing-page">
     </div>
   )}
 
-  {/* ===============================
-      CUSTOMER DETAILS
-  =============================== */}
+  {/* CUSTOMER */}
 
   <div className="billing-card">
 
@@ -493,21 +438,19 @@ return ( <div className="billing-page">
     </h2>
 
     <p>
-      Name :{" "}
+      Name:{" "}
       {customerName}
     </p>
 
     <p>
-      Role :{" "}
+      Role:{" "}
       {user?.role ||
         "USER"}
     </p>
 
   </div>
 
-  {/* ===============================
-      ORDER SUMMARY
-  =============================== */}
+  {/* ORDER */}
 
   <div className="billing-card">
 
@@ -552,8 +495,7 @@ return ( <div className="billing-page">
           </td>
 
           <td>
-            ₹
-            {totalAmount}
+            ₹{totalAmount}
           </td>
 
         </tr>
@@ -565,146 +507,36 @@ return ( <div className="billing-page">
     <h2
       className="billing-total"
     >
-      Total Payable :
-      ₹
-      {totalAmount}
+      Total Payable:
+      ₹{totalAmount}
     </h2>
 
-    {/* ===============================
-        GENERATE BILL BUTTON
-    =============================== */}
-
-    {!invoice &&
-      !paymentSuccess && (
-
+    {!invoice && (
       <button
         className="generate-bill-btn"
         onClick={
           generateBill
         }
-        disabled={
-          !order ||
-          totalAmount <= 0
-        }
       >
         Generate Bill
       </button>
-
     )}
 
   </div>
 
-  {/* ===============================
-      PAYMENT SUCCESS
-  =============================== */}
+  {/* PAYMENT SUCCESS */}
 
   {paymentSuccess && (
+    <div className="billing-card">
 
-    <div
-      className="billing-card"
-      style={{
-        marginTop:
-          "20px",
-        border:
-          "2px solid #22c55e"
-      }}
-    >
-
-      <h2
-        style={{
-          color:
-            "#16a34a"
-        }}
-      >
+      <h2>
         Payment Successful ✅
       </h2>
 
-      <p>
-        Invoice Number :{" "}
-        <strong>
-          {
-            invoice?.invoiceNumber
-          }
-        </strong>
-      </p>
-
-      <p>
-        Amount Paid :{" "}
-        <strong>
-          ₹
-          {
-            invoice?.totalAmount
-          }
-        </strong>
-      </p>
-
-      <p>
-        Payment Method :{" "}
-        <strong>
-          {
-            invoice?.paymentMethod
-          }
-        </strong>
-      </p>
-
-      <p>
-        Payment Status :{" "}
-        <strong>
-          Paid
-        </strong>
-      </p>
-
-      <p>
-        Order ID :{" "}
-        <strong>
-          {orderId}
-        </strong>
-      </p>
-
-      <p>
-        Order Status :{" "}
-        <strong>
-          Pending
-        </strong>
-      </p>
-
-      <p>
-        Your payment has been
-        completed successfully.
-      </p>
-
-      <p>
-        The Admin will manually
-        update your order status
-        to Completed.
-      </p>
-
-      {/* ===============================
-          FINISH BILLING
-      =============================== */}
-
-      <button
-        className="generate-bill-btn"
-        onClick={
-          clearCompletedBill
-        }
-        style={{
-          marginTop:
-            "20px",
-          background:
-            "#16a34a"
-        }}
-      >
-        Finish
-      </button>
-
     </div>
-
   )}
 
-  {/* ===============================
-      PAYMENT POPUP
-  =============================== */}
+  {/* PAYMENT POPUP */}
 
   {showPaymentPopup && (
 
@@ -734,7 +566,7 @@ return ( <div className="billing-page">
       <div
         style={{
           background:
-            "#ffffff",
+            "white",
           padding:
             "30px",
           borderRadius:
@@ -742,9 +574,7 @@ return ( <div className="billing-page">
           width:
             "400px",
           maxWidth:
-            "90%",
-          boxShadow:
-            "0 10px 40px rgba(0,0,0,0.3)"
+            "90%"
         }}
       >
 
@@ -753,7 +583,8 @@ return ( <div className="billing-page">
         </h2>
 
         <p>
-          Invoice Number :{" "}
+          Invoice Number:
+          {" "}
           <strong>
             {
               invoice?.invoiceNumber
@@ -762,7 +593,8 @@ return ( <div className="billing-page">
         </p>
 
         <p>
-          Amount :{" "}
+          Amount:
+          {" "}
           <strong>
             ₹
             {
@@ -777,16 +609,7 @@ return ( <div className="billing-page">
           Select Payment Method
         </h3>
 
-        {/* UPI */}
-
-        <label
-          style={{
-            display:
-              "block",
-            margin:
-              "12px 0"
-          }}
-        >
+        <label>
 
           <input
             type="radio"
@@ -796,11 +619,10 @@ return ( <div className="billing-page">
               paymentMethod ===
               "UPI"
             }
-            onChange={
-              (e) =>
-                setPaymentMethod(
-                  e.target.value
-                )
+            onChange={(e) =>
+              setPaymentMethod(
+                e.target.value
+              )
             }
           />
 
@@ -809,16 +631,9 @@ return ( <div className="billing-page">
 
         </label>
 
-        {/* CARD */}
+        <br />
 
-        <label
-          style={{
-            display:
-              "block",
-            margin:
-              "12px 0"
-          }}
-        >
+        <label>
 
           <input
             type="radio"
@@ -828,11 +643,10 @@ return ( <div className="billing-page">
               paymentMethod ===
               "Card"
             }
-            onChange={
-              (e) =>
-                setPaymentMethod(
-                  e.target.value
-                )
+            onChange={(e) =>
+              setPaymentMethod(
+                e.target.value
+              )
             }
           />
 
@@ -841,16 +655,9 @@ return ( <div className="billing-page">
 
         </label>
 
-        {/* CASH */}
+        <br />
 
-        <label
-          style={{
-            display:
-              "block",
-            margin:
-              "12px 0"
-          }}
-        >
+        <label>
 
           <input
             type="radio"
@@ -860,11 +667,10 @@ return ( <div className="billing-page">
               paymentMethod ===
               "Cash"
             }
-            onChange={
-              (e) =>
-                setPaymentMethod(
-                  e.target.value
-                )
+            onChange={(e) =>
+              setPaymentMethod(
+                e.target.value
+              )
             }
           />
 
@@ -872,10 +678,6 @@ return ( <div className="billing-page">
           Cash
 
         </label>
-
-        {/* ===============================
-            BUTTONS
-        =============================== */}
 
         <div
           style={{
@@ -906,9 +708,7 @@ return ( <div className="billing-page">
               border:
                 "none",
               borderRadius:
-                "8px",
-              cursor:
-                "pointer"
+                "8px"
             }}
           >
 
@@ -938,9 +738,7 @@ return ( <div className="billing-page">
               border:
                 "none",
               borderRadius:
-                "8px",
-              cursor:
-                "pointer"
+                "8px"
             }}
           >
 
@@ -953,7 +751,6 @@ return ( <div className="billing-page">
       </div>
 
     </div>
-
   )}
 
 </div>
