@@ -188,27 +188,107 @@ method: "DELETE",
 // BILLING API
 // ===============================
 
+// export const billingAPI = {
+// getAll: () =>
+// request(BILLING_API_URL),
+
+// getById: (id) =>
+// request(`${BILLING_API_URL}/${id}`),
+
+// create: (data) =>
+// request(BILLING_API_URL, {
+// method: "POST",
+// body: JSON.stringify(data),
+// }),
+
+// update: (id, data) =>
+// request(`${BILLING_API_URL}/${id}`, {
+// method: "PUT",
+// body: JSON.stringify(data),
+// }),
+
+// delete: (id) =>
+// request(`${BILLING_API_URL}/${id}`, {
+// method: "DELETE",
+// }),
+// };
+
+// ===============================
+// BILLING API
+// ===============================
+
+// ===============================
+// BILLING API
+// ===============================
+
 export const billingAPI = {
-getAll: () =>
-request(BILLING_API_URL),
 
-getById: (id) =>
-request(`${BILLING_API_URL}/${id}`),
+  // GET ALL INVOICES
+  getAll: () =>
+    request(BILLING_API_URL),
 
-create: (data) =>
-request(BILLING_API_URL, {
-method: "POST",
-body: JSON.stringify(data),
-}),
+  // GET INVOICE BY ID
+  getById: (id) =>
+    request(
+      `${BILLING_API_URL}/${id}`
+    ),
 
-update: (id, data) =>
-request(`${BILLING_API_URL}/${id}`, {
-method: "PUT",
-body: JSON.stringify(data),
-}),
+  // CREATE INVOICE
+  create: (data) =>
+    request(
+      BILLING_API_URL,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    ),
 
-delete: (id) =>
-request(`${BILLING_API_URL}/${id}`, {
-method: "DELETE",
-}),
+  // UPDATE INVOICE
+  update: (id, data) =>
+    request(
+      `${BILLING_API_URL}/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }
+    ),
+
+  // UPDATE PAYMENT STATUS
+  // Example:
+  // Pending -> Paid
+  updatePaymentStatus: (
+    id,
+    data
+  ) =>
+    request(
+      `${BILLING_API_URL}/${id}/payment-status`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }
+    ),
+
+  // UPDATE PAYMENT METHOD
+  // Example:
+  // Cash / UPI / Card
+  updatePaymentMethod: (
+    id,
+    data
+  ) =>
+    request(
+      `${BILLING_API_URL}/${id}/payment-method`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }
+    ),
+
+  // DELETE INVOICE
+  delete: (id) =>
+    request(
+      `${BILLING_API_URL}/${id}`,
+      {
+        method: "DELETE",
+      }
+    ),
 };
