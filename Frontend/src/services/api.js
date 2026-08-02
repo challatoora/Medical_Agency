@@ -284,3 +284,42 @@ export const billingAPI = {
     ),
 
 };
+
+// ===============================
+// ORDER API
+// ===============================
+
+export const orderAPI = {
+
+  // ADMIN - GET ALL ORDERS
+  getAll: () =>
+    request(ORDER_API_URL),
+
+  // USER - GET ONLY USER ORDERS
+  getByUserId: (userId) =>
+    request(`${ORDER_API_URL}?userId=${userId}`),
+
+  // GET ORDER BY ID
+  getById: (id) =>
+    request(`${ORDER_API_URL}/${id}`),
+
+  // CREATE ORDER
+  create: (data) =>
+    request(ORDER_API_URL, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  // UPDATE ORDER
+  update: (id, data) =>
+    request(`${ORDER_API_URL}/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  // DELETE ORDER
+  delete: (id) =>
+    request(`${ORDER_API_URL}/${id}`, {
+      method: "DELETE",
+    }),
+};
