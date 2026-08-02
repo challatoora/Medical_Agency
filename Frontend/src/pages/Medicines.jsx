@@ -1,4 +1,3 @@
-jsx
 import React, { useEffect, useState } from "react";
 import { medicineAPI } from "../services/api";
 import "./Medicines.css";
