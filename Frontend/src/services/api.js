@@ -159,30 +159,30 @@ method: "DELETE",
 // ORDER API
 // ===============================
 
-export const orderAPI = {
-getAll: () =>
-request(ORDER_API_URL),
+// export const orderAPI = {
+// getAll: () =>
+// request(ORDER_API_URL),
 
-getById: (id) =>
-request(`${ORDER_API_URL}/${id}`),
+// getById: (id) =>
+// request(`${ORDER_API_URL}/${id}`),
 
-create: (data) =>
-request(ORDER_API_URL, {
-method: "POST",
-body: JSON.stringify(data),
-}),
+// create: (data) =>
+// request(ORDER_API_URL, {
+// method: "POST",
+// body: JSON.stringify(data),
+// }),
 
-update: (id, data) =>
-request(`${ORDER_API_URL}/${id}`, {
-method: "PUT",
-body: JSON.stringify(data),
-}),
+// update: (id, data) =>
+// request(`${ORDER_API_URL}/${id}`, {
+// method: "PUT",
+// body: JSON.stringify(data),
+// }),
 
-delete: (id) =>
-request(`${ORDER_API_URL}/${id}`, {
-method: "DELETE",
-}),
-};
+// delete: (id) =>
+// request(`${ORDER_API_URL}/${id}`, {
+// method: "DELETE",
+// }),
+// };
 
 // orderAPI
 export const orderAPI = {
