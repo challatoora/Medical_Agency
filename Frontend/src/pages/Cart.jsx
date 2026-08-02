@@ -1,1347 +1,3 @@
-// // import React, { useEffect, useState } from "react";
-// // import Cart from "./pages/Cart";
-// // import "./Cart.css";
-
-
-// // function Cart({ setCurrentPage }) {
-
-
-// //   const [cart, setCart] = useState([]);
-
-
-
-// //   useEffect(() => {
-
-// //     loadCart();
-
-// //   }, []);
-
-// //   const loadCart = () => {
-
-// //     const savedCart =
-// //       JSON.parse(localStorage.getItem("cart")) || [];
-
-// //     setCart(savedCart);
-
-// //   };
-
-// //   const saveCart = (updatedCart) => {
-
-// //     setCart(updatedCart);
-
-// //     localStorage.setItem(
-// //       "cart",
-// //       JSON.stringify(updatedCart)
-// //     );
-
-// //   };
-
-// //   const increaseQuantity = (id) => {
-
-
-// //     const updatedCart = cart.map(item => {
-
-
-// //       if(item._id === id){
-
-
-// //         return {
-
-// //           ...item,
-
-// //           cartQuantity:
-// //             item.cartQuantity + 1
-
-// //         };
-
-
-// //       }
-
-
-// //       return item;
-
-
-// //     });
-
-
-
-// //     saveCart(updatedCart);
-
-
-// //   };
-
-
-// //   const decreaseQuantity = (id) => {
-
-
-// //     const updatedCart = cart.map(item => {
-
-
-// //       if(item._id === id){
-
-
-// //         return {
-
-// //           ...item,
-
-// //           cartQuantity:
-// //           item.cartQuantity > 1
-// //           ?
-// //           item.cartQuantity - 1
-// //           :
-// //           1
-
-// //         };
-
-
-// //       }
-
-
-// //       return item;
-
-
-// //     });
-
-
-
-// //     saveCart(updatedCart);
-
-
-// //   };
-
-
-// //   const removeFromCart = (id) => {
-
-
-// //     const updatedCart =
-// //       cart.filter(
-// //         item => item._id !== id
-// //       );
-
-
-
-// //     saveCart(updatedCart);
-
-
-// //   };
-
-// //   const totalAmount = cart.reduce(
-
-// //     (sum,item)=>{
-
-// //       return (
-// //         sum +
-// //         Number(item.price) *
-// //         Number(item.cartQuantity)
-// //       );
-
-// //     },
-
-// //     0
-
-// //   );
-
-
-
-
-
-
-// //   return (
-
-
-// //     <div className="cart-page">
-
-
-// //       <div className="cart-header">
-
-// //         <h1>
-// //           My Cart
-// //         </h1>
-
-// //         <p>
-// //           Review medicines before billing
-// //         </p>
-
-// //       </div>
-
-
-
-
-
-
-// //       {
-// //         cart.length === 0 ?
-
-
-// //         (
-
-// //           <div className="cart-card">
-
-// //             <h2>
-// //               Cart is empty
-// //             </h2>
-
-
-// //             <button
-
-// //               className="checkout-btn"
-
-// //               onClick={() =>
-// //                 setCurrentPage("Medicines")
-// //               }
-
-// //             >
-
-// //               Browse Medicines
-
-// //             </button>
-
-
-// //           </div>
-
-
-// //         )
-
-
-
-// //         :
-
-
-
-// //         (
-
-
-// //         <div className="cart-card">
-
-
-
-
-
-// //           <table className="cart-table">
-
-
-// //             <thead>
-
-// //               <tr>
-
-// //                 <th>
-// //                   Medicine
-// //                 </th>
-
-
-// //                 <th>
-// //                   Price
-// //                 </th>
-
-
-// //                 <th>
-// //                   Quantity
-// //                 </th>
-
-
-// //                 <th>
-// //                   Amount
-// //                 </th>
-
-
-// //                 <th>
-// //                   Action
-// //                 </th>
-
-
-// //               </tr>
-
-// //             </thead>
-
-
-
-
-
-
-
-// //             <tbody>
-
-
-// //             {
-
-// //               cart.map(item=>(
-
-
-// //                 <tr key={item._id}>
-
-
-// //                   <td>
-
-// //                     {item.name}
-
-// //                   </td>
-
-
-
-
-
-// //                   <td>
-
-// //                     ₹{item.price}
-
-// //                   </td>
-
-
-
-
-
-
-// //                   <td>
-
-
-// //                     <button
-
-// //                       onClick={() =>
-// //                         decreaseQuantity(
-// //                           item._id
-// //                         )
-// //                       }
-
-// //                     >
-
-// //                       -
-
-// //                     </button>
-
-
-
-// //                     <span className="cart-qty">
-
-// //                       {item.cartQuantity}
-
-// //                     </span>
-
-
-
-
-
-// //                     <button
-
-// //                       onClick={() =>
-// //                         increaseQuantity(
-// //                           item._id
-// //                         )
-// //                       }
-
-// //                     >
-
-// //                       +
-
-// //                     </button>
-
-
-
-// //                   </td>
-
-
-
-
-
-
-
-// //                   <td>
-
-
-// //                     ₹
-// //                     {
-// //                       Number(item.price) *
-// //                       Number(item.cartQuantity)
-// //                     }
-
-
-// //                   </td>
-
-
-
-
-
-
-
-// //                   <td>
-
-
-// //                     <button
-
-// //                       className="delete-medicine-btn"
-
-// //                       onClick={() =>
-// //                         removeFromCart(
-// //                           item._id
-// //                         )
-// //                       }
-
-// //                     >
-
-// //                       Remove
-
-// //                     </button>
-
-
-
-// //                   </td>
-
-
-
-
-// //                 </tr>
-
-
-// //               ))
-
-// //             }
-
-
-// //             </tbody>
-
-
-// //           </table>
-
-
-
-
-
-
-
-
-// //           <div className="cart-summary">
-
-
-// //             <h2>
-
-// //               Total :
-
-// //               ₹{totalAmount}
-
-// //             </h2>
-
-
-
-
-
-
-// //             <button
-
-// //               className="checkout-btn"
-
-
-// //               onClick={() => {
-
-
-// //                 localStorage.setItem(
-
-// //                   "billingAmount",
-
-// //                   totalAmount
-
-// //                 );
-
-
-// //                 setCurrentPage(
-// //                   "Billing"
-// //                 );
-
-
-// //               }}
-
-
-// //             >
-
-// //               Proceed To Billing
-
-// //             </button>
-
-
-
-// //           </div>
-
-
-
-
-
-// //         </div>
-
-
-// //         )
-
-// //       }
-
-
-
-// //     </div>
-
-
-// //   );
-
-
-// // }
-
-
-// // export default Cart;
-
-// // import React, { useEffect, useState } from "react";
-// // import "./Cart.css";
-
-// // function Cart({ setCurrentPage }) {
-// //   const [cart, setCart] = useState([]);
-
-// //   useEffect(() => {
-// //     loadCart();
-// //   }, []);
-
-// //   const loadCart = () => {
-// //     const data = JSON.parse(localStorage.getItem("cart")) || [];
-// //     setCart(data);
-// //   };
-
-// //   const updateQuantity = (id, type) => {
-// //     const updatedCart = cart.map((item) => {
-// //       if (item._id === id) {
-// //         let quantity = Number(item.cartQuantity) || 1;
-
-// //         if (type === "plus") {
-// //           quantity++;
-// //         }
-
-// //         if (type === "minus" && quantity > 1) {
-// //           quantity--;
-// //         }
-
-// //         return {
-// //           ...item,
-// //           cartQuantity: quantity,
-// //         };
-// //       }
-
-// //       return item;
-// //     });
-
-// //     setCart(updatedCart);
-// //     localStorage.setItem("cart", JSON.stringify(updatedCart));
-// //   };
-
-// //   const removeItem = (id) => {
-// //     const updatedCart = cart.filter(
-// //       (item) => item._id !== id
-// //     );
-
-// //     setCart(updatedCart);
-// //     localStorage.setItem(
-// //       "cart",
-// //       JSON.stringify(updatedCart)
-// //     );
-// //   };
-
-// //   const totalAmount = cart.reduce(
-// //     (total, item) =>
-// //       total +
-// //       Number(item.price) *
-// //         Number(item.cartQuantity || 1),
-// //     0
-// //   );
-
-// //   return (
-// //     <div className="cart-page">
-// //       <h1>Shopping Cart</h1>
-
-// //       {cart.length === 0 ? (
-// //         <div className="cart-card">
-// //           <h2>Your cart is empty</h2>
-// //         </div>
-// //       ) : (
-// //         <div className="cart-card">
-// //           <table className="cart-table">
-// //             <thead>
-// //               <tr>
-// //                 <th>Medicine</th>
-// //                 <th>Price</th>
-// //                 <th>Quantity</th>
-// //                 <th>Total</th>
-// //                 <th>Action</th>
-// //               </tr>
-// //             </thead>
-
-// //             <tbody>
-// //               {cart.map((item) => (
-// //                 <tr key={item._id}>
-// //                   <td>{item.name}</td>
-
-// //                   <td>₹{item.price}</td>
-
-// //                   <td>
-// //                     <button
-// //                       onClick={() =>
-// //                         updateQuantity(
-// //                           item._id,
-// //                           "minus"
-// //                         )
-// //                       }
-// //                     >
-// //                       -
-// //                     </button>
-
-// //                     <span style={{ margin: "0 10px" }}>
-// //                       {item.cartQuantity}
-// //                     </span>
-
-// //                     <button
-// //                       onClick={() =>
-// //                         updateQuantity(
-// //                           item._id,
-// //                           "plus"
-// //                         )
-// //                       }
-// //                     >
-// //                       +
-// //                     </button>
-// //                   </td>
-
-// //                   <td>
-// //                     ₹
-// //                     {Number(item.price) *
-// //                       Number(item.cartQuantity)}
-// //                   </td>
-
-// //                   <td>
-// //                     <button
-// //                       className="delete-medicine-btn"
-// //                       onClick={() =>
-// //                         removeItem(item._id)
-// //                       }
-// //                     >
-// //                       Remove
-// //                     </button>
-// //                   </td>
-// //                 </tr>
-// //               ))}
-// //             </tbody>
-// //           </table>
-
-// //           <div className="cart-total">
-// //             Total Amount: ₹{totalAmount}
-// //           </div>
-
-// //           <button
-// //             className="checkout-btn"
-// //             onClick={() =>
-// //               setCurrentPage("Billing")
-// //             }
-// //           >
-// //             Proceed To Billing
-// //           </button>
-// //         </div>
-// //       )}
-// //     </div>
-// //   );
-// // }
-
-// // export default Cart;
-
-
-// import React, { useEffect, useState } from "react";
-// import { orderAPI } from "../services/api";
-// import "./Cart.css";
-
-// function Cart({ setCurrentPage }) {
-//   const [cart, setCart] = useState([]);
-
-//   const [placingOrder, setPlacingOrder] = useState(false);
-
-//   useEffect(() => {
-//     loadCart();
-//   }, []);
-
-//   // ===============================
-//   // LOAD CART
-//   // ===============================
-
-//   const loadCart = () => {
-//     const data =
-//       JSON.parse(
-//         localStorage.getItem("cart")
-//       ) || [];
-
-//     setCart(data);
-//   };
-
-//   // ===============================
-//   // UPDATE QUANTITY
-//   // ===============================
-
-//   const updateQuantity = (
-//     id,
-//     type
-//   ) => {
-
-//     const updatedCart =
-//       cart.map((item) => {
-
-//         if (item._id === id) {
-
-//           let quantity =
-//             Number(
-//               item.cartQuantity
-//             ) || 1;
-
-//           if (
-//             type === "plus"
-//           ) {
-//             quantity++;
-//           }
-
-//           if (
-//             type === "minus" &&
-//             quantity > 1
-//           ) {
-//             quantity--;
-//           }
-
-//           return {
-//             ...item,
-//             cartQuantity:
-//               quantity,
-//           };
-//         }
-
-//         return item;
-//       });
-
-//     setCart(updatedCart);
-
-//     localStorage.setItem(
-//       "cart",
-//       JSON.stringify(
-//         updatedCart
-//       )
-//     );
-//   };
-
-//   // ===============================
-//   // REMOVE ITEM
-//   // ===============================
-
-//   const removeItem = (id) => {
-
-//     const updatedCart =
-//       cart.filter(
-//         (item) =>
-//           item._id !== id
-//       );
-
-//     setCart(updatedCart);
-
-//     localStorage.setItem(
-//       "cart",
-//       JSON.stringify(
-//         updatedCart
-//       )
-//     );
-//   };
-
-//   // ===============================
-//   // TOTAL AMOUNT
-//   // ===============================
-
-//   const totalAmount =
-//     cart.reduce(
-//       (total, item) =>
-//         total +
-//         Number(item.price) *
-//           Number(
-//             item.cartQuantity || 1
-//           ),
-//       0
-//     );
-
-//   // ===============================
-//   // PROCEED TO BILLING
-//   // ===============================
-
-// //   const proceedToBilling =
-// //     async () => {
-
-// //       try {
-
-// //         setPlacingOrder(true);
-
-// //         // Get logged-in user
-// //         const user =
-// //           JSON.parse(
-// //             localStorage.getItem(
-// //               "user"
-// //             )
-// //           );
-
-// //         if (!user) {
-
-// //           alert(
-// //             "Please login first"
-// //           );
-
-// //           return;
-// //         }
-
-// //         // Check cart
-// //         if (
-// //           cart.length === 0
-// //         ) {
-
-// //           alert(
-// //             "Your cart is empty"
-// //           );
-
-// //           return;
-// //         }
-
-// //         // ===============================
-// //         // CREATE ORDER ITEMS
-// //         // ===============================
-
-// //         const orderItems =
-// //           cart.map(
-// //             (item) => ({
-
-// //               medicine_id:
-// //                 item._id,
-
-// //               medicine_name:
-// //                 item.name,
-
-// //               quantity:
-// //                 Number(
-// //                   item.cartQuantity
-// //                 ) || 1,
-
-// //               price:
-// //                 Number(
-// //                   item.price
-// //                 ),
-
-// //               amount:
-// //                 Number(
-// //                   item.price
-// //                 ) *
-// //                 Number(
-// //                   item.cartQuantity
-// //                 )
-
-// //             })
-// //           );
-
-// //         // ===============================
-// //         // CREATE ORDER
-// //         // ===============================
-
-// //         const orderData = {
-
-// //           user_id:
-// //             user.id ||
-// //             user._id,
-
-// //           customer_name:
-// //             user.name ||
-// //             "Customer",
-
-// //           items:
-// //             orderItems,
-
-// //           total_amount:
-// //             totalAmount,
-
-// //           order_status:
-// //             "Pending"
-
-// //         };
-
-// //         console.log(
-// //           "Creating Order:",
-// //           orderData
-// //         );
-
-// //         const response =
-// //           await orderAPI.create(
-// //             orderData
-// //           );
-
-// //         console.log(
-// //           "Order Created:",
-// //           response
-// //         );
-
-// //         // ===============================
-// //         // GET ORDER ID
-// //         // ===============================
-
-// //         const orderId =
-// //           response.orderId ||
-// //           response.order_id ||
-// //           response.id ||
-// //           response.insertId;
-
-// //         if (!orderId) {
-
-// //           console.error(
-// //             "Order response:",
-// //             response
-// //           );
-
-// //           alert(
-// //             "Order created but Order ID was not returned by the server."
-// //           );
-
-// //           return;
-// //         }
-
-// //         // ===============================
-// //         // SAVE ORDER ID
-// //         // ===============================
-
-// //         localStorage.setItem(
-// //           "orderId",
-// //           orderId
-// //         );
-
-// //         console.log(
-// //           "Saved Order ID:",
-// //           orderId
-// //         );
-
-// //         // ===============================
-// //         // SAVE ORDER DATA
-// //         // ===============================
-
-// //         localStorage.setItem(
-// //           "currentOrder",
-// //           JSON.stringify(
-// //             {
-// //               orderId:
-// //                 orderId,
-
-// //               items:
-// //                 orderItems,
-
-// //               totalAmount:
-// //                 totalAmount
-// //             }
-// //           )
-// //         );
-
-// //         // ===============================
-// //         // GO TO BILLING
-// //         // ===============================
-
-// //         setCurrentPage(
-// //           "Billing"
-// //         );
-
-// //       }
-
-// //       catch (err) {
-
-// //         console.error(
-// //           "Order creation failed:",
-// //           err
-// //         );
-
-// //         alert(
-// //           err.message ||
-// //           "Failed to create order"
-// //         );
-
-// //       }
-
-// //       finally {
-
-// //         setPlacingOrder(
-// //           false
-// //         );
-
-// //       }
-// //     };
-
-// //   return (
-
-// //     <div className="cart-page">
-
-// //       <h1>
-// //         Shopping Cart
-// //       </h1>
-
-// //       {cart.length === 0 ? (
-
-// //         <div className="cart-card">
-
-// //           <h2>
-// //             Your cart is empty
-// //           </h2>
-
-// //         </div>
-
-// //       ) : (
-
-// //         <div className="cart-card">
-
-// //           <table
-// //             className="cart-table"
-// //           >
-
-// //             <thead>
-
-// //               <tr>
-
-// //                 <th>
-// //                   Medicine
-// //                 </th>
-
-// //                 <th>
-// //                   Price
-// //                 </th>
-
-// //                 <th>
-// //                   Quantity
-// //                 </th>
-
-// //                 <th>
-// //                   Total
-// //                 </th>
-
-// //                 <th>
-// //                   Action
-// //                 </th>
-
-// //               </tr>
-
-// //             </thead>
-
-// //             <tbody>
-
-// //               {cart.map(
-// //                 (item) => (
-
-// //                   <tr
-// //                     key={
-// //                       item._id
-// //                     }
-// //                   >
-
-// //                     <td>
-// //                       {item.name}
-// //                     </td>
-
-// //                     <td>
-// //                       ₹
-// //                       {item.price}
-// //                     </td>
-
-// //                     <td>
-
-// //                       <button
-// //                         onClick={() =>
-// //                           updateQuantity(
-// //                             item._id,
-// //                             "minus"
-// //                           )
-// //                         }
-// //                       >
-// //                         -
-// //                       </button>
-
-// //                       <span
-// //                         style={{
-// //                           margin:
-// //                             "0 10px"
-// //                         }}
-// //                       >
-// //                         {
-// //                           item.cartQuantity
-// //                         }
-// //                       </span>
-
-// //                       <button
-// //                         onClick={() =>
-// //                           updateQuantity(
-// //                             item._id,
-// //                             "plus"
-// //                           )
-// //                         }
-// //                       >
-// //                         +
-// //                       </button>
-
-// //                     </td>
-
-// //                     <td>
-
-// //                       ₹
-// //                       {
-// //                         Number(
-// //                           item.price
-// //                         ) *
-// //                         Number(
-// //                           item.cartQuantity
-// //                         )
-// //                       }
-
-// //                     </td>
-
-// //                     <td>
-
-// //                       <button
-// //                         className=
-// //                           "delete-medicine-btn"
-
-// //                         onClick={() =>
-// //                           removeItem(
-// //                             item._id
-// //                           )
-// //                         }
-// //                       >
-// //                         Remove
-// //                       </button>
-
-// //                     </td>
-
-// //                   </tr>
-
-// //                 )
-// //               )}
-
-// //             </tbody>
-
-// //           </table>
-
-// //           <div
-// //             className="cart-total"
-// //           >
-// //             Total Amount:
-// //             ₹
-// //             {totalAmount}
-// //           </div>
-
-// //           <button
-// //             className="checkout-btn"
-// //             onClick={
-// //               proceedToBilling
-// //             }
-// //             disabled={
-// //               placingOrder
-// //             }
-// //           >
-
-// //             {placingOrder
-// //               ? "Creating Order..."
-// //               : "Proceed To Billing"}
-// //           </button>
-
-// //         </div>
-
-// //       )}
-
-// //     </div>
-
-// //   );
-// // }
-
-// // export default Cart;
-// // ===============================
-// // PROCEED TO BILLING
-// // ===============================
-
-// const proceedToBilling = async () => {
-
-//   try {
-
-//     setPlacingOrder(true);
-
-//     // Get logged-in user
-//     const user =
-//       JSON.parse(
-//         localStorage.getItem("user")
-//       );
-
-//     if (!user) {
-
-//       alert("Please login first");
-
-//       return;
-//     }
-
-//     // Check cart
-//     if (cart.length === 0) {
-
-//       alert("Your cart is empty");
-
-//       return;
-//     }
-
-//     // ===============================
-//     // MEDICINE NAMES
-//     // ===============================
-
-//     const medicineNames =
-//       cart
-//         .map((item) => item.name)
-//         .join(", ");
-
-//     // ===============================
-//     // TOTAL QUANTITY
-//     // ===============================
-
-//     const totalQuantity =
-//       cart.reduce(
-//         (total, item) =>
-//           total +
-//           Number(item.cartQuantity || 1),
-//         0
-//       );
-
-//     // ===============================
-//     // CREATE ORDER DATA
-//     // ===============================
-
-//     const orderData = {
-
-//       customer_name:
-//         user.name || "Customer",
-
-//       medicine_name:
-//         medicineNames,
-
-//       quantity:
-//         totalQuantity,
-
-//       total_price:
-//         totalAmount,
-
-//       status:
-//         "Pending"
-
-//     };
-
-//     console.log(
-//       "Creating Order:",
-//       orderData
-//     );
-
-//     // ===============================
-//     // CREATE ORDER
-//     // ===============================
-
-//     const response =
-//       await orderAPI.create(
-//         orderData
-//       );
-
-//     console.log(
-//       "Order Created:",
-//       response
-//     );
-
-//     // ===============================
-//     // GET ORDER ID
-//     // ===============================
-
-//     const orderId =
-//       response.orderId ||
-//       response.order_id ||
-//       response.id ||
-//       response.insertId;
-
-//     if (!orderId) {
-
-//       alert(
-//         "Order created but Order ID was not returned."
-//       );
-
-//       return;
-//     }
-
-//     // ===============================
-//     // SAVE ORDER ID
-//     // ===============================
-
-//     localStorage.setItem(
-//       "orderId",
-//       orderId
-//     );
-
-//     // ===============================
-//     // SAVE CURRENT ORDER
-//     // ===============================
-
-//     localStorage.setItem(
-//       "currentOrder",
-//       JSON.stringify({
-
-//         orderId:
-//           orderId,
-
-//         customerName:
-//           user.name || "Customer",
-
-//         medicineName:
-//           medicineNames,
-
-//         quantity:
-//           totalQuantity,
-
-//         totalAmount:
-//           totalAmount
-
-//       })
-//     );
-
-//     // ===============================
-//     // CLEAR CART
-//     // ===============================
-
-//     localStorage.removeItem(
-//       "cart"
-//     );
-
-//     setCart([]);
-
-//     // ===============================
-//     // GO TO BILLING
-//     // ===============================
-
-//     setCurrentPage(
-//       "Billing"
-//     );
-
-//   }
-
-//   catch (err) {
-
-//     console.error(
-//       "Order creation failed:",
-//       err
-//     );
-
-//     alert(
-//       err.message ||
-//       "Failed to create order"
-//     );
-
-//   }
-
-//   finally {
-
-//     setPlacingOrder(
-//       false
-//     );
-
-//   }
-
-// };
-
-
-
-
 import React, { useEffect, useState } from "react";
 import { orderAPI } from "../services/api";
 import "./Cart.css";
@@ -1350,19 +6,17 @@ function Cart({ setCurrentPage }) {
   const [cart, setCart] = useState([]);
   const [placingOrder, setPlacingOrder] = useState(false);
 
-  useEffect(() => {
-    loadCart();
-  }, []);
-
   // ===============================
   // LOAD CART
   // ===============================
 
+  useEffect(() => {
+    loadCart();
+  }, []);
+
   const loadCart = () => {
     const data =
-      JSON.parse(
-        localStorage.getItem("cart")
-      ) || [];
+      JSON.parse(localStorage.getItem("cart")) || [];
 
     setCart(data);
   };
@@ -1371,51 +25,34 @@ function Cart({ setCurrentPage }) {
   // UPDATE QUANTITY
   // ===============================
 
-  const updateQuantity = (
-    id,
-    type
-  ) => {
+  const updateQuantity = (id, type) => {
+    const updatedCart = cart.map((item) => {
+      if (item._id === id) {
+        let quantity =
+          Number(item.cartQuantity) || 1;
 
-    const updatedCart =
-      cart.map((item) => {
-
-        if (item._id === id) {
-
-          let quantity =
-            Number(
-              item.cartQuantity
-            ) || 1;
-
-          if (
-            type === "plus"
-          ) {
-            quantity++;
-          }
-
-          if (
-            type === "minus" &&
-            quantity > 1
-          ) {
-            quantity--;
-          }
-
-          return {
-            ...item,
-            cartQuantity:
-              quantity,
-          };
+        if (type === "plus") {
+          quantity++;
         }
 
-        return item;
-      });
+        if (type === "minus" && quantity > 1) {
+          quantity--;
+        }
+
+        return {
+          ...item,
+          cartQuantity: quantity,
+        };
+      }
+
+      return item;
+    });
 
     setCart(updatedCart);
 
     localStorage.setItem(
       "cart",
-      JSON.stringify(
-        updatedCart
-      )
+      JSON.stringify(updatedCart)
     );
   };
 
@@ -1424,20 +61,15 @@ function Cart({ setCurrentPage }) {
   // ===============================
 
   const removeItem = (id) => {
-
-    const updatedCart =
-      cart.filter(
-        (item) =>
-          item._id !== id
-      );
+    const updatedCart = cart.filter(
+      (item) => item._id !== id
+    );
 
     setCart(updatedCart);
 
     localStorage.setItem(
       "cart",
-      JSON.stringify(
-        updatedCart
-      )
+      JSON.stringify(updatedCart)
     );
   };
 
@@ -1445,42 +77,56 @@ function Cart({ setCurrentPage }) {
   // TOTAL AMOUNT
   // ===============================
 
-  const totalAmount =
-    cart.reduce(
-      (total, item) =>
-        total +
-        Number(item.price) *
-          Number(
-            item.cartQuantity || 1
-          ),
-      0
-    );
+  const totalAmount = cart.reduce(
+    (total, item) =>
+      total +
+      Number(item.price) *
+        Number(item.cartQuantity || 1),
+    0
+  );
 
   // ===============================
-  // PROCEED TO BILLING
+  // PROCEED TO BILLING / CREATE ORDER
   // ===============================
 
   const proceedToBilling = async () => {
-
     try {
-
       setPlacingOrder(true);
 
       // ===============================
       // GET LOGGED-IN USER
       // ===============================
 
-      const user =
-        JSON.parse(
-          localStorage.getItem(
-            "user"
-          )
-        );
+      const user = JSON.parse(
+        localStorage.getItem("user")
+      );
+
+      console.log(
+        "Logged-in user:",
+        user
+      );
+
+      // ===============================
+      // CHECK USER
+      // ===============================
 
       if (!user) {
+        alert("Please login first");
+        return;
+      }
 
+      // ===============================
+      // CHECK USER ID
+      // ===============================
+
+      if (!user.id) {
         alert(
-          "Please login first"
+          "User ID not found. Please logout and login again."
+        );
+
+        console.error(
+          "User object does not contain id:",
+          user
         );
 
         return;
@@ -1490,14 +136,8 @@ function Cart({ setCurrentPage }) {
       // CHECK CART
       // ===============================
 
-      if (
-        cart.length === 0
-      ) {
-
-        alert(
-          "Your cart is empty"
-        );
-
+      if (cart.length === 0) {
+        alert("Your cart is empty");
         return;
       }
 
@@ -1505,37 +145,32 @@ function Cart({ setCurrentPage }) {
       // MEDICINE NAMES
       // ===============================
 
-      const medicineNames =
-        cart
-          .map(
-            (item) =>
-              item.name
-          )
-          .join(", ");
+      const medicineNames = cart
+        .map((item) => item.name)
+        .join(", ");
 
       // ===============================
       // TOTAL QUANTITY
       // ===============================
 
-      const totalQuantity =
-        cart.reduce(
-          (total, item) =>
-            total +
-            Number(
-              item.cartQuantity || 1
-            ),
-          0
-        );
+      const totalQuantity = cart.reduce(
+        (total, item) =>
+          total +
+          Number(item.cartQuantity || 1),
+        0
+      );
 
       // ===============================
       // CREATE ORDER DATA
       // ===============================
 
       const orderData = {
+        // IMPORTANT:
+        // This stores the logged-in user's ID
+        user_id: user.id,
 
         customer_name:
-          user.name ||
-          "Customer",
+          user.name || "Customer",
 
         medicine_name:
           medicineNames,
@@ -1547,8 +182,7 @@ function Cart({ setCurrentPage }) {
           totalAmount,
 
         status:
-          "Pending"
-
+          "Pending",
       };
 
       console.log(
@@ -1557,7 +191,7 @@ function Cart({ setCurrentPage }) {
       );
 
       // ===============================
-      // CREATE ORDER
+      // CREATE ORDER IN DATABASE
       // ===============================
 
       const response =
@@ -1581,6 +215,10 @@ function Cart({ setCurrentPage }) {
         response.insertId;
 
       if (!orderId) {
+        console.error(
+          "Order response does not contain ID:",
+          response
+        );
 
         alert(
           "Order created but Order ID was not returned."
@@ -1605,13 +243,12 @@ function Cart({ setCurrentPage }) {
       localStorage.setItem(
         "currentOrder",
         JSON.stringify({
+          orderId: orderId,
 
-          orderId:
-            orderId,
+          userId: user.id,
 
           customerName:
-            user.name ||
-            "Customer",
+            user.name || "Customer",
 
           medicineName:
             medicineNames,
@@ -1623,8 +260,7 @@ function Cart({ setCurrentPage }) {
             totalAmount,
 
           orderStatus:
-            "Pending"
-
+            "Pending",
         })
       );
 
@@ -1632,9 +268,7 @@ function Cart({ setCurrentPage }) {
       // CLEAR CART
       // ===============================
 
-      localStorage.removeItem(
-        "cart"
-      );
+      localStorage.removeItem("cart");
 
       setCart([]);
 
@@ -1642,14 +276,8 @@ function Cart({ setCurrentPage }) {
       // GO TO BILLING
       // ===============================
 
-      setCurrentPage(
-        "Billing"
-      );
-
-    }
-
-    catch (err) {
-
+      setCurrentPage("Billing");
+    } catch (err) {
       console.error(
         "Order creation failed:",
         err
@@ -1657,19 +285,11 @@ function Cart({ setCurrentPage }) {
 
       alert(
         err.message ||
-        "Failed to create order"
+          "Failed to create order"
       );
-
+    } finally {
+      setPlacingOrder(false);
     }
-
-    finally {
-
-      setPlacingOrder(
-        false
-      );
-
-    }
-
   };
 
   // ===============================
@@ -1677,7 +297,6 @@ function Cart({ setCurrentPage }) {
   // ===============================
 
   return (
-
     <div className="cart-page">
 
       <h1>
@@ -1730,103 +349,88 @@ function Cart({ setCurrentPage }) {
 
             <tbody>
 
-              {cart.map(
-                (item) => (
+              {cart.map((item) => (
 
-                  <tr
-                    key={
-                      item._id
-                    }
-                  >
+                <tr
+                  key={item._id}
+                >
 
-                    <td>
-                      {item.name}
-                    </td>
+                  <td>
+                    {item.name}
+                  </td>
 
-                    <td>
-                      ₹{item.price}
-                    </td>
+                  <td>
+                    ₹{item.price}
+                  </td>
 
-                    <td>
+                  <td>
 
-                      <button
-                        onClick={() =>
-                          updateQuantity(
-                            item._id,
-                            "minus"
-                          )
-                        }
-                      >
-                        -
-                      </button>
-
-                      <span
-                        style={{
-                          margin:
-                            "0 10px"
-                        }}
-                      >
-                        {
-                          item.cartQuantity ||
-                          1
-                        }
-                      </span>
-
-                      <button
-                        onClick={() =>
-                          updateQuantity(
-                            item._id,
-                            "plus"
-                          )
-                        }
-                      >
-                        +
-                      </button>
-
-                    </td>
-
-                    <td>
-
-                      ₹
-                      {
-                        Number(
-                          item.price
-                        ) *
-                        Number(
-                          item.cartQuantity ||
-                            1
+                    <button
+                      onClick={() =>
+                        updateQuantity(
+                          item._id,
+                          "minus"
                         )
                       }
+                    >
+                      -
+                    </button>
 
-                    </td>
+                    <span
+                      style={{
+                        margin: "0 10px",
+                      }}
+                    >
+                      {item.cartQuantity || 1}
+                    </span>
 
-                    <td>
+                    <button
+                      onClick={() =>
+                        updateQuantity(
+                          item._id,
+                          "plus"
+                        )
+                      }
+                    >
+                      +
+                    </button>
 
-                      <button
-                        className="delete-medicine-btn"
-                        onClick={() =>
-                          removeItem(
-                            item._id
-                          )
-                        }
-                      >
-                        Remove
-                      </button>
+                  </td>
 
-                    </td>
+                  <td>
 
-                  </tr>
+                    ₹
+                    {Number(item.price) *
+                      Number(
+                        item.cartQuantity || 1
+                      )}
 
-                )
-              )}
+                  </td>
+
+                  <td>
+
+                    <button
+                      className="delete-medicine-btn"
+                      onClick={() =>
+                        removeItem(
+                          item._id
+                        )
+                      }
+                    >
+                      Remove
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              ))}
 
             </tbody>
 
           </table>
 
-          <div
-            className="cart-total"
-          >
+          <div className="cart-total">
 
             Total Amount:
             ₹{totalAmount}
@@ -1854,9 +458,7 @@ function Cart({ setCurrentPage }) {
       )}
 
     </div>
-
   );
-
 }
 
 export default Cart;
