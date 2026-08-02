@@ -1,29 +1,73 @@
 const orderModel = require("../models/orderModel");
 
 // ==============================
-// GET ORDERS
+// GET ALL ORDERS
 // ==============================
 
 const getAllOrders = (req, res) => {
 
-    const { userId } = req.query;
 
-    orderModel.getAllOrders(userId, (err, results) => {
+orderModel.getAllOrders((err, results) => {
+
+    if (err) {
+        console.error("Get all orders error:", err);
+
+        return res.status(500).json({
+            message: "Failed to fetch orders"
+        });
+    }
+
+    res.status(200).json(results);
+
+});
+
+
+};
+
+// ==============================
+// GET ORDERS BY USER ID
+// ==============================
+
+const getOrdersByUserId = (req, res) => {
+
+
+const userId = req.query.userId;
+
+console.log("Fetching orders for user ID:", userId);
+
+if (!userId) {
+
+    return res.status(400).json({
+        message: "userId is required"
+    });
+
+}
+
+orderModel.getOrdersByUserId(
+    userId,
+    (err, results) => {
 
         if (err) {
-            console.error(err);
+
+            console.error(
+                "Get user orders error:",
+                err
+            );
 
             return res.status(500).json({
-                message: "Failed to fetch orders"
+                message: "Failed to fetch user orders",
+                error: err.message
             });
+
         }
 
         res.status(200).json(results);
 
-    });
+    }
+);
+
 
 };
-
 
 // ==============================
 // GET ORDER BY ID
@@ -31,31 +75,39 @@ const getAllOrders = (req, res) => {
 
 const getOrderById = (req, res) => {
 
-    orderModel.getOrderById(
-        req.params.id,
-        (err, order) => {
 
-            if (err) {
-                console.error(err);
+orderModel.getOrderById(
+    req.params.id,
+    (err, order) => {
 
-                return res.status(500).json({
-                    message: "Failed to fetch order"
-                });
-            }
+        if (err) {
 
-            if (!order) {
-                return res.status(404).json({
-                    message: "Order not found"
-                });
-            }
+            console.error(
+                "Get order by ID error:",
+                err
+            );
 
-            res.json(order);
+            return res.status(500).json({
+                message: "Failed to fetch order"
+            });
 
         }
-    );
+
+        if (!order) {
+
+            return res.status(404).json({
+                message: "Order not found"
+            });
+
+        }
+
+        res.status(200).json(order);
+
+    }
+);
+
 
 };
-
 
 // ==============================
 // CREATE ORDER
@@ -63,28 +115,40 @@ const getOrderById = (req, res) => {
 
 const createOrder = (req, res) => {
 
-    orderModel.createOrder(
-        req.body,
-        (err, result) => {
 
-            if (err) {
-                console.error(err);
+console.log(
+    "Creating order:",
+    req.body
+);
 
-                return res.status(500).json({
-                    message: "Failed to create order"
-                });
-            }
+orderModel.createOrder(
+    req.body,
+    (err, result) => {
 
-            res.status(201).json({
-                message: "Order created successfully",
-                orderId: result.insertId
+        if (err) {
+
+            console.error(
+                "Create order error:",
+                err
+            );
+
+            return res.status(500).json({
+                message: "Failed to create order",
+                error: err.message
             });
 
         }
-    );
+
+        res.status(201).json({
+            message: "Order created successfully",
+            orderId: result.insertId
+        });
+
+    }
+);
+
 
 };
-
 
 // ==============================
 // UPDATE ORDER
@@ -92,34 +156,42 @@ const createOrder = (req, res) => {
 
 const updateOrder = (req, res) => {
 
-    orderModel.updateOrder(
-        req.params.id,
-        req.body,
-        (err, result) => {
 
-            if (err) {
-                console.error(err);
+orderModel.updateOrder(
+    req.params.id,
+    req.body,
+    (err, result) => {
 
-                return res.status(500).json({
-                    message: "Failed to update order"
-                });
-            }
+        if (err) {
 
-            if (result.affectedRows === 0) {
-                return res.status(404).json({
-                    message: "Order not found"
-                });
-            }
+            console.error(
+                "Update order error:",
+                err
+            );
 
-            res.json({
-                message: "Order updated successfully"
+            return res.status(500).json({
+                message: "Failed to update order"
             });
 
         }
-    );
+
+        if (result.affectedRows === 0) {
+
+            return res.status(404).json({
+                message: "Order not found"
+            });
+
+        }
+
+        res.status(200).json({
+            message: "Order updated successfully"
+        });
+
+    }
+);
+
 
 };
-
 
 // ==============================
 // DELETE ORDER
@@ -127,38 +199,59 @@ const updateOrder = (req, res) => {
 
 const deleteOrder = (req, res) => {
 
-    orderModel.deleteOrder(
-        req.params.id,
-        (err, result) => {
 
-            if (err) {
-                console.error(err);
+orderModel.deleteOrder(
+    req.params.id,
+    (err, result) => {
 
-                return res.status(500).json({
-                    message: "Failed to delete order"
-                });
-            }
+        if (err) {
 
-            if (result.affectedRows === 0) {
-                return res.status(404).json({
-                    message: "Order not found"
-                });
-            }
+            console.error(
+                "Delete order error:",
+                err
+            );
 
-            res.json({
-                message: "Order deleted successfully"
+            return res.status(500).json({
+                message: "Failed to delete order"
             });
 
         }
-    );
+
+        if (result.affectedRows === 0) {
+
+            return res.status(404).json({
+                message: "Order not found"
+            });
+
+        }
+
+        res.status(200).json({
+            message: "Order deleted successfully"
+        });
+
+    }
+);
+
 
 };
 
+// ==============================
+// EXPORT
+// ==============================
 
 module.exports = {
-    getAllOrders,
-    getOrderById,
-    createOrder,
-    updateOrder,
-    deleteOrder
+
+getAllOrders,
+
+getOrdersByUserId,
+
+getOrderById,
+
+createOrder,
+
+updateOrder,
+
+deleteOrder
+
+
 };
