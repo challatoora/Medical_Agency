@@ -223,10 +223,6 @@ method: "DELETE",
 const ORDER_API_URL =
   "http://18.206.210.238:5004/api/orders";
 
-const BILLING_API_URL =
-  "http://18.206.210.238:5005/api/billing";
-
-
 // orderAPI
 export const orderAPI = {
   getAll: () =>
