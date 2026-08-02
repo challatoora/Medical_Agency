@@ -10,35 +10,62 @@ function Orders() {
   // ==============================
   // LOAD ALL ORDERS
   // ==============================
-  const loadOrders = async () => {
-    try {
-      setLoading(true);
+const loadOrders = async () => {
 
-      const user = JSON.parse(localStorage.getItem("user"));
+  try {
 
-      const response = await orderAPI.getAll();
+    setLoading(true);
 
-      let filteredOrders = response;
+    const user = JSON.parse(
+      localStorage.getItem("user")
+    );
 
-      // Normal users see only their own orders
-      if (user?.role !== "admin") {
-        filteredOrders = response.filter(
-          (order) => Number(order.user_id) === Number(user.id)
-        );
-      }
+    let response;
 
-      console.log("Logged-in user:", user);
-      console.log("Orders shown:", filteredOrders);
+    if (user?.role === "admin") {
 
-      setOrders(filteredOrders);
+      // Admin sees all orders
+      response = await orderAPI.getAll();
 
-    } catch (error) {
-      console.error("Failed to load orders:", error);
-      alert("Failed to load orders");
-    } finally {
-      setLoading(false);
+    } else {
+
+      // User sees only own orders
+      response = await orderAPI.getByUserId(
+        user.id
+      );
+
     }
-  };
+
+    console.log(
+      "Logged-in user:",
+      user
+    );
+
+    console.log(
+      "Orders:",
+      response
+    );
+
+    setOrders(response);
+
+  } catch (error) {
+
+    console.error(
+      "Failed to load orders:",
+      error
+    );
+
+    alert(
+      "Failed to load orders"
+    );
+
+  } finally {
+
+    setLoading(false);
+
+  }
+
+};
   // ==============================
   // LOAD ORDERS ON PAGE OPEN
   // ==============================

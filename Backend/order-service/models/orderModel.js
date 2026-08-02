@@ -1,19 +1,28 @@
 const db = require("../config/db");
 
 // ==============================
-// GET ALL ORDERS
+// GET ORDERS
 // ==============================
 
-const getAllOrders = (callback) => {
+const getAllOrders = (userId, callback) => {
 
-    const sql = `
+    let sql = `
         SELECT *
         FROM orders
-        ORDER BY id DESC
     `;
 
-    db.query(sql, callback);
+    let params = [];
+
+    if (userId) {
+        sql += ` WHERE user_id = ?`;
+        params.push(userId);
+    }
+
+    sql += ` ORDER BY id DESC`;
+
+    db.query(sql, params, callback);
 };
+
 
 // ==============================
 // GET ORDER BY ID
@@ -43,6 +52,7 @@ const getOrderById = (id, callback) => {
 
 };
 
+
 // ==============================
 // CREATE ORDER
 // ==============================
@@ -50,6 +60,7 @@ const getOrderById = (id, callback) => {
 const createOrder = (order, callback) => {
 
     const {
+        user_id,
         customer_name,
         medicine_name,
         quantity,
@@ -60,18 +71,20 @@ const createOrder = (order, callback) => {
     const sql = `
         INSERT INTO orders
         (
+            user_id,
             customer_name,
             medicine_name,
             quantity,
             total_price,
             status
         )
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
         sql,
         [
+            user_id,
             customer_name,
             medicine_name,
             quantity,
@@ -82,6 +95,7 @@ const createOrder = (order, callback) => {
     );
 
 };
+
 
 // ==============================
 // UPDATE ORDER
@@ -123,6 +137,7 @@ const updateOrder = (id, order, callback) => {
 
 };
 
+
 // ==============================
 // DELETE ORDER
 // ==============================
@@ -136,6 +151,7 @@ const deleteOrder = (id, callback) => {
     );
 
 };
+
 
 module.exports = {
     getAllOrders,

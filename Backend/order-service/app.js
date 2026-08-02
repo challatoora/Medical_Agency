@@ -1,26 +1,28 @@
-const express = require("express");
+export const orderAPI = {
 
-const cors = require("cors");
+  getAll: () =>
+    request(ORDER_API_URL),
 
-const orderRoutes = require("./routes/orderRoutes");
+  getByUserId: (userId) =>
+    request(`${ORDER_API_URL}?userId=${userId}`),
 
+  getById: (id) =>
+    request(`${ORDER_API_URL}/${id}`),
 
-const app = express();
+  create: (data) =>
+    request(ORDER_API_URL, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 
+  update: (id, data) =>
+    request(`${ORDER_API_URL}/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
 
-app.use(cors());
-
-app.use(express.json());
-
-
-app.get("/", (req, res) => {
-
-    res.send("CMR Medical Agency - Order Service Running...");
-
-});
-
-
-app.use("/api/orders", orderRoutes);
-
-
-module.exports = app;
+  delete: (id) =>
+    request(`${ORDER_API_URL}/${id}`, {
+      method: "DELETE",
+    }),
+};
