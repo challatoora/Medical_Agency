@@ -62,34 +62,6 @@ method: "DELETE",
 }),
 };
 
-// ===============================
-// MEDICINE API
-// ===============================
-
-// export const medicineAPI = {
-// getAll: () =>
-// request(MEDICINE_API_URL),
-
-// getById: (id) =>
-// request(`${MEDICINE_API_URL}/${id}`),
-
-// create: (data) =>
-// request(MEDICINE_API_URL, {
-// method: "POST",
-// body: JSON.stringify(data),
-// }),
-
-// update: (id, data) =>
-// request(`${MEDICINE_API_URL}/${id}`, {
-// method: "PUT",
-// body: JSON.stringify(data),
-// }),
-
-// delete: (id) =>
-// request(`${MEDICINE_API_URL}/${id}`, {
-// method: "DELETE",
-// }),
-// };
 
 // ===============================
 // MEDICINE API
@@ -240,60 +212,3 @@ request(`${BILLING_API_URL}/${id}`, {
 method: "DELETE",
 }),
 };
-
-// export const billingAPI = {
-
-//   create: async (data) => {
-
-//     const response = await fetch(
-//       "http://100.58.117.241:5005/api/billing",
-//       {
-//         method:"POST",
-
-//         headers:{
-//           "Content-Type":"application/json"
-//         },
-
-//         body:JSON.stringify(data)
-//       }
-//     );
-
-
-//     if(!response.ok){
-
-//       throw new Error(
-//         "Failed to create bill"
-//       );
-
-//     }
-
-
-//     return response.json();
-
-//   }
-
-
-// };
-
-// export const orderAPI = {
-
-//   create: async (data) => {
-
-//     const response = await fetch(
-//       `${ORDER_API_URL}/orders`,
-//       {
-//         method: "POST",
-
-//         headers:{
-//           "Content-Type":"application/json"
-//         },
-
-//         body: JSON.stringify(data)
-//       }
-//     );
-
-//     return response.json();
-
-//   }
-
-// };

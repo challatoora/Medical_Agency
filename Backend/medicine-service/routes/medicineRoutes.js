@@ -1,15 +1,3 @@
-// const express = require("express");
-
-// const router = express.Router();
-
-// const medicineController = require("../controllers/medicineController");
-
-// router.get("/", medicineController.getMedicines);
-
-// router.post("/", medicineController.addMedicine);
-
-// module.exports = router;
-
 const express = require("express");
 
 const router = express.Router();
