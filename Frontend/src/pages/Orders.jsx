@@ -1,610 +1,569 @@
 import React, { useEffect, useState } from "react";
-import { orderAPI } from "../services/api";
-import "./Orders.css";
+import { orderAPI, billingAPI } from "../services/api";
+import "./Cart.css";
 
-function Orders() {
+function Cart({ setCurrentPage }) {
 
-  // ==============================
-  // STATE
-  // ==============================
+  const [cart, setCart] = useState([]);
 
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-
-  // ==============================
-  // LOGGED-IN USER
-  // ==============================
-
-  const user =
-    JSON.parse(localStorage.getItem("user")) || null;
-
-
-  // ==============================
-  // CHECK ADMIN
-  // ==============================
-
-  const isAdmin =
-    user?.role?.toLowerCase().trim() === "admin";
-
-
-  // ==============================
-  // FETCH ORDERS
-  // ==============================
-
-  const fetchOrders = async () => {
-
-    try {
-
-      setLoading(true);
-      setError("");
-
-
-      // Get all orders from backend
-
-      const response =
-        await orderAPI.getAll();
-
-
-      // ==============================
-      // ADMIN
-      // ==============================
-
-      if (isAdmin) {
-
-        // Admin can see ALL orders
-
-        setOrders(response);
-
-      }
-
-
-      // ==============================
-      // NORMAL USER
-      // ==============================
-
-      else {
-
-        // User can see ONLY their own orders
-
-        const myOrders =
-          response.filter(
-
-            (order) =>
-
-              order.customer_name
-                ?.toLowerCase()
-                .trim() ===
-
-              user?.name
-                ?.toLowerCase()
-                .trim()
-
-          );
-
-
-        setOrders(myOrders);
-
-      }
-
-
-    }
-
-    catch (err) {
-
-      console.error(
-        "Failed to fetch orders:",
-        err
-      );
-
-
-      setError(
-
-        err.message ||
-
-        "Failed to load orders"
-
-      );
-
-    }
-
-    finally {
-
-      setLoading(false);
-
-    }
-
-  };
-
-
-  // ==============================
-  // LOAD ORDERS
-  // ==============================
 
   useEffect(() => {
 
-    fetchOrders();
+    loadCart();
 
   }, []);
 
 
-  // ==============================
-  // COMPLETE ORDER
-  // ADMIN ONLY
-  // ==============================
+  const loadCart = () => {
 
-  const completeOrder = async (order) => {
+    const data =
+      JSON.parse(
+        localStorage.getItem("cart")
+      ) || [];
 
-
-    // Confirm action
-
-    const confirmComplete =
-
-      window.confirm(
-
-        `Mark Order #${order.id} as Completed?`
-
-      );
-
-
-    if (!confirmComplete) {
-
-      return;
-
-    }
-
-
-    try {
-
-
-      // Update order
-
-      await orderAPI.update(
-
-        order.id,
-
-        {
-
-          customer_name:
-            order.customer_name,
-
-          medicine_name:
-            order.medicine_name,
-
-          quantity:
-            order.quantity,
-
-          total_price:
-            order.total_price,
-
-          status:
-            "Completed"
-
-        }
-
-      );
-
-
-      alert(
-
-        "Order completed successfully"
-
-      );
-
-
-      // Refresh order list
-
-      fetchOrders();
-
-
-    }
-
-    catch (err) {
-
-
-      console.error(
-
-        "Complete order error:",
-
-        err
-
-      );
-
-
-      alert(
-
-        err.message ||
-
-        "Failed to complete order"
-
-      );
-
-    }
+    setCart(data);
 
   };
 
 
   // ==============================
-  // LOADING
+  // UPDATE QUANTITY
   // ==============================
 
-  if (loading) {
+  const updateQuantity = (id, type) => {
 
-    return (
+    const updatedCart = cart.map((item) => {
 
-      <div className="orders-page">
+      if (item._id === id) {
 
-        <h1>
-          Orders
-        </h1>
+        let quantity =
+          Number(item.cartQuantity) || 1;
 
-        <p>
-          Loading orders...
-        </p>
 
-      </div>
+        if (type === "plus") {
+
+          quantity++;
+
+        }
+
+
+        if (
+          type === "minus" &&
+          quantity > 1
+        ) {
+
+          quantity--;
+
+        }
+
+
+        return {
+
+          ...item,
+
+          cartQuantity: quantity
+
+        };
+
+      }
+
+
+      return item;
+
+    });
+
+
+    setCart(updatedCart);
+
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(updatedCart)
+    );
+
+  };
+
+
+  // ==============================
+  // REMOVE ITEM
+  // ==============================
+
+  const removeItem = (id) => {
+
+    const updatedCart =
+      cart.filter(
+        (item) =>
+          item._id !== id
+      );
+
+
+    setCart(updatedCart);
+
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(updatedCart)
+    );
+
+  };
+
+
+  // ==============================
+  // TOTAL
+  // ==============================
+
+  const totalAmount =
+    cart.reduce(
+
+      (total, item) =>
+
+        total +
+
+        Number(item.price) *
+
+        Number(
+          item.cartQuantity || 1
+        ),
+
+      0
 
     );
 
-  }
-
 
   // ==============================
-  // PAGE
+  // CREATE ORDER + PAYMENT
   // ==============================
+
+  const createOrderAndPayment =
+    async () => {
+
+      try {
+
+        setLoading(true);
+
+
+        // GET LOGGED-IN USER
+
+        const userData =
+          JSON.parse(
+            localStorage.getItem(
+              "user"
+            )
+          );
+
+
+        const customerName =
+          userData?.name ||
+          "Customer";
+
+
+        const userId =
+          userData?.id ||
+          userData?._id;
+
+
+        if (!userId) {
+
+          alert(
+            "User information not found. Please login again."
+          );
+
+          return;
+
+        }
+
+
+        // ==============================
+        // PREPARE ORDER DATA
+        // ==============================
+
+        const medicineNames =
+          cart
+            .map(
+              (item) =>
+                item.name
+            )
+            .join(", ");
+
+
+        const totalQuantity =
+          cart.reduce(
+
+            (sum, item) =>
+
+              sum +
+
+              Number(
+                item.cartQuantity || 1
+              ),
+
+            0
+
+          );
+
+
+        // ==============================
+        // CREATE ORDER
+        // ==============================
+
+        const orderData = {
+
+          customer_name:
+            customerName,
+
+          medicine_name:
+            medicineNames,
+
+          quantity:
+            totalQuantity,
+
+          total_price:
+            totalAmount,
+
+          status:
+            "Pending"
+
+        };
+
+
+        const orderResponse =
+          await orderAPI.create(
+            orderData
+          );
+
+
+        console.log(
+          "Order Created:",
+          orderResponse
+        );
+
+
+        const orderId =
+          orderResponse.orderId;
+
+
+        if (!orderId) {
+
+          throw new Error(
+            "Order ID was not returned"
+          );
+
+        }
+
+
+        // ==============================
+        // CREATE INVOICE
+        // ==============================
+
+        const invoiceData = {
+
+          order_id:
+            orderId,
+
+          user_id:
+            userId,
+
+          subtotal:
+            totalAmount,
+
+          tax_amount:
+            0,
+
+          discount_amount:
+            0,
+
+          payment_status:
+            "SUCCESS",
+
+          payment_method:
+            "Dummy Payment"
+
+        };
+
+
+        const invoiceResponse =
+          await billingAPI.create(
+            invoiceData
+          );
+
+
+        console.log(
+          "Invoice Created:",
+          invoiceResponse
+        );
+
+
+        // ==============================
+        // PAYMENT SUCCESS
+        // ==============================
+
+        alert(
+
+          "Payment Successful!\n\n" +
+
+          "Invoice Number: " +
+
+          invoiceResponse.invoiceNumber +
+
+          "\n\n" +
+
+          "Order Status: Pending\n\n" +
+
+          "Admin will complete your order."
+
+        );
+
+
+        // ==============================
+        // CLEAR CART
+        // ==============================
+
+        localStorage.removeItem(
+          "cart"
+        );
+
+
+        setCart([]);
+
+
+        // ==============================
+        // GO TO ORDERS
+        // ==============================
+
+        setCurrentPage(
+          "Orders"
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Order/Payment Error:",
+          error
+        );
+
+
+        alert(
+          error.message ||
+          "Failed to create order"
+        );
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
 
   return (
 
-    <div className="orders-page">
+    <div className="cart-page">
+
+      <h1>
+        Shopping Cart
+      </h1>
 
 
-      {/* ==========================
-          PAGE HEADER
-      =========================== */}
+      {cart.length === 0 ? (
 
-      <div className="orders-page-header">
+        <div className="cart-card">
 
-
-        <div>
-
-          <h1>
-            Orders
-          </h1>
-
-
-          <p>
-
-            {isAdmin
-
-              ? "Manage all customer orders"
-
-              : "View your orders"
-
-            }
-
-          </p>
+          <h2>
+            Your cart is empty
+          </h2>
 
         </div>
 
+      ) : (
 
-      </div>
+        <div className="cart-card">
 
-
-
-      {/* ==========================
-          ERROR
-      =========================== */}
-
-      {error && (
-
-        <div className="error-message">
-
-          {error}
-
-        </div>
-
-      )}
-
-
-
-      {/* ==========================
-          ORDERS CARD
-      =========================== */}
-
-      <div className="orders-card">
-
-
-        {/* ========================
-            NO ORDERS
-        ========================= */}
-
-        {orders.length === 0 ? (
-
-          <div className="empty-orders">
-
-
-            <h2>
-
-              No Orders Found
-
-            </h2>
-
-
-            <p>
-
-              {isAdmin
-
-                ? "There are no customer orders yet."
-
-                : "You have not placed any orders yet."
-
-              }
-
-            </p>
-
-
-          </div>
-
-        )
-
-
-        :
-
-
-        (
-
-
-          /* ========================
-             ORDERS TABLE
-          ========================= */
-
-          <table className="orders-table">
-
+          <table
+            className="cart-table"
+          >
 
             <thead>
 
               <tr>
 
-
-                <th>
-                  Order ID
-                </th>
-
-
-                <th>
-                  Customer
-                </th>
-
-
                 <th>
                   Medicine
                 </th>
 
+                <th>
+                  Price
+                </th>
 
                 <th>
                   Quantity
                 </th>
 
-
                 <th>
                   Total
                 </th>
 
-
                 <th>
-                  Status
+                  Action
                 </th>
-
-
-                {/* ADMIN ONLY */}
-
-                {isAdmin && (
-
-                  <th>
-                    Action
-                  </th>
-
-                )}
-
 
               </tr>
 
             </thead>
 
 
-
             <tbody>
 
-
-              {orders.map(
-
-                (order) => (
-
+              {cart.map(
+                (item) => (
 
                   <tr
-                    key={order.id}
+                    key={item._id}
                   >
 
-
-                    {/* ORDER ID */}
-
                     <td>
-
-                      #{order.id}
-
+                      {item.name}
                     </td>
 
 
-
-                    {/* CUSTOMER */}
-
                     <td>
-
-                      {order.customer_name}
-
+                      ₹{item.price}
                     </td>
 
 
-
-                    {/* MEDICINE */}
-
                     <td>
 
-                      {order.medicine_name}
+                      <button
 
-                    </td>
-
-
-
-                    {/* QUANTITY */}
-
-                    <td>
-
-                      {order.quantity}
-
-                    </td>
-
-
-
-                    {/* TOTAL */}
-
-                    <td>
-
-                      ₹
-                      {order.total_price}
-
-                    </td>
-
-
-
-                    {/* STATUS */}
-
-                    <td>
-
-
-                      <span
-
-                        className={
-
-                          order.status
-                            ?.toLowerCase()
-                            .trim() ===
-                          "completed"
-
-                            ? "status-completed"
-
-                            : "status-pending"
-
+                        onClick={() =>
+                          updateQuantity(
+                            item._id,
+                            "minus"
+                          )
                         }
 
                       >
+                        -
+                      </button>
 
-                        {order.status ||
 
-                          "Pending"
+                      <span
+                        style={{
+                          margin:
+                            "0 10px"
+                        }}
+                      >
 
+                        {
+                          item.cartQuantity
                         }
 
                       </span>
 
 
+                      <button
+
+                        onClick={() =>
+                          updateQuantity(
+                            item._id,
+                            "plus"
+                          )
+                        }
+
+                      >
+                        +
+                      </button>
+
                     </td>
 
 
+                    <td>
 
-                    {/* ======================
-                        ADMIN ACTION
-                    ======================= */}
+                      ₹
+                      {
+                        Number(
+                          item.price
+                        ) *
 
-                    {isAdmin && (
+                        Number(
+                          item.cartQuantity
+                        )
+                      }
 
-
-                      <td>
-
-
-                        {order.status
-                          ?.toLowerCase()
-                          .trim() ===
-                        "completed"
-
-
-                          ?
+                    </td>
 
 
-                          (
+                    <td>
 
-                            <span
+                      <button
 
-                              className=
-                                "completed-text"
+                        className=
+                          "delete-medicine-btn"
 
-                            >
-
-                              ✓ Completed
-
-                            </span>
-
+                        onClick={() =>
+                          removeItem(
+                            item._id
                           )
-
-
-                          :
-
-
-                          (
-
-
-                            <button
-
-                              className=
-                                "complete-order-btn"
-
-
-                              onClick={() =>
-
-                                completeOrder(
-                                  order
-                                )
-
-                              }
-
-                            >
-
-                              Complete Order
-
-                            </button>
-
-
-                          )
-
                         }
 
+                      >
 
-                      </td>
+                        Remove
 
+                      </button>
 
-                    )}
-
+                    </td>
 
                   </tr>
 
-
                 )
-
               )}
 
-
             </tbody>
-
 
           </table>
 
 
-        )}
+          <div
+            className="cart-total"
+          >
+
+            Total Amount:
+            ₹{totalAmount}
+
+          </div>
 
 
-      </div>
+          <button
 
+            className=
+              "checkout-btn"
+
+            onClick={
+              createOrderAndPayment
+            }
+
+            disabled={loading}
+
+          >
+
+            {loading
+
+              ? "Processing Payment..."
+
+              : "Proceed To Payment"
+
+            }
+
+          </button>
+
+
+        </div>
+
+      )}
 
     </div>
 
@@ -612,4 +571,5 @@ function Orders() {
 
 }
 
-export default Orders;
+
+export default Cart;
