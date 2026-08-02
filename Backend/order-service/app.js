@@ -1,28 +1,25 @@
-export const orderAPI = {
+const express = require("express");
+const cors = require("cors");
 
-  getAll: () =>
-    request(ORDER_API_URL),
+const orderRoutes = require("./routes/orderRoutes");
 
-  getByUserId: (userId) =>
-    request(`${ORDER_API_URL}?userId=${userId}`),
+const app = express();
 
-  getById: (id) =>
-    request(`${ORDER_API_URL}/${id}`),
+const PORT = 5004;
 
-  create: (data) =>
-    request(ORDER_API_URL, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-  update: (id, data) =>
-    request(`${ORDER_API_URL}/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
+// Routes
+app.use("/api/orders", orderRoutes);
 
-  delete: (id) =>
-    request(`${ORDER_API_URL}/${id}`, {
-      method: "DELETE",
-    }),
-};
+// Health check
+app.get("/", (req, res) => {
+res.send("Order Service Running");
+});
+
+// Start server
+app.listen(PORT, "0.0.0.0", () => {
+console.log(`Order Service running on port ${PORT}`);
+});
