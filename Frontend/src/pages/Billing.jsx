@@ -1,1461 +1,965 @@
-// import React, { useEffect, useState } from "react";
-// import {
-//   orderAPI,
-//   billingAPI
-// } from "../services/api";
-
-// import "./Billing.css";
-
-
-// function Billing() {
-
-//   // ==========================================
-//   // CART
-//   // ==========================================
-
-//   const [cart, setCart] = useState([]);
-
-
-//   // ==========================================
-//   // LOGGED-IN USER
-//   // ==========================================
-
-//   const [user, setUser] = useState(null);
-
-
-//   // ==========================================
-//   // PAYMENT
-//   // ==========================================
-
-//   const [paymentMethod, setPaymentMethod] =
-//     useState("Cash");
-
-
-//   // ==========================================
-//   // BILLING STATUS
-//   // ==========================================
-
-//   const [loading, setLoading] =
-//     useState(false);
-
-
-//   // ==========================================
-//   // LOAD CART + USER
-//   // ==========================================
-
-//   useEffect(() => {
-
-//     const cartData =
-//       JSON.parse(
-//         localStorage.getItem("cart")
-//       ) || [];
-
-
-//     const userData =
-//       JSON.parse(
-//         localStorage.getItem("user")
-//       );
-
-
-//     setCart(cartData);
-
-//     setUser(userData);
-
-//   }, []);
-
-
-//   // ==========================================
-//   // SUBTOTAL
-//   // ==========================================
-
-//   const subtotal = cart.reduce(
-
-//     (sum, item) =>
-
-//       sum +
-//       (
-//         Number(item.price) *
-//         Number(item.cartQuantity)
-//       ),
-
-//     0
-
-//   );
-
-
-//   // ==========================================
-//   // TAX 18%
-//   // ==========================================
-
-//   const taxAmount =
-//     subtotal * 0.18;
-
-
-//   // ==========================================
-//   // DISCOUNT
-//   // ==========================================
-
-//   const discountAmount = 0;
-
-
-//   // ==========================================
-//   // FINAL TOTAL
-//   // ==========================================
-
-//   const totalAmount =
-//     subtotal +
-//     taxAmount -
-//     discountAmount;
-
-
-//   // ==========================================
-//   // GENERATE BILL
-//   // ==========================================
-
-//   const generateBill = async () => {
-
-//     // Check cart
-
-//     if (cart.length === 0) {
-
-//       alert(
-//         "Your cart is empty"
-//       );
-
-//       return;
-
-//     }
-
-
-//     // Check user
-
-//     if (!user?.id) {
-
-//       alert(
-//         "User information not found"
-//       );
-
-//       return;
-
-//     }
-
-
-//     try {
-
-//       setLoading(true);
-
-
-//       // ========================================
-//       // STEP 1
-//       // CREATE ORDER
-//       // ========================================
-
-//       const orderData = {
-
-//         customer_name:
-//           user?.name || "Customer",
-
-//         medicine_name:
-//           cart
-//             .map(item => item.name)
-//             .join(", "),
-
-//         quantity:
-//           cart.reduce(
-//             (total, item) =>
-//               total +
-//               Number(item.cartQuantity),
-
-//             0
-//           ),
-
-//         total_price:
-//           totalAmount,
-
-//         status:
-//           "Pending"
-
-//       };
-
-
-//       console.log(
-//         "Creating Order:",
-//         orderData
-//       );
-
-
-//       const orderResponse =
-//         await orderAPI.create(
-//           orderData
-//         );
-
-
-//       console.log(
-//         "Order Response:",
-//         orderResponse
-//       );
-
-
-//       // ========================================
-//       // GET ORDER ID
-//       // ========================================
-
-//       const orderId =
-//         orderResponse.orderId ||
-//         orderResponse.id;
-
-
-//       if (!orderId) {
-
-//         throw new Error(
-//           "Order ID was not returned"
-//         );
-
-//       }
-
-
-//       // ========================================
-//       // STEP 2
-//       // CREATE BILL / INVOICE
-//       // ========================================
-
-//       const billData = {
-
-//         order_id:
-//           Number(orderId),
-
-//         user_id:
-//           Number(user.id),
-
-//         subtotal:
-//           Number(subtotal),
-
-//         tax_amount:
-//           Number(taxAmount),
-
-//         discount_amount:
-//           Number(discountAmount),
-
-//         payment_status:
-//           "Pending",
-
-//         payment_method:
-//           paymentMethod
-
-//       };
-
-
-//       console.log(
-//         "Creating Invoice:",
-//         billData
-//       );
-
-
-//       const billResponse =
-//         await billingAPI.create(
-//           billData
-//         );
-
-
-//       console.log(
-//         "Invoice Response:",
-//         billResponse
-//       );
-
-
-//       // ========================================
-//       // SUCCESS
-//       // ========================================
-
-//       alert(
-
-//         `Invoice created successfully!\n\n` +
-
-//         `Invoice Number: ${
-//           billResponse.invoiceNumber ||
-//           "Generated"
-//         }\n\n` +
-
-//         `Total Amount: ₹${
-//           totalAmount.toFixed(2)
-//         }`
-
-//       );
-
-
-//       // ========================================
-//       // CLEAR CART
-//       // ========================================
-
-//       localStorage.removeItem(
-//         "cart"
-//       );
-
-
-//       setCart([]);
-
-
-//     }
-
-//     catch (err) {
-
-//       console.error(
-//         "Billing Error:",
-//         err
-//       );
-
-
-//       alert(
-
-//         err.message ||
-//         "Failed to generate bill"
-
-//       );
-
-//     }
-
-//     finally {
-
-//       setLoading(false);
-
-//     }
-
-//   };
-
-
-//   // ==========================================
-//   // RETURN
-//   // ==========================================
-
-//   return (
-
-//     <div className="billing-page">
-
-
-//       {/* ======================================
-//           PAGE TITLE
-//       ====================================== */}
-
-//       <h1>
-//         Billing
-//       </h1>
-
-
-//       {/* ======================================
-//           CUSTOMER DETAILS
-//       ====================================== */}
-
-//       <div className="billing-card">
-
-
-//         <h2>
-//           Customer Details
-//         </h2>
-
-
-//         <p>
-
-//           <strong>
-//             Name:
-//           </strong>
-
-//           {" "}
-
-//           {user?.name || "Customer"}
-
-//         </p>
-
-
-//         <p>
-
-//           <strong>
-//             Role:
-//           </strong>
-
-//           {" "}
-
-//           {user?.role || "USER"}
-
-//         </p>
-
-
-//         <p>
-
-//           <strong>
-//             User ID:
-//           </strong>
-
-//           {" "}
-
-//           {user?.id || "-"}
-
-//         </p>
-
-
-//       </div>
-
-
-//       {/* ======================================
-//           ORDER SUMMARY
-//       ====================================== */}
-
-//       <div className="billing-card">
-
-
-//         <h2>
-//           Order Summary
-//         </h2>
-
-
-//         {cart.length === 0 ? (
-
-//           <p>
-//             Your cart is empty.
-//           </p>
-
-//         ) : (
-
-//           <table className="billing-table">
-
-
-//             <thead>
-
-//               <tr>
-
-//                 <th>
-//                   Medicine
-//                 </th>
-
-//                 <th>
-//                   Price
-//                 </th>
-
-//                 <th>
-//                   Quantity
-//                 </th>
-
-//                 <th>
-//                   Amount
-//                 </th>
-
-//               </tr>
-
-//             </thead>
-
-
-//             <tbody>
-
-
-//               {cart.map(item => (
-
-
-//                 <tr
-//                   key={item._id}
-//                 >
-
-
-//                   <td>
-//                     {item.name}
-//                   </td>
-
-
-//                   <td>
-//                     ₹{Number(item.price).toFixed(2)}
-//                   </td>
-
-
-//                   <td>
-//                     {item.cartQuantity}
-//                   </td>
-
-
-//                   <td>
-
-//                     ₹
-//                     {(
-//                       Number(item.price) *
-//                       Number(item.cartQuantity)
-//                     ).toFixed(2)}
-
-//                   </td>
-
-
-//                 </tr>
-
-
-//               ))}
-
-
-//             </tbody>
-
-
-//           </table>
-
-//         )}
-
-
-//         {/* ====================================
-//             BILL CALCULATION
-//         ==================================== */}
-
-//         {cart.length > 0 && (
-
-//           <div className="billing-calculation">
-
-
-//             <p>
-
-//               <span>
-//                 Subtotal:
-//               </span>
-
-//               <strong>
-//                 ₹{subtotal.toFixed(2)}
-//               </strong>
-
-//             </p>
-
-
-//             <p>
-
-//               <span>
-//                 Tax (18%):
-//               </span>
-
-//               <strong>
-//                 ₹{taxAmount.toFixed(2)}
-//               </strong>
-
-//             </p>
-
-
-//             <p>
-
-//               <span>
-//                 Discount:
-//               </span>
-
-//               <strong>
-//                 ₹{discountAmount.toFixed(2)}
-//               </strong>
-
-//             </p>
-
-
-//             <hr />
-
-
-//             <h2 className="billing-total">
-
-//               <span>
-//                 Total Payable:
-//               </span>
-
-//               <strong>
-//                 ₹{totalAmount.toFixed(2)}
-//               </strong>
-
-//             </h2>
-
-
-//           </div>
-
-//         )}
-
-
-//         {/* ====================================
-//             PAYMENT METHOD
-//         ==================================== */}
-
-//         {cart.length > 0 && (
-
-//           <div className="payment-section">
-
-
-//             <h3>
-//               Payment Method
-//             </h3>
-
-
-//             <select
-
-//               value={paymentMethod}
-
-//               onChange={(e) =>
-//                 setPaymentMethod(
-//                   e.target.value
-//                 )
-//               }
-
-//             >
-
-//               <option value="Cash">
-//                 Cash
-//               </option>
-
-//               <option value="Card">
-//                 Card
-//               </option>
-
-//               <option value="UPI">
-//                 UPI
-//               </option>
-
-//             </select>
-
-
-//           </div>
-
-//         )}
-
-
-//         {/* ====================================
-//             GENERATE BILL BUTTON
-//         ==================================== */}
-
-//         {cart.length > 0 && (
-
-//           <button
-
-//             className="generate-bill-btn"
-
-//             onClick={
-//               generateBill
-//             }
-
-//             disabled={loading}
-
-//           >
-
-//             {loading
-
-//               ? "Generating Bill..."
-
-//               : "Generate Bill"
-
-//             }
-
-//           </button>
-
-//         )}
-
-
-//       </div>
-
-
-//     </div>
-
-//   );
-
-// }
-
-
-// export default Billing;
-
 import React, { useEffect, useState } from "react";
 import { billingAPI } from "../services/api";
 import "./Billing.css";
 
 function Billing() {
-  const [order, setOrder] = useState(null);
-  const [user, setUser] = useState(null);
+const [order, setOrder] = useState(null);
+const [user, setUser] = useState(null);
 
-  const [invoice, setInvoice] = useState(null);
+const [invoice, setInvoice] = useState(null);
 
-  const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+const [showPaymentPopup, setShowPaymentPopup] = useState(false);
 
-  const [paymentMethod, setPaymentMethod] = useState("UPI");
+const [paymentMethod, setPaymentMethod] = useState("UPI");
 
-  const [paymentLoading, setPaymentLoading] = useState(false);
+const [paymentLoading, setPaymentLoading] = useState(false);
 
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
+const [paymentSuccess, setPaymentSuccess] = useState(false);
 
-  const [error, setError] = useState("");
+const [error, setError] = useState("");
 
-  // ===============================
-  // LOAD CURRENT ORDER
-  // ===============================
+// ===============================
+// LOAD CURRENT ORDER
+// ===============================
 
-  useEffect(() => {
-    const orderData =
-      JSON.parse(
-        localStorage.getItem("currentOrder")
-      );
+useEffect(() => {
+loadBillingData();
+}, []);
 
-    const userData =
-      JSON.parse(
-        localStorage.getItem("user")
-      );
+const loadBillingData = () => {
+try {
+const orderData = JSON.parse(
+localStorage.getItem("currentOrder")
+);
 
-    console.log(
-      "Current Order:",
-      orderData
+
+  const userData = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+  console.log("Current Order:", orderData);
+  console.log("Current User:", userData);
+
+  setOrder(orderData);
+  setUser(userData);
+
+  // Reset page state when there is no active order
+  if (!orderData) {
+    setInvoice(null);
+    setPaymentSuccess(false);
+  }
+} catch (err) {
+  console.error(
+    "Failed to load billing data:",
+    err
+  );
+
+  setError(
+    "Failed to load billing information."
+  );
+}
+
+
+};
+
+// ===============================
+// GET ORDER DATA
+// ===============================
+
+const orderId = order?.orderId;
+
+const customerName =
+order?.customerName ||
+user?.name ||
+"Customer";
+
+const medicineName =
+order?.medicineName ||
+"Medicine";
+
+const quantity =
+Number(order?.quantity) || 0;
+
+const totalAmount =
+Number(order?.totalAmount) || 0;
+
+// ===============================
+// GENERATE INVOICE
+// ===============================
+
+const generateBill = async () => {
+try {
+setError("");
+
+
+  // Check current order
+  if (!order) {
+    alert(
+      "No active order found. Please place an order first."
     );
 
-    console.log(
-      "Current User:",
-      userData
+    return;
+  }
+
+  // Check Order ID
+  if (!orderId) {
+    alert(
+      "Order ID not found."
     );
 
-    setOrder(orderData);
-    setUser(userData);
-  }, []);
+    return;
+  }
+
+  // Check User
+  if (
+    !user?.id &&
+    !user?._id
+  ) {
+    alert(
+      "User information not found."
+    );
+
+    return;
+  }
+
+  // Check Amount
+  if (
+    totalAmount <= 0
+  ) {
+    alert(
+      "Order amount is invalid."
+    );
+
+    return;
+  }
 
   // ===============================
-  // GET ORDER DATA
+  // BILL DATA
   // ===============================
 
-  const orderId =
-    order?.orderId;
+  const billData = {
+    order_id:
+      Number(orderId),
 
-  const customerName =
-    order?.customerName ||
-    user?.name ||
-    "Customer";
+    user_id:
+      user.id ||
+      user._id,
 
-  const medicineName =
-    order?.medicineName ||
-    "Medicine";
+    subtotal:
+      totalAmount,
 
-  const quantity =
-    Number(order?.quantity) || 0;
+    tax_amount:
+      0,
 
-  const totalAmount =
-    Number(order?.totalAmount) || 0;
+    discount_amount:
+      0,
 
-  // ===============================
-  // GENERATE INVOICE
-  // ===============================
+    payment_status:
+      "Pending",
 
-  const generateBill = async () => {
-    try {
-      setError("");
-
-      // Check current order
-      if (!order) {
-        alert(
-          "Order information not found."
-        );
-
-        return;
-      }
-
-      // Check Order ID
-      if (!orderId) {
-        alert(
-          "Order ID not found."
-        );
-
-        return;
-      }
-
-      // Check User
-      if (
-        !user?.id &&
-        !user?._id
-      ) {
-        alert(
-          "User information not found."
-        );
-
-        return;
-      }
-
-      // Check Amount
-      if (
-        totalAmount <= 0
-      ) {
-        alert(
-          "Order amount is invalid."
-        );
-
-        return;
-      }
-
-      // ===============================
-      // BILL DATA
-      // ===============================
-
-      const billData = {
-        order_id:
-          Number(orderId),
-
-        user_id:
-          user.id ||
-          user._id,
-
-        subtotal:
-          totalAmount,
-
-        tax_amount:
-          0,
-
-        discount_amount:
-          0,
-
-        payment_status:
-          "Pending",
-
-        payment_method:
-          "Pending"
-      };
-
-      console.log(
-        "Creating Invoice:",
-        billData
-      );
-
-      // ===============================
-      // CREATE INVOICE
-      // ===============================
-
-      const response =
-        await billingAPI.create(
-          billData
-        );
-
-      console.log(
-        "Invoice Created:",
-        response
-      );
-
-      // ===============================
-      // SAVE INVOICE
-      // ===============================
-
-      setInvoice({
-        id:
-          response.invoiceId,
-
-        invoiceNumber:
-          response.invoiceNumber,
-
-        totalAmount:
-          response.totalAmount,
-
-        paymentStatus:
-          "Pending",
-
-        paymentMethod:
-          "Pending"
-      });
-
-      // ===============================
-      // OPEN PAYMENT POPUP
-      // ===============================
-
-      setShowPaymentPopup(
-        true
-      );
-    }
-
-    catch (err) {
-      console.error(
-        "Invoice creation failed:",
-        err
-      );
-
-      setError(
-        err.message ||
-        "Failed to create invoice"
-      );
-    }
+    payment_method:
+      "Pending"
   };
 
+  console.log(
+    "Creating Invoice:",
+    billData
+  );
+
   // ===============================
-  // CONFIRM PAYMENT
+  // CREATE INVOICE
   // ===============================
 
-  const confirmPayment = async () => {
-    try {
-      setPaymentLoading(
-        true
-      );
+  const response =
+    await billingAPI.create(
+      billData
+    );
 
-      setError("");
+  console.log(
+    "Invoice Created:",
+    response
+  );
 
-      if (!invoice?.id) {
-        alert(
-          "Invoice ID not found."
-        );
+  // ===============================
+  // SAVE INVOICE
+  // ===============================
 
-        return;
-      }
+  setInvoice({
+    id:
+      response.invoiceId,
 
-      // ===============================
-      // UPDATE PAYMENT METHOD
-      // ===============================
+    invoiceNumber:
+      response.invoiceNumber,
 
-      await billingAPI.updatePaymentMethod(
-        invoice.id,
-        {
-          payment_method:
-            paymentMethod
-        }
-      );
+    totalAmount:
+      response.totalAmount ||
+      totalAmount,
 
-      // ===============================
-      // UPDATE PAYMENT STATUS
-      // ===============================
+    paymentStatus:
+      "Pending",
 
-      await billingAPI.updatePaymentStatus(
-        invoice.id,
-        {
-          payment_status:
-            "Paid"
-        }
-      );
+    paymentMethod:
+      "Pending"
+  });
 
-      console.log(
-        "Payment Successful"
-      );
+  // ===============================
+  // OPEN PAYMENT POPUP
+  // ===============================
 
-      // ===============================
-      // UPDATE INVOICE UI
-      // ===============================
+  setShowPaymentPopup(
+    true
+  );
+}
 
-      setInvoice({
-        ...invoice,
+catch (err) {
+  console.error(
+    "Invoice creation failed:",
+    err
+  );
 
-        paymentStatus:
-          "Paid",
+  setError(
+    err.message ||
+    "Failed to create invoice"
+  );
+}
 
-        paymentMethod:
-          paymentMethod
-      });
 
-      // ===============================
-      // CLOSE POPUP
-      // ===============================
+};
 
-      setShowPaymentPopup(
-        false
-      );
+// ===============================
+// CLEAR COMPLETED BILL
+// ===============================
 
-      // ===============================
-      // SHOW SUCCESS
-      // ===============================
+const clearCompletedBill = () => {
+console.log(
+"Clearing completed order and billing data..."
+);
 
-      setPaymentSuccess(
-        true
-      );
 
-      // ===============================
-      // CLEAR CART
-      // ===============================
+// Clear current order
+localStorage.removeItem(
+  "currentOrder"
+);
 
-      localStorage.removeItem(
-        "cart"
-      );
+// Clear order ID
+localStorage.removeItem(
+  "orderId"
+);
 
+// Clear billing amount
+localStorage.removeItem(
+  "billingAmount"
+);
+
+// Clear cart
+localStorage.removeItem(
+  "cart"
+);
+
+// Clear React state
+setOrder(null);
+
+setInvoice(null);
+
+setPaymentSuccess(
+  false
+);
+
+setShowPaymentPopup(
+  false
+);
+
+
+};
+
+// ===============================
+// CONFIRM PAYMENT
+// ===============================
+
+const confirmPayment = async () => {
+try {
+setPaymentLoading(
+true
+);
+
+
+  setError("");
+
+  if (!invoice?.id) {
+    alert(
+      "Invoice ID not found."
+    );
+
+    return;
+  }
+
+  // ===============================
+  // UPDATE PAYMENT METHOD
+  // ===============================
+
+  await billingAPI.updatePaymentMethod(
+    invoice.id,
+    {
+      payment_method:
+        paymentMethod
     }
+  );
 
-    catch (err) {
-      console.error(
-        "Payment failed:",
-        err
-      );
+  // ===============================
+  // UPDATE PAYMENT STATUS
+  // ===============================
 
-      setError(
-        err.message ||
-        "Payment failed"
-      );
+  await billingAPI.updatePaymentStatus(
+    invoice.id,
+    {
+      payment_status:
+        "Paid"
     }
+  );
 
-    finally {
-      setPaymentLoading(
-        false
-      );
-    }
-  };
+  console.log(
+    "Payment Successful"
+  );
 
-  return (
-    <div className="billing-page">
+  // ===============================
+  // UPDATE INVOICE UI
+  // ===============================
 
-      <h1>
-        Billing
-      </h1>
+  setInvoice(
+    (previousInvoice) => ({
+      ...previousInvoice,
 
-      {/* ===============================
-          ERROR
-      =============================== */}
+      paymentStatus:
+        "Paid",
 
-      {error && (
-        <div
-          style={{
-            background:
-              "#fee2e2",
-            color:
-              "#b91c1c",
-            padding:
-              "12px",
-            marginBottom:
-              "20px",
-            borderRadius:
-              "8px"
-          }}
-        >
-          {error}
-        </div>
-      )}
+      paymentMethod:
+        paymentMethod
+    })
+  );
 
-      {/* ===============================
-          CUSTOMER DETAILS
-      =============================== */}
+  // ===============================
+  // CLOSE PAYMENT POPUP
+  // ===============================
 
-      <div className="billing-card">
+  setShowPaymentPopup(
+    false
+  );
 
-        <h2>
-          Customer Details
-        </h2>
+  // ===============================
+  // SHOW SUCCESS MESSAGE
+  // ===============================
 
-        <p>
-          Name :{" "}
-          {customerName}
-        </p>
+  setPaymentSuccess(
+    true
+  );
 
-        <p>
-          Role :{" "}
-          {user?.role ||
-            "USER"}
-        </p>
+  // ===============================
+  // CLEAR CART
+  // ===============================
 
+  localStorage.removeItem(
+    "cart"
+  );
+
+  /*
+    IMPORTANT:
+
+    We DO NOT clear currentOrder
+    immediately here.
+
+    This allows the user to see
+    the successful payment details.
+
+    The user can then click
+    "Finish" and the completed
+    billing data will be removed.
+  */
+}
+
+catch (err) {
+  console.error(
+    "Payment failed:",
+    err
+  );
+
+  setError(
+    err.message ||
+    "Payment failed"
+  );
+}
+
+finally {
+  setPaymentLoading(
+    false
+  );
+}
+
+
+};
+
+// ===============================
+// NO ACTIVE ORDER
+// ===============================
+
+if (!order) {
+return ( <div className="billing-page">
+
+
+    <h1>
+      Billing
+    </h1>
+
+    {error && (
+      <div
+        style={{
+          background:
+            "#fee2e2",
+          color:
+            "#b91c1c",
+          padding:
+            "12px",
+          marginBottom:
+            "20px",
+          borderRadius:
+            "8px"
+        }}
+      >
+        {error}
       </div>
-
-      {/* ===============================
-          ORDER SUMMARY
-      =============================== */}
-
-      <div className="billing-card">
-
-        <h2>
-          Order Summary
-        </h2>
-
-        <table
-          className="billing-table"
-        >
-
-          <thead>
-
-            <tr>
-
-              <th>
-                Medicine
-              </th>
-
-              <th>
-                Quantity
-              </th>
-
-              <th>
-                Amount
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            <tr>
-
-              <td>
-                {medicineName}
-              </td>
-
-              <td>
-                {quantity}
-              </td>
-
-              <td>
-                ₹
-                {totalAmount}
-              </td>
-
-            </tr>
-
-          </tbody>
-
-        </table>
-
-        <h2
-          className="billing-total"
-        >
-          Total Payable :
-          ₹
-          {totalAmount}
-        </h2>
-
-        {/* ===============================
-            GENERATE BILL BUTTON
-        =============================== */}
-
-        {!invoice &&
-          !paymentSuccess && (
-
-          <button
-            className="generate-bill-btn"
-            onClick={
-              generateBill
-            }
-            disabled={
-              !order ||
-              totalAmount <= 0
-            }
-          >
-            Generate Bill
-          </button>
-
-        )}
-
-      </div>
-
-      {/* ===============================
-          PAYMENT SUCCESS
-      =============================== */}
-
-      {paymentSuccess && (
-
-        <div
-          className="billing-card"
-          style={{
-            marginTop:
-              "20px",
-            border:
-              "2px solid #22c55e"
-          }}
-        >
-
-          <h2
-            style={{
-              color:
-                "#16a34a"
-            }}
-          >
-            Payment Successful ✅
-          </h2>
-
-          <p>
-            Invoice Number :{" "}
-            <strong>
-              {
-                invoice?.invoiceNumber
-              }
-            </strong>
-          </p>
-
-          <p>
-            Amount Paid :{" "}
-            <strong>
-              ₹
-              {
-                invoice?.totalAmount
-              }
-            </strong>
-          </p>
-
-          <p>
-            Payment Method :{" "}
-            <strong>
-              {
-                invoice?.paymentMethod
-              }
-            </strong>
-          </p>
-
-          <p>
-            Payment Status :{" "}
-            <strong>
-              Paid
-            </strong>
-          </p>
-
-          <p>
-            Order ID :{" "}
-            <strong>
-              {orderId}
-            </strong>
-          </p>
-
-          <p>
-            Order Status :{" "}
-            <strong>
-              Pending
-            </strong>
-          </p>
-
-          <p>
-            Your payment has been
-            completed successfully.
-          </p>
-
-          <p>
-            The Admin will manually
-            update your order status
-            to Completed.
-          </p>
-
-        </div>
-
-      )}
-
-      {/* ===============================
-          PAYMENT POPUP
-      =============================== */}
-
-      {showPaymentPopup && (
-
-        <div
-          style={{
-            position:
-              "fixed",
-            top: 0,
-            left: 0,
-            width:
-              "100%",
-            height:
-              "100%",
-            background:
-              "rgba(0,0,0,0.6)",
-            display:
-              "flex",
-            justifyContent:
-              "center",
-            alignItems:
-              "center",
-            zIndex:
-              9999
-          }}
-        >
-
-          <div
-            style={{
-              background:
-                "#ffffff",
-              padding:
-                "30px",
-              borderRadius:
-                "15px",
-              width:
-                "400px",
-              maxWidth:
-                "90%",
-              boxShadow:
-                "0 10px 40px rgba(0,0,0,0.3)"
-            }}
-          >
-
-            <h2>
-              Payment
-            </h2>
-
-            <p>
-              Invoice Number :{" "}
-              <strong>
-                {
-                  invoice?.invoiceNumber
-                }
-              </strong>
-            </p>
-
-            <p>
-              Amount :{" "}
-              <strong>
-                ₹
-                {
-                  invoice?.totalAmount
-                }
-              </strong>
-            </p>
-
-            <hr />
-
-            <h3>
-              Select Payment Method
-            </h3>
-
-            {/* UPI */}
-
-            <label
-              style={{
-                display:
-                  "block",
-                margin:
-                  "12px 0"
-              }}
-            >
-
-              <input
-                type="radio"
-                name="payment"
-                value="UPI"
-                checked={
-                  paymentMethod ===
-                  "UPI"
-                }
-                onChange={
-                  (e) =>
-                    setPaymentMethod(
-                      e.target.value
-                    )
-                }
-              />
-
-              {" "}
-              UPI
-
-            </label>
-
-            {/* CARD */}
-
-            <label
-              style={{
-                display:
-                  "block",
-                margin:
-                  "12px 0"
-              }}
-            >
-
-              <input
-                type="radio"
-                name="payment"
-                value="Card"
-                checked={
-                  paymentMethod ===
-                  "Card"
-                }
-                onChange={
-                  (e) =>
-                    setPaymentMethod(
-                      e.target.value
-                    )
-                }
-              />
-
-              {" "}
-              Card
-
-            </label>
-
-            {/* CASH */}
-
-            <label
-              style={{
-                display:
-                  "block",
-                margin:
-                  "12px 0"
-              }}
-            >
-
-              <input
-                type="radio"
-                name="payment"
-                value="Cash"
-                checked={
-                  paymentMethod ===
-                  "Cash"
-                }
-                onChange={
-                  (e) =>
-                    setPaymentMethod(
-                      e.target.value
-                    )
-                }
-              />
-
-              {" "}
-              Cash
-
-            </label>
-
-            {/* ===============================
-                BUTTONS
-            =============================== */}
-
-            <div
-              style={{
-                display:
-                  "flex",
-                gap:
-                  "10px",
-                marginTop:
-                  "25px"
-              }}
-            >
-
-              <button
-                onClick={
-                  confirmPayment
-                }
-                disabled={
-                  paymentLoading
-                }
-                style={{
-                  flex: 1,
-                  padding:
-                    "12px",
-                  background:
-                    "#16a34a",
-                  color:
-                    "white",
-                  border:
-                    "none",
-                  borderRadius:
-                    "8px",
-                  cursor:
-                    "pointer"
-                }}
-              >
-
-                {paymentLoading
-                  ? "Processing..."
-                  : "Confirm Payment"}
-
-              </button>
-
-              <button
-                onClick={() =>
-                  setShowPaymentPopup(
-                    false
-                  )
-                }
-                disabled={
-                  paymentLoading
-                }
-                style={{
-                  flex: 1,
-                  padding:
-                    "12px",
-                  background:
-                    "#6b7280",
-                  color:
-                    "white",
-                  border:
-                    "none",
-                  borderRadius:
-                    "8px",
-                  cursor:
-                    "pointer"
-                }}
-              >
-
-                Cancel
-
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      )}
+    )}
+
+    <div className="billing-card">
+
+      <h2>
+        No Active Order
+      </h2>
+
+      <p>
+        There is no active order available
+        for billing.
+      </p>
+
+      <p>
+        Please add medicines to your cart
+        and place a new order.
+      </p>
 
     </div>
-  );
+
+  </div>
+);
+
+
+}
+
+return ( <div className="billing-page">
+
+
+  <h1>
+    Billing
+  </h1>
+
+  {/* ===============================
+      ERROR
+  =============================== */}
+
+  {error && (
+    <div
+      style={{
+        background:
+          "#fee2e2",
+        color:
+          "#b91c1c",
+        padding:
+          "12px",
+        marginBottom:
+          "20px",
+        borderRadius:
+          "8px"
+      }}
+    >
+      {error}
+    </div>
+  )}
+
+  {/* ===============================
+      CUSTOMER DETAILS
+  =============================== */}
+
+  <div className="billing-card">
+
+    <h2>
+      Customer Details
+    </h2>
+
+    <p>
+      Name :{" "}
+      {customerName}
+    </p>
+
+    <p>
+      Role :{" "}
+      {user?.role ||
+        "USER"}
+    </p>
+
+  </div>
+
+  {/* ===============================
+      ORDER SUMMARY
+  =============================== */}
+
+  <div className="billing-card">
+
+    <h2>
+      Order Summary
+    </h2>
+
+    <table
+      className="billing-table"
+    >
+
+      <thead>
+
+        <tr>
+
+          <th>
+            Medicine
+          </th>
+
+          <th>
+            Quantity
+          </th>
+
+          <th>
+            Amount
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr>
+
+          <td>
+            {medicineName}
+          </td>
+
+          <td>
+            {quantity}
+          </td>
+
+          <td>
+            ₹
+            {totalAmount}
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+    <h2
+      className="billing-total"
+    >
+      Total Payable :
+      ₹
+      {totalAmount}
+    </h2>
+
+    {/* ===============================
+        GENERATE BILL BUTTON
+    =============================== */}
+
+    {!invoice &&
+      !paymentSuccess && (
+
+      <button
+        className="generate-bill-btn"
+        onClick={
+          generateBill
+        }
+        disabled={
+          !order ||
+          totalAmount <= 0
+        }
+      >
+        Generate Bill
+      </button>
+
+    )}
+
+  </div>
+
+  {/* ===============================
+      PAYMENT SUCCESS
+  =============================== */}
+
+  {paymentSuccess && (
+
+    <div
+      className="billing-card"
+      style={{
+        marginTop:
+          "20px",
+        border:
+          "2px solid #22c55e"
+      }}
+    >
+
+      <h2
+        style={{
+          color:
+            "#16a34a"
+        }}
+      >
+        Payment Successful ✅
+      </h2>
+
+      <p>
+        Invoice Number :{" "}
+        <strong>
+          {
+            invoice?.invoiceNumber
+          }
+        </strong>
+      </p>
+
+      <p>
+        Amount Paid :{" "}
+        <strong>
+          ₹
+          {
+            invoice?.totalAmount
+          }
+        </strong>
+      </p>
+
+      <p>
+        Payment Method :{" "}
+        <strong>
+          {
+            invoice?.paymentMethod
+          }
+        </strong>
+      </p>
+
+      <p>
+        Payment Status :{" "}
+        <strong>
+          Paid
+        </strong>
+      </p>
+
+      <p>
+        Order ID :{" "}
+        <strong>
+          {orderId}
+        </strong>
+      </p>
+
+      <p>
+        Order Status :{" "}
+        <strong>
+          Pending
+        </strong>
+      </p>
+
+      <p>
+        Your payment has been
+        completed successfully.
+      </p>
+
+      <p>
+        The Admin will manually
+        update your order status
+        to Completed.
+      </p>
+
+      {/* ===============================
+          FINISH BILLING
+      =============================== */}
+
+      <button
+        className="generate-bill-btn"
+        onClick={
+          clearCompletedBill
+        }
+        style={{
+          marginTop:
+            "20px",
+          background:
+            "#16a34a"
+        }}
+      >
+        Finish
+      </button>
+
+    </div>
+
+  )}
+
+  {/* ===============================
+      PAYMENT POPUP
+  =============================== */}
+
+  {showPaymentPopup && (
+
+    <div
+      style={{
+        position:
+          "fixed",
+        top: 0,
+        left: 0,
+        width:
+          "100%",
+        height:
+          "100%",
+        background:
+          "rgba(0,0,0,0.6)",
+        display:
+          "flex",
+        justifyContent:
+          "center",
+        alignItems:
+          "center",
+        zIndex:
+          9999
+      }}
+    >
+
+      <div
+        style={{
+          background:
+            "#ffffff",
+          padding:
+            "30px",
+          borderRadius:
+            "15px",
+          width:
+            "400px",
+          maxWidth:
+            "90%",
+          boxShadow:
+            "0 10px 40px rgba(0,0,0,0.3)"
+        }}
+      >
+
+        <h2>
+          Payment
+        </h2>
+
+        <p>
+          Invoice Number :{" "}
+          <strong>
+            {
+              invoice?.invoiceNumber
+            }
+          </strong>
+        </p>
+
+        <p>
+          Amount :{" "}
+          <strong>
+            ₹
+            {
+              invoice?.totalAmount
+            }
+          </strong>
+        </p>
+
+        <hr />
+
+        <h3>
+          Select Payment Method
+        </h3>
+
+        {/* UPI */}
+
+        <label
+          style={{
+            display:
+              "block",
+            margin:
+              "12px 0"
+          }}
+        >
+
+          <input
+            type="radio"
+            name="payment"
+            value="UPI"
+            checked={
+              paymentMethod ===
+              "UPI"
+            }
+            onChange={
+              (e) =>
+                setPaymentMethod(
+                  e.target.value
+                )
+            }
+          />
+
+          {" "}
+          UPI
+
+        </label>
+
+        {/* CARD */}
+
+        <label
+          style={{
+            display:
+              "block",
+            margin:
+              "12px 0"
+          }}
+        >
+
+          <input
+            type="radio"
+            name="payment"
+            value="Card"
+            checked={
+              paymentMethod ===
+              "Card"
+            }
+            onChange={
+              (e) =>
+                setPaymentMethod(
+                  e.target.value
+                )
+            }
+          />
+
+          {" "}
+          Card
+
+        </label>
+
+        {/* CASH */}
+
+        <label
+          style={{
+            display:
+              "block",
+            margin:
+              "12px 0"
+          }}
+        >
+
+          <input
+            type="radio"
+            name="payment"
+            value="Cash"
+            checked={
+              paymentMethod ===
+              "Cash"
+            }
+            onChange={
+              (e) =>
+                setPaymentMethod(
+                  e.target.value
+                )
+            }
+          />
+
+          {" "}
+          Cash
+
+        </label>
+
+        {/* ===============================
+            BUTTONS
+        =============================== */}
+
+        <div
+          style={{
+            display:
+              "flex",
+            gap:
+              "10px",
+            marginTop:
+              "25px"
+          }}
+        >
+
+          <button
+            onClick={
+              confirmPayment
+            }
+            disabled={
+              paymentLoading
+            }
+            style={{
+              flex: 1,
+              padding:
+                "12px",
+              background:
+                "#16a34a",
+              color:
+                "white",
+              border:
+                "none",
+              borderRadius:
+                "8px",
+              cursor:
+                "pointer"
+            }}
+          >
+
+            {paymentLoading
+              ? "Processing..."
+              : "Confirm Payment"}
+
+          </button>
+
+          <button
+            onClick={() =>
+              setShowPaymentPopup(
+                false
+              )
+            }
+            disabled={
+              paymentLoading
+            }
+            style={{
+              flex: 1,
+              padding:
+                "12px",
+              background:
+                "#6b7280",
+              color:
+                "white",
+              border:
+                "none",
+              borderRadius:
+                "8px",
+              cursor:
+                "pointer"
+            }}
+          >
+
+            Cancel
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  )}
+
+</div>
+
+
+);
 }
 
 export default Billing;
