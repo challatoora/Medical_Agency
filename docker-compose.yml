@@ -76,8 +76,8 @@ services:
       DB_NAME: user_db
       DB_PORT: 3306
 
-    ports:
-      - "5006:5006"
+    expose:
+    - "5006"
 
     depends_on:
       - mysql
@@ -100,8 +100,8 @@ services:
     environment:
       MONGO_URI: mongodb://mongodb:27017/medical_medicine_db
 
-    ports:
-      - "5001:5001"
+    expose:
+    - "5001"
 
     depends_on:
       - mongodb
@@ -129,8 +129,8 @@ services:
       DB_PORT: 3306
       REDIS_URL: redis://redis:6379
 
-    ports:
-      - "5002:5002"
+    expose:
+    - "5002"
 
     depends_on:
       - mysql
@@ -154,8 +154,8 @@ services:
     environment:
       MONGO_URI: mongodb://mongodb:27017/medical_supplier_db
 
-    ports:
-      - "5003:5003"
+    expose:
+    - "5003"
 
     depends_on:
       - mongodb
@@ -182,8 +182,8 @@ services:
       DB_NAME: order_db
       DB_PORT: 3306
 
-    ports:
-      - "5004:5004"
+    expose:
+    - "5004"
 
     depends_on:
       - mysql
@@ -210,8 +210,8 @@ services:
       DB_NAME: billing_db
       DB_PORT: 3306
 
-    ports:
-      - "5005:5005"
+    expose:
+    - "5005"
 
     depends_on:
       - mysql
