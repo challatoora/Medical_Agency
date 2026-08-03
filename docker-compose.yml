@@ -53,6 +53,8 @@ services:
       - "5006:5006"
     depends_on:
       - mysql
+    networks:
+      - medical-network  
 
   medicine-service:
     build:
