@@ -53,9 +53,9 @@ services:
       - medical-network
 
 
-#   # =========================
-#   # INVENTORY SERVICE
-#   # =========================
+  # =========================
+  # INVENTORY SERVICE
+  # =========================
   inventory-service:
     build:
       context: ./Backend/inventory-service
@@ -82,10 +82,9 @@ services:
     networks:
       - medical-network
 
-
-#   # =========================
-#   # SUPPLIER SERVICE
-#   # =========================
+  # =========================
+  # SUPPLIER SERVICE
+  # =========================
   supplier-service:
     build:
       context: ./Backend/supplier-service
