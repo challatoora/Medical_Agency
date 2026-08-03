@@ -40,9 +40,33 @@ exports.getMedicineById = async (req, res) => {
   }
 };
 
+// // ADD MEDICINE
+// exports.addMedicine = async (req, res) => {
+//   try {
+//     const medicine = await medicineModel.create(req.body);
+
+//     res.status(201).json({
+//       message: "Medicine Added Successfully",
+//       medicine,
+//     });
+//   } catch (error) {
+//     console.error("Add medicine error:", error);
+
+//     res.status(500).json({
+//       message: "Failed to add medicine",
+//       error: error.message,
+//     });
+//   }
+// };
+
+
 // ADD MEDICINE
 exports.addMedicine = async (req, res) => {
   try {
+    console.log("========== ADD MEDICINE ==========");
+    console.log("Headers:", req.headers);
+    console.log("Body:", req.body);
+
     const medicine = await medicineModel.create(req.body);
 
     res.status(201).json({
@@ -50,7 +74,8 @@ exports.addMedicine = async (req, res) => {
       medicine,
     });
   } catch (error) {
-    console.error("Add medicine error:", error);
+    console.error("========== ADD MEDICINE ERROR ==========");
+    console.error(error);
 
     res.status(500).json({
       message: "Failed to add medicine",
