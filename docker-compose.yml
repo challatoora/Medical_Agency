@@ -1,279 +1,328 @@
 services:
 
-  # =========================
-  # MYSQL DATABASE
-  # =========================
-  mysql:
-  image: mysql:8.0
-  container_name: medical-mysql
-  restart: unless-stopped
+# =========================
 
-  environment:
-    MYSQL_ROOT_PASSWORD: root
-    MYSQL_DATABASE: user_db
+# MYSQL DATABASE
 
-  ports:
-    - "3306:3306"
+# =========================
 
-  volumes:
-    - mysql_data:/var/lib/mysql
+mysql:
+image: mysql:8.0
+container_name: medical-mysql
+restart: unless-stopped
 
-  healthcheck:
-    test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
-    interval: 10s
-    timeout: 5s
-    retries: 10
-    start_period: 30s
+```
+environment:
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_DATABASE: user_db
 
-  networks:
-    - medical-network
+ports:
+  - "3306:3306"
 
+volumes:
+  - mysql_data:/var/lib/mysql
 
-  # =========================
-  # MONGODB DATABASE
-  # =========================
-  mongodb:
-    image: mongo:7
-    container_name: medical-mongodb
-    restart: unless-stopped
+healthcheck:
+  test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+  interval: 10s
+  timeout: 5s
+  retries: 10
+  start_period: 30s
 
-    ports:
-      - "27017:27017"
+networks:
+  - medical-network
+```
 
-    volumes:
-      - mongodb_data:/data/db
+# =========================
 
-    networks:
-      - medical-network
+# MONGODB DATABASE
 
+# =========================
 
-  # =========================
-  # REDIS
-  # =========================
-  redis:
-    image: redis:7-alpine
-    container_name: medical-redis
-    restart: unless-stopped
+mongodb:
+image: mongo:7
+container_name: medical-mongodb
+restart: unless-stopped
 
-    ports:
-      - "6379:6379"
+```
+ports:
+  - "27017:27017"
 
-    volumes:
-      - redis_data:/data
+volumes:
+  - mongodb_data:/data/db
 
-    networks:
-      - medical-network
+networks:
+  - medical-network
+```
 
+# =========================
 
-  # =========================
-  # USER SERVICE
-  # =========================
-  user-service:
-    build:
-      context: ./Backend/user-service
-      dockerfile: Dockerfile
+# REDIS
 
-    container_name: user-service
-    restart: unless-stopped
+# =========================
 
-    environment:
-      DB_HOST: mysql
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: user_db
-      DB_PORT: 3306
+redis:
+image: redis:7-alpine
+container_name: medical-redis
+restart: unless-stopped
 
-    expose:
-    - "5006"
+```
+ports:
+  - "6379:6379"
 
-    depends_on:
+volumes:
+  - redis_data:/data
+
+networks:
+  - medical-network
+```
+
+# =========================
+
+# USER SERVICE
+
+# =========================
+
+user-service:
+build:
+context: ./Backend/user-service
+dockerfile: Dockerfile
+
+```
+container_name: user-service
+restart: unless-stopped
+
+environment:
+  DB_HOST: mysql
+  DB_USER: root
+  DB_PASSWORD: root
+  DB_NAME: user_db
+  DB_PORT: 3306
+
+expose:
+  - "5006"
+
+depends_on:
   mysql:
     condition: service_healthy
 
-    networks:
-      - medical-network
-
-
-  # =========================
-  # MEDICINE SERVICE
-  # =========================
-  medicine-service:
-    build:
-      context: ./Backend/medicine-service
-      dockerfile: Dockerfile
-
-    container_name: medicine-service
-    restart: unless-stopped
-
-    environment:
-      MONGO_URI: mongodb://mongodb:27017/medical_medicine_db
-
-    expose:
-    - "5001"
-
-    depends_on:
-      - mongodb
-
-    networks:
-      - medical-network
-
-
-  # =========================
-  # INVENTORY SERVICE
-  # =========================
-  inventory-service:
-    build:
-      context: ./Backend/inventory-service
-      dockerfile: Dockerfile
-
-    container_name: inventory-service
-    restart: unless-stopped
-
-    environment:
-      DB_HOST: mysql
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: cmr_medical
-      DB_PORT: 3306
-      REDIS_URL: redis://redis:6379
-
-    expose:
-    - "5002"
-
-    depends_on:
-      - mysql
-      - redis
-
-    networks:
-      - medical-network
-
-
-  # =========================
-  # SUPPLIER SERVICE
-  # =========================
-  supplier-service:
-    build:
-      context: ./Backend/supplier-service
-      dockerfile: Dockerfile
-
-    container_name: supplier-service
-    restart: unless-stopped
-
-    environment:
-      MONGO_URI: mongodb://mongodb:27017/medical_supplier_db
-
-    expose:
-    - "5003"
-
-    depends_on:
-      - mongodb
-
-    networks:
-      - medical-network
-
-
-  # =========================
-  # ORDER SERVICE
-  # =========================
-  order-service:
-    build:
-      context: ./Backend/order-service
-      dockerfile: Dockerfile
-
-    container_name: order-service
-    restart: unless-stopped
-
-    environment:
-      DB_HOST: mysql
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: order_db
-      DB_PORT: 3306
-
-    expose:
-    - "5004"
-
-    depends_on:
-      - mysql
-
-    networks:
-      - medical-network
-
-
-  # =========================
-  # BILLING SERVICE
-  # =========================
-  billing-service:
-    build:
-      context: ./Backend/billing-service
-      dockerfile: Dockerfile
-
-    container_name: billing-service
-    restart: unless-stopped
-
-    environment:
-      DB_HOST: mysql
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: billing_db
-      DB_PORT: 3306
-
-    expose:
-    - "5005"
-
-    depends_on:
-      - mysql
-
-    networks:
-      - medical-network
-
-
-  # =========================
-  # FRONTEND
-  # =========================
-  frontend:
-    build:
-      context: ./Frontend
-      dockerfile: Dockerfile
-
-    container_name: medical-frontend
-    restart: unless-stopped
-
-    ports:
-      - "80:80"
-
-    depends_on:
-      - user-service
-      - medicine-service
-      - inventory-service
-      - supplier-service
-      - order-service
-      - billing-service
-
-    networks:
-      - medical-network
-
+networks:
+  - medical-network
+```
 
 # =========================
+
+# MEDICINE SERVICE
+
+# =========================
+
+medicine-service:
+build:
+context: ./Backend/medicine-service
+dockerfile: Dockerfile
+
+```
+container_name: medicine-service
+restart: unless-stopped
+
+environment:
+  MONGO_URI: mongodb://mongodb:27017/medical_medicine_db
+
+expose:
+  - "5001"
+
+depends_on:
+  - mongodb
+
+networks:
+  - medical-network
+```
+
+# =========================
+
+# INVENTORY SERVICE
+
+# =========================
+
+inventory-service:
+build:
+context: ./Backend/inventory-service
+dockerfile: Dockerfile
+
+```
+container_name: inventory-service
+restart: unless-stopped
+
+environment:
+  DB_HOST: mysql
+  DB_USER: root
+  DB_PASSWORD: root
+  DB_NAME: cmr_medical
+  DB_PORT: 3306
+  REDIS_URL: redis://redis:6379
+
+expose:
+  - "5002"
+
+depends_on:
+  mysql:
+    condition: service_healthy
+  redis:
+    condition: service_started
+
+networks:
+  - medical-network
+```
+
+# =========================
+
+# SUPPLIER SERVICE
+
+# =========================
+
+supplier-service:
+build:
+context: ./Backend/supplier-service
+dockerfile: Dockerfile
+
+```
+container_name: supplier-service
+restart: unless-stopped
+
+environment:
+  MONGO_URI: mongodb://mongodb:27017/medical_supplier_db
+
+expose:
+  - "5003"
+
+depends_on:
+  - mongodb
+
+networks:
+  - medical-network
+```
+
+# =========================
+
+# ORDER SERVICE
+
+# =========================
+
+order-service:
+build:
+context: ./Backend/order-service
+dockerfile: Dockerfile
+
+```
+container_name: order-service
+restart: unless-stopped
+
+environment:
+  DB_HOST: mysql
+  DB_USER: root
+  DB_PASSWORD: root
+  DB_NAME: order_db
+  DB_PORT: 3306
+
+expose:
+  - "5004"
+
+depends_on:
+  mysql:
+    condition: service_healthy
+
+networks:
+  - medical-network
+```
+
+# =========================
+
+# BILLING SERVICE
+
+# =========================
+
+billing-service:
+build:
+context: ./Backend/billing-service
+dockerfile: Dockerfile
+
+```
+container_name: billing-service
+restart: unless-stopped
+
+environment:
+  DB_HOST: mysql
+  DB_USER: root
+  DB_PASSWORD: root
+  DB_NAME: billing_db
+  DB_PORT: 3306
+
+expose:
+  - "5005"
+
+depends_on:
+  mysql:
+    condition: service_healthy
+
+networks:
+  - medical-network
+```
+
+# =========================
+
+# FRONTEND
+
+# =========================
+
+frontend:
+build:
+context: ./Frontend
+dockerfile: Dockerfile
+
+```
+container_name: medical-frontend
+restart: unless-stopped
+
+ports:
+  - "80:80"
+
+depends_on:
+  - user-service
+  - medicine-service
+  - inventory-service
+  - supplier-service
+  - order-service
+  - billing-service
+
+networks:
+  - medical-network
+```
+
+# =========================
+
 # VOLUMES
+
 # =========================
+
 volumes:
 
-  mysql_data:
-    name: medical_mysql_data
+mysql_data:
+name: medical_mysql_data
 
-  mongodb_data:
-    name: medical_mongodb_data
+mongodb_data:
+name: medical_mongodb_data
 
-  redis_data:
-    name: medical_redis_data
-
+redis_data:
+name: medical_redis_data
 
 # =========================
+
 # NETWORK
+
 # =========================
+
 networks:
 
-  medical-network:
-    name: medical-network
-    driver: bridge
+medical-network:
+name: medical-network
+driver: bridge
