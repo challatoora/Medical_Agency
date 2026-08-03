@@ -16,10 +16,8 @@ services:
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       DB_NAME: user_db
       DB_PORT: 3306
-      ports:
-      - "5006:5006"
-
-    
+    ports:
+    - "5006:5006"
 
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -38,7 +36,6 @@ services:
     container_name: medicine-service
     restart: unless-stopped
 
-    
     environment:
       MONGO_URI: mongodb://host.docker.internal:27017/medical_medicine_db
     ports:
@@ -128,7 +125,6 @@ services:
       DB_NAME: order_db
       DB_PORT: 3306
     
-
     expose:
       - "5004"
 
@@ -158,8 +154,6 @@ services:
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       DB_NAME: billing_db
       DB_PORT: 3306
-
-      
 
     expose:
       - "5005"
