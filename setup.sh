@@ -8,7 +8,7 @@ sudo systemctl start mysqld
 sudo systemctl enable mysqld
 sudo systemctl status mysqld
 
-echo "Setupimh nodejs"
+echo "Setuping nodejs"
 sudo dnf module enable nodejs:20 -y
 sudo dnf install nodejs -y
 npm install express mysql2 cors dotenv
@@ -18,6 +18,11 @@ echo "Setup Completed Successfully."
 
 npm install lucide-react
 npm install lucide-react recharts
+
+sudo dnf install -y mongodb-org
+sudo systemctl enable mongod
+sudo systemctl start mongod
+sudo systemctl status mongod
 # ALTER USER 'root'@'localhost' IDENTIFIED BY 'Root@123';
 # FLUSH PRIVILEGES;
 # EXIT;
