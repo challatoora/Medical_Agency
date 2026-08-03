@@ -37,7 +37,7 @@ services:
     networks:
       - medical-network
 
-  user-service:
+    user-service:
     build:
       context: ./Backend/user-service
       dockerfile: Dockerfile
@@ -49,12 +49,10 @@ services:
       DB_PASSWORD: root
       DB_NAME: user_db
       DB_PORT: 3306
-    expose:
-      - "5006"
+    ports:
+      - "5006:5006"
     depends_on:
       - mysql
-    networks:
-      - medical-network
 
   medicine-service:
     build:
