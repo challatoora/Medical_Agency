@@ -148,6 +148,9 @@ services:
     container_name: billing-service
     restart: unless-stopped
 
+    ports:
+      - "5005:5005"
+
     environment:
       DB_HOST: host.docker.internal
       DB_USER: root
@@ -155,8 +158,7 @@ services:
       DB_NAME: billing_db
       DB_PORT: 3306
 
-      ports:
-      - "5005:5005"
+      
 
     expose:
       - "5005"
