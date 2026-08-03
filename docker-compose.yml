@@ -10,14 +10,15 @@ services:
     container_name: user-service
     restart: unless-stopped
 
+    ports:
+      - "5006:5006"
+
     environment:
       DB_HOST: host.docker.internal
       DB_USER: root
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       DB_NAME: user_db
       DB_PORT: 3306
-    ports:
-    - "5006:5006"
 
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -26,9 +27,9 @@ services:
       - medical-network
 
 
-#   # =========================
-#   # MEDICINE SERVICE
-#   # =========================
+  # =========================
+  # MEDICINE SERVICE
+  # =========================
   medicine-service:
     build:
       context: ./Backend/medicine-service
@@ -36,13 +37,11 @@ services:
     container_name: medicine-service
     restart: unless-stopped
 
+    ports:
+      - "5001:5001"
+
     environment:
       MONGO_URI: mongodb://host.docker.internal:27017/medical_medicine_db
-    ports:
-    - "5001:5001"
-
-    expose:
-      - "5001"
 
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -61,6 +60,9 @@ services:
     container_name: inventory-service
     restart: unless-stopped
 
+    ports:
+      - "5003:5003"
+
     environment:
       DB_HOST: host.docker.internal
       DB_USER: root
@@ -68,17 +70,13 @@ services:
       DB_NAME: cmr_medical
       DB_PORT: 3306
       REDIS_URL: redis://host.docker.internal:6379
-    ports:
-    - "5003:5003"
-
-    expose:
-      - "5003"
 
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
     networks:
       - medical-network
+
 
   # =========================
   # SUPPLIER SERVICE
@@ -90,13 +88,11 @@ services:
     container_name: supplier-service
     restart: unless-stopped
 
-    environment:
-       MONGO_URI: mongodb://host.docker.internal:27017/medical_supplier_db
     ports:
       - "5002:5002"
 
-    expose:
-      - "5002"
+    environment:
+      MONGO_URI: mongodb://host.docker.internal:27017/medical_supplier_db
 
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -105,9 +101,9 @@ services:
       - medical-network
 
 
-#   # =========================
-#   # ORDER SERVICE
-#   # =========================
+  # =========================
+  # ORDER SERVICE
+  # =========================
   order-service:
     build:
       context: ./Backend/order-service
@@ -124,9 +120,6 @@ services:
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       DB_NAME: order_db
       DB_PORT: 3306
-    
-    expose:
-      - "5004"
 
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -135,9 +128,9 @@ services:
       - medical-network
 
 
-#   # =========================
-#   # BILLING SERVICE
-#   # =========================
+  # =========================
+  # BILLING SERVICE
+  # =========================
   billing-service:
     build:
       context: ./Backend/billing-service
@@ -155,9 +148,6 @@ services:
       DB_NAME: billing_db
       DB_PORT: 3306
 
-    expose:
-      - "5005"
-
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -165,9 +155,9 @@ services:
       - medical-network
 
 
-#   # =========================
-#   # FRONTEND
-#   # =========================
+  # =========================
+  # FRONTEND
+  # =========================
   frontend:
     build:
       context: ./Frontend
@@ -190,14 +180,13 @@ services:
       - medical-network
 
 
-# # =========================
-# # DOCKER NETWORK
-# # =========================
+# =========================
+# DOCKER NETWORK
+# =========================
 networks:
   medical-network:
     name: medical-network
     driver: bridge
-
 
 # services:
 
