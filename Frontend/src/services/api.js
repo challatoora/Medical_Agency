@@ -1,9 +1,9 @@
-const USER_API_URL = "http://3.88.154.51:5006/api/users";
-const MEDICINE_API_URL = "http://3.88.154.51:5001/api/medicines";
-const INVENTORY_API_URL = "http://3.88.154.51:5003/api/inventory";
-const SUPPLIER_API_URL = "http://3.88.154.51:5002/api/suppliers";
-const ORDER_API_URL = "http://3.88.154.51:5004/api/orders";
-const BILLING_API_URL = "http://3.88.154.51:5005/api/billing";
+const USER_API_URL = "http://100.54.227.81:5006/api/users";
+const MEDICINE_API_URL = "http://100.54.227.81:5001/api/medicines";
+const INVENTORY_API_URL = "http://100.54.227.81:5003/api/inventory";
+const SUPPLIER_API_URL = "http://100.54.227.81:5002/api/suppliers";
+const ORDER_API_URL = "http://100.54.227.81:5004/api/orders";
+const BILLING_API_URL = "http://100.54.227.81:5005/api/billing";
 //const ORDER_API_URL = "http://50.16.167.95:5004/api";
 // const USER_API_URL = "http://mreddy.online/api/users";
 // const MEDICINE_API_URL = "http://mreddy.online/api/medicines";
