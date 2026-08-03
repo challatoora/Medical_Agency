@@ -23,6 +23,12 @@ sudo dnf install -y mongodb-org
 sudo systemctl enable mongod
 sudo systemctl start mongod
 sudo systemctl status mongod
+
+
+sudo dnf module enable redis:7 -y
+sudo dnf install redis -y
+sudo systemctl start redis7
+sudo systemctl status redis7
 # ALTER USER 'root'@'localhost' IDENTIFIED BY 'Root@123';
 # FLUSH PRIVILEGES;
 # EXIT;
