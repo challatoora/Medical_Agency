@@ -92,9 +92,9 @@ services:
     container_name: supplier-service
     restart: unless-stopped
 
-     environment:
+    environment:
        MONGO_URI: mongodb://host.docker.internal:27017/medical_supplier_db
-      ports:
+    ports:
       - "5002:5002"
 
     expose:
