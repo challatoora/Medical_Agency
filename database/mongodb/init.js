@@ -18,23 +18,6 @@ db.medicines.insertOne({
     createdAt: new Date()
 });
 
-
-// ==========================================
-// INVENTORY DATABASE
-// ==========================================
-
-use("inventory_db");
-
-db.inventory.insertOne({
-    medicineId: "sample-medicine-001",
-    quantity: 100,
-    batchNumber: "BATCH001",
-    expiryDate: new Date("2027-12-31"),
-    reorderLevel: 10,
-    createdAt: new Date()
-});
-
-
 // ==========================================
 // SUPPLIER DATABASE
 // ==========================================
