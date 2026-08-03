@@ -117,14 +117,16 @@ services:
     container_name: order-service
     restart: unless-stopped
 
+    ports:
+      - "5004:5004"
+
     environment:
       DB_HOST: host.docker.internal
       DB_USER: root
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       DB_NAME: order_db
       DB_PORT: 3306
-      ports:
-      - "5004:5004"
+    
 
     expose:
       - "5004"
