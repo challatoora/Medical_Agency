@@ -303,34 +303,34 @@ networks:
   # ==========================================
   # MYSQL
   # ==========================================
-  mysql:
-    image: mysql:8.0
-    container_name: medical-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: your_root_password
-    restart: unless-stopped
-    networks:
-      - medical-network
+  # mysql:
+  #   image: mysql:8.0
+  #   container_name: medical-mysql
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: your_root_password
+  #   restart: unless-stopped
+  #   networks:
+  #     - medical-network
 
-  # ==========================================
-  # MONGODB
-  # ==========================================
-  mongodb:
-    image: mongo:7
-    container_name: medical-mongodb
-    restart: unless-stopped
-    networks:
-      - medical-network
+  # # ==========================================
+  # # MONGODB
+  # # ==========================================
+  # mongodb:
+  #   image: mongo:7
+  #   container_name: medical-mongodb
+  #   restart: unless-stopped
+  #   networks:
+  #     - medical-network
 
-  # ==========================================
-  # REDIS
-  # ==========================================
-  redis:
-    image: redis:7
-    container_name: medical-redis
-    restart: unless-stopped
-    networks:
-      - medical-network
+  # # ==========================================
+  # # REDIS
+  # # ==========================================
+  # redis:
+  #   image: redis:7
+  #   container_name: medical-redis
+  #   restart: unless-stopped
+  #   networks:
+  #     - medical-network
 
 # # ==========================================
 # # NETWORK
