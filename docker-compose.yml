@@ -41,8 +41,8 @@ services:
     build:
       context: ./Backend/user-service
       dockerfile: Dockerfile
-    container_name: user-service
-    restart: unless-stopped
+      container_name: user-service
+      restart: unless-stopped
     environment:
       DB_HOST: mysql
       DB_USER: root
