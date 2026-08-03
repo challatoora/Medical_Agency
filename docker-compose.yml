@@ -11,7 +11,7 @@ image: mysql:8.0
 container_name: medical-mysql
 restart: unless-stopped
 
-```
+
 environment:
   MYSQL_ROOT_PASSWORD: root
   MYSQL_DATABASE: user_db
@@ -31,7 +31,7 @@ healthcheck:
 
 networks:
   - medical-network
-```
+
 
 # =========================
 
@@ -44,7 +44,7 @@ image: mongo:7
 container_name: medical-mongodb
 restart: unless-stopped
 
-```
+
 ports:
   - "27017:27017"
 
@@ -53,7 +53,7 @@ volumes:
 
 networks:
   - medical-network
-```
+
 
 # =========================
 
@@ -66,7 +66,7 @@ image: redis:7-alpine
 container_name: medical-redis
 restart: unless-stopped
 
-```
+
 ports:
   - "6379:6379"
 
@@ -75,7 +75,7 @@ volumes:
 
 networks:
   - medical-network
-```
+
 
 # =========================
 
@@ -88,7 +88,7 @@ build:
 context: ./Backend/user-service
 dockerfile: Dockerfile
 
-```
+
 container_name: user-service
 restart: unless-stopped
 
@@ -108,7 +108,7 @@ depends_on:
 
 networks:
   - medical-network
-```
+
 
 # =========================
 
@@ -121,7 +121,7 @@ build:
 context: ./Backend/medicine-service
 dockerfile: Dockerfile
 
-```
+
 container_name: medicine-service
 restart: unless-stopped
 
@@ -136,7 +136,7 @@ depends_on:
 
 networks:
   - medical-network
-```
+
 
 # =========================
 
@@ -149,7 +149,7 @@ build:
 context: ./Backend/inventory-service
 dockerfile: Dockerfile
 
-```
+
 container_name: inventory-service
 restart: unless-stopped
 
@@ -172,7 +172,7 @@ depends_on:
 
 networks:
   - medical-network
-```
+
 
 # =========================
 
@@ -185,7 +185,7 @@ build:
 context: ./Backend/supplier-service
 dockerfile: Dockerfile
 
-```
+
 container_name: supplier-service
 restart: unless-stopped
 
@@ -200,7 +200,7 @@ depends_on:
 
 networks:
   - medical-network
-```
+
 
 # =========================
 
@@ -213,7 +213,7 @@ build:
 context: ./Backend/order-service
 dockerfile: Dockerfile
 
-```
+
 container_name: order-service
 restart: unless-stopped
 
@@ -233,7 +233,7 @@ depends_on:
 
 networks:
   - medical-network
-```
+
 
 # =========================
 
@@ -246,7 +246,7 @@ build:
 context: ./Backend/billing-service
 dockerfile: Dockerfile
 
-```
+
 container_name: billing-service
 restart: unless-stopped
 
@@ -266,7 +266,7 @@ depends_on:
 
 networks:
   - medical-network
-```
+
 
 # =========================
 
@@ -279,7 +279,7 @@ build:
 context: ./Frontend
 dockerfile: Dockerfile
 
-```
+
 container_name: medical-frontend
 restart: unless-stopped
 
@@ -296,7 +296,7 @@ depends_on:
 
 networks:
   - medical-network
-```
+
 
 # =========================
 
