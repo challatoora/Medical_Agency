@@ -71,11 +71,11 @@ services:
       DB_NAME: cmr_medical
       DB_PORT: 3306
       REDIS_URL: redis://host.docker.internal:6379
-      ports:
-      - "5003:5003"
+    ports:
+    - "5003:5003"
 
     expose:
-      - "5002"
+      - "5003"
 
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -99,7 +99,7 @@ services:
       - "5002:5002"
 
     expose:
-      - "5003"
+      - "5002"
 
     extra_hosts:
       - "host.docker.internal:host-gateway"
