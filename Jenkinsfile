@@ -4,18 +4,6 @@ pipeline {
 
     stages {
 
-        stage('Pull Code') {
-            steps {
-                dir('/home/ec2-user/Medical_Agency') {
-                    sh '''
-                        echo "Pulling latest code..."
-                        git pull origin main
-                    '''
-                }
-            }
-        }
-
-
         stage('Build') {
             steps {
                 dir('/home/ec2-user/Medical_Agency') {
