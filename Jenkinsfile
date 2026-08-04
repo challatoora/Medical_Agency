@@ -1,31 +1,23 @@
+```groovy
 pipeline {
 
     agent any
 
-    environment {
-        PROJECT_DIR = '/home/ec2-user/Medical_Agency'
-    }
-
     stages {
 
-        stage('Update Code') {
+        stage('Checkout Code') {
             steps {
-                sh '''
-                    cd ${PROJECT_DIR}
-
-                    git pull origin main
-                '''
+                echo 'Checking out latest code from GitHub...'
+                checkout scm
             }
         }
 
         stage('Build Docker Images') {
             steps {
                 sh '''
-                    cd ${PROJECT_DIR}
-
                     echo "Building Docker images..."
 
-                    sudo docker compose build
+                    docker compose build
                 '''
             }
         }
@@ -33,11 +25,9 @@ pipeline {
         stage('Stop and Remove Old Containers') {
             steps {
                 sh '''
-                    cd ${PROJECT_DIR}
-
                     echo "Stopping and removing old containers..."
 
-                    sudo docker compose down --remove-orphans
+                    docker compose down --remove-orphans
                 '''
             }
         }
@@ -45,11 +35,9 @@ pipeline {
         stage('Deploy Application') {
             steps {
                 sh '''
-                    cd ${PROJECT_DIR}
-
                     echo "Starting application..."
 
-                    sudo docker compose up -d
+                    docker compose up -d
                 '''
             }
         }
@@ -57,14 +45,12 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sh '''
-                    cd ${PROJECT_DIR}
-
                     echo "Waiting for services..."
                     sleep 20
 
                     echo "Checking containers..."
 
-                    sudo docker compose ps
+                    docker compose ps
 
                     echo "Testing frontend..."
 
@@ -87,3 +73,4 @@ pipeline {
         }
     }
 }
+```
