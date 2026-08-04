@@ -1,61 +1,84 @@
 pipeline {
 
-agent any
+    agent any
 
-stages {
+    stages {
 
-    stage('Build Docker Images') {
-        steps {
-            sh '''
-                echo "Building Docker images..."
-                docker compose build
-            '''
+        stage('Pull Code') {
+            steps {
+                dir('/home/ec2-user/Medical_Agency') {
+                    sh '''
+                        echo "Pulling latest code..."
+                        git pull origin main
+                    '''
+                }
+            }
         }
-    }
 
-    stage('Stop Old Containers') {
-        steps {
-            sh '''
-                echo "Stopping old containers..."
-                docker compose down --remove-orphans
-            '''
+
+        stage('Build') {
+            steps {
+                dir('/home/ec2-user/Medical_Agency') {
+                    sh '''
+                        echo "Building Docker images..."
+                        docker compose build
+                    '''
+                }
+            }
         }
-    }
 
-    stage('Deploy Application') {
-        steps {
-            sh '''
-                echo "Starting application..."
-                docker compose up -d
-            '''
+
+        stage('Stop') {
+            steps {
+                dir('/home/ec2-user/Medical_Agency') {
+                    sh '''
+                        echo "Stopping old containers..."
+                        docker compose down
+                    '''
+                }
+            }
         }
-    }
 
-    stage('Verify Deployment') {
-        steps {
-            sh '''
-                echo "Waiting for services..."
-                sleep 20
 
-                docker compose ps
-
-                echo "Testing frontend..."
-                curl -f http://localhost:80
-
-                echo "Deployment successful!"
-            '''
+        stage('Deploy') {
+            steps {
+                dir('/home/ec2-user/Medical_Agency') {
+                    sh '''
+                        echo "Starting containers..."
+                        docker compose up -d
+                    '''
+                }
+            }
         }
-    }
-}
 
-post {
-    success {
-        echo 'Deployment Successful!'
+
+        stage('Verify') {
+            steps {
+                dir('/home/ec2-user/Medical_Agency') {
+                    sh '''
+                        echo "Checking containers..."
+                        docker compose ps
+
+                        echo "Testing application..."
+                        curl -f http://localhost:80
+                    '''
+                }
+            }
+        }
+
     }
 
-    failure {
-        echo 'Deployment Failed!'
+
+    post {
+
+        success {
+            echo "Deployment Successful"
+        }
+
+        failure {
+            echo "Deployment Failed"
+        }
+
     }
-}
 
 }
