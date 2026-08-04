@@ -22,21 +22,48 @@
 
 
 
+// const mysql = require("mysql2");
+
+// const db = mysql.createConnection({
+//     host: process.env.DB_HOST || "localhost",
+//     user: process.env.DB_USER || "root",
+//     password: process.env.DB_PASSWORD || "Root@123",
+//     database: process.env.DB_NAME || "order_db"
+// });
+
+// db.connect((err) => {
+//     if (err) {
+//         console.error("MySQL Connection Failed");
+//         console.error(err);
+//     } else {
+//         console.log("MySQL Connected Successfully");
+//     }
+// });
+
+// module.exports = db;
+
+
 const mysql = require("mysql2");
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER || "root",
     password: process.env.DB_PASSWORD || "Root@123",
-    database: process.env.DB_NAME || "order_db"
+    database: process.env.DB_NAME || "order_db",
+    port: process.env.DB_PORT || 3306,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-db.connect((err) => {
+// Test MySQL connection
+db.getConnection((err, connection) => {
     if (err) {
         console.error("MySQL Connection Failed");
         console.error(err);
     } else {
         console.log("MySQL Connected Successfully");
+        connection.release();
     }
 });
 
