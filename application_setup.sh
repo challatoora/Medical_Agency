@@ -42,6 +42,16 @@ sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -aG docker ec2-user
 sudo systemctl status docker
+
+sudo dnf install -y java-21-openjdk
+java -version
+sudo curl -k -L -o /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+sudo dnf clean all
+sudo dnf makecache
+sudo dnf install -y jenkins
+sudo systemctl enable --now jenkins
+sudo systemctl status jenkins
 # ALTER USER 'root'@'localhost' IDENTIFIED BY 'Root@123';
 # FLUSH PRIVILEGES;
 # EXIT;

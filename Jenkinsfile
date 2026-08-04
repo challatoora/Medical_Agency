@@ -1,8 +1,6 @@
 pipeline {
 
-    agent {
-        label 'medical-agency-agent'
-    }
+    agent any
 
     environment {
         PROJECT_DIR = '/home/ec2-user/Medical_Agency'
