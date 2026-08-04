@@ -14,11 +14,12 @@ pipeline {
         }
 
 
-        stage('Stop') {
+        stage('Stop & cleaning') {
             steps {
                 sh '''
-                    echo "Stopping old containers..."
-                    docker compose down
+                    echo "Stopping & cleaning old containers..."
+                    docker compose down --remove-orphans
+                    docker image prune -f
                 '''
             }
         }
